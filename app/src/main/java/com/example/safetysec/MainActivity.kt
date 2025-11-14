@@ -1,4 +1,4 @@
-package com.safetysec.app
+package com.example.safetysec.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import dagger.hilt.android.AndroidEntryPoint
 import com.example.safetysec.presentation.navigation.SafetYSecNavigation
 import com.example.safetysec.presentation.theme.SafetYSecTheme
-import dagger.hilt.android.AndroidEntryPoint
+
 
 /**
  * Main Activity for SafetYSec application
