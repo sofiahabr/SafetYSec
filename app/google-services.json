@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:980635699596:android:4a9af1d4e0114651e06ea9",
+        "mobilesdk_app_id": "1:980635699596:android:d9911a54269ed306e06ea9",
         "android_client_info": {
-          "package_name": "com.safetysec"
+          "package_name": "com.example.safetysec"
         }
       },
       "oauth_client": [],
