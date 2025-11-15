@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import com.example.safetysec.presentation.navigation.SafetYSecNavigation
+import com.example.safetysec.navigation.AppNavHost
 import com.example.safetysec.presentation.theme.SafetYSecTheme
 
 
@@ -31,7 +32,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SafetYSecNavigation()
+                    val navController = rememberNavController()
+                    AppNavHost(navController = navController)
                 }
             }
         }
