@@ -1,0 +1,100 @@
+<resources>
+    <!-- App Name -->
+    <string name="app_name">SafetYSec</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="delete">Eliminar</string>
+    <string name="edit">Editar</string>
+    <string name="back">Voltar</string>
+    <string name="next">Seguinte</string>
+    <string name="done">Concluído</string>
+    <string name="loading">A carregar…</string>
+    <string name="error">Erro</string>
+    <string name="success">Sucesso</string>
+
+    <!-- Authentication -->
+    <string name="login">Entrar</string>
+    <string name="register">Registar</string>
+    <string name="logout">Sair</string>
+    <string name="email">Email</string>
+    <string name="password">Palavra-passe</string>
+    <string name="confirm_password">Confirmar Palavra-passe</string>
+    <string name="forgot_password">Esqueceu a palavra-passe?</string>
+    <string name="full_name">Nome Completo</string>
+    <string name="phone_number">Número de Telefone</string>
+
+    <!-- User Profiles -->
+    <string name="monitor">Monitor</string>
+    <string name="protected_user">Utilizador Protegido</string>
+    <string name="profile">Perfil</string>
+    <string name="settings">Definições</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard">Painel</string>
+    <string name="my_safety">A Minha Segurança</string>
+    <string name="active_monitors">Monitores Ativos</string>
+    <string name="active_rules">Regras Ativas</string>
+    <string name="current_status">Estado Atual</string>
+    <string name="all_safe">Tudo Seguro</string>
+    <string name="monitoring_active">Monitorização ativa</string>
+
+    <!-- Rules -->
+    <string name="rules">Regras</string>
+    <string name="safety_rules">Regras de Segurança</string>
+    <string name="create_rule">Criar Regra</string>
+    <string name="edit_rule">Editar Regra</string>
+    <string name="rule_authorized">Autorizada</string>
+    <string name="rule_pending">Pendente de Autorização</string>
+    <string name="fall_detection">Deteção de Queda</string>
+    <string name="accident_detection">Deteção de Acidente</string>
+    <string name="geofencing">Geolocalização</string>
+    <string name="speed_control">Controlo de Velocidade</string>
+    <string name="prolonged_inactivity">Inatividade Prolongada</string>
+    <string name="panic_button">Botão de Pânico</string>
+
+    <!-- Alerts -->
+    <string name="alerts">Alertas</string>
+    <string name="alert_history">Histórico de Alertas</string>
+    <string name="recent_alerts">Alertas Recentes</string>
+    <string name="alert_details">Detalhes do Alerta</string>
+    <string name="no_alerts">Sem alertas neste momento</string>
+    <string name="view_all">Ver Todos</string>
+
+    <!-- Association -->
+    <string name="association">Associação</string>
+    <string name="add_monitor">Adicionar Monitor</string>
+    <string name="add_protected">Adicionar Utilizador Protegido</string>
+    <string name="otp_code">Código de Uso Único</string>
+    <string name="generate_code">Gerar Código</string>
+    <string name="enter_code">Inserir Código</string>
+    <string name="connect">Conectar</string>
+
+    <!-- Time Windows -->
+    <string name="time_windows">Janelas Temporais</string>
+    <string name="add_time_window">Adicionar Janela Temporal</string>
+    <string name="edit_time_window">Editar Janela Temporal</string>
+    <string name="start_time">Hora de Início</string>
+    <string name="end_time">Hora de Fim</string>
+    <string name="days_of_week">Dias da Semana</string>
+
+    <!-- Notifications -->
+    <string name="notification_title_monitoring">Monitorização de Segurança Ativa</string>
+    <string name="notification_text_monitoring">A sua segurança está a ser monitorizada</string>
+    <string name="notification_channel_monitoring">Monitorização de Segurança</string>
+
+    <!-- Permissions -->
+    <string name="permission_location_rationale">A permissão de localização é necessária para geolocalização e monitorização de velocidade.</string>
+    <string name="permission_camera_rationale">A permissão de câmara é necessária para gravar vídeo durante alertas.</string>
+    <string name="permission_activity_rationale">O reconhecimento de atividade é necessário para detetar inatividade prolongada.</string>
+
+    <!-- Errors -->
+    <string name="error_generic">Ocorreu um erro. Por favor, tente novamente.</string>
+    <string name="error_network">Erro de rede. Verifique a sua ligação.</string>
+    <string name="error_auth">Falha na autenticação.</string>
+    <string name="error_invalid_email">Endereço de email inválido.</string>
+    <string name="error_invalid_password">A palavra-passe deve ter pelo menos 6 caracteres.</string>
+    <string name="error_passwords_dont_match">As palavras-passe não coincidem.</string>
+</resources>
