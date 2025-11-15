@@ -14,7 +14,7 @@
         android:theme="@style/Theme.SafetYSec">
 
         <activity
-            android:name="com.example.safetysec.app.MainActivity"
+            android:name="com.example.safetysec.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
