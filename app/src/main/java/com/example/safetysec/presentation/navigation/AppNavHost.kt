@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.example.safetysec.presentation.screens.auth.LogInScreen
 import com.example.safetysec.presentation.screens.home.HomeScreen
 import com.example.safetysec.presentation.screens.profile.ProfileScreen
+import com.example.safetysec.presentation.screens.showcase.ComponentsShowcaseScreen
 
 @Composable
 fun AppNavHost(
@@ -26,6 +27,13 @@ fun AppNavHost(
         }
         composable(AppRoutes.PROFILE) {
             ProfileScreen(navController = navController)
+        }
+        composable(AppRoutes.SHOWCASE) {
+            ComponentsShowcaseScreen(
+                onNavigateBack = {
+                    navController.navigate(AppRoutes.LOGIN)
+                }
+            )
         }
     }
 }
