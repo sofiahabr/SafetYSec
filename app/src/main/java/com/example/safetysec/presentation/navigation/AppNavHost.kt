@@ -1,12 +1,13 @@
 package com.example.safetysec.presentation.navigation
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.safetysec.presentation.screens.auth.LogInScreen
-import com.example.safetysec.presentation.screens.home.HomeScreen
 import com.example.safetysec.presentation.screens.profile.ProfileScreen
 import com.example.safetysec.presentation.screens.showcase.ComponentsShowcaseScreen
 import com.example.safetysec.presentation.screens.profile.EditProfileScreen
@@ -19,6 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.example.safetysec.navigation.AppRoutes
 import com.example.safetysec.presentation.screens.association.AssociationScreen
+import com.example.safetysec.presentation.components.BottomNavigationBar
+import com.example.safetysec.presentation.screens.dashboard.DashboardScreen
 
 @Composable
 fun AppNavHost(
@@ -29,76 +32,88 @@ fun AppNavHost(
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
     val startDestination = if (authState.isAuthenticated && authState.user != null) {
-        AppRoutes.HOME
+        AppRoutes.DASHBOARD
     } else {
         AppRoutes.LOGIN
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
-        modifier = modifier
-    ) {
-        composable(AppRoutes.LOGIN) {
-            LogInScreen(
-                viewModel = authViewModel,
-                onLoginSuccess = {
-                    navController.navigate(AppRoutes.HOME) {
-                        popUpTo(AppRoutes.LOGIN) { inclusive = true }
-                    }
-                },
-                onNavigateToRegister = {
-                    navController.navigate(AppRoutes.REGISTER)
-                }
-            )
-        }
-        composable(AppRoutes.HOME) {
-            HomeScreen(navController = navController)
-        }
-        composable(AppRoutes.PROFILE) {
-            ProfileScreen(navController = navController)
-        }
-        composable(AppRoutes.SHOWCASE) {
-            ComponentsShowcaseScreen(
-                onNavigateBack = {
-                    navController.navigate(AppRoutes.LOGIN)
-                }
-            )
-        }
-        composable(AppRoutes.EDIT_PROFILE) {
-            EditProfileScreen(navController = navController)
-        }
-        composable(AppRoutes.CHANGE_PASSWORD) {
-            ChangePasswordScreen(navController = navController)
-        }
-        composable(AppRoutes.SETTINGS) {
-            SettingsScreen(navController = navController)
-        }
+    // Bottom nav appears on all screens except Login and Register
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val showBottomNav = currentRoute != AppRoutes.LOGIN &&
+            currentRoute != AppRoutes.REGISTER
 
-        composable(AppRoutes.ASSOCIATIONS) {
-            AssociationScreen(
-                onNavigateBack = {
-                    navController.navigateUp()
-                }
-            )
+    Scaffold(
+        bottomBar = {
+            if (showBottomNav) {
+                BottomNavigationBar(navController = navController)
+            }
         }
-
-        composable(AppRoutes.SHOWCASE) {
-            ComponentsShowcaseScreen(
-                onNavigateBack = {
-                    navController.navigate(AppRoutes.LOGIN)
-                }
-            )
-        }
-        composable(AppRoutes.REGISTER) {
-            RegistrationScreen(
-                viewModel = authViewModel,
-                onRegistrationSuccess = {
-                    navController.navigate(AppRoutes.HOME) {
-                        popUpTo(AppRoutes.REGISTER) { inclusive = true }
+    ) { paddingValues ->
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = modifier.padding(paddingValues)
+        ) {
+            composable(AppRoutes.LOGIN) {
+                LogInScreen(
+                    viewModel = authViewModel,
+                    onLoginSuccess = {
+                        navController.navigate(AppRoutes.DASHBOARD) {
+                            popUpTo(AppRoutes.LOGIN) { inclusive = true }
+                        }
+                    },
+                    onNavigateToRegister = {
+                        navController.navigate(AppRoutes.REGISTER)
                     }
-                }
-            )
+                )
+            }
+
+            composable(AppRoutes.REGISTER) {
+                RegistrationScreen(
+                    viewModel = authViewModel,
+                    onRegistrationSuccess = {
+                        navController.navigate(AppRoutes.DASHBOARD) {
+                            popUpTo(AppRoutes.REGISTER) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable(AppRoutes.DASHBOARD) {
+                DashboardScreen(navController = navController)
+            }
+
+            composable(AppRoutes.PROFILE) {
+                ProfileScreen(navController = navController)
+            }
+
+            composable(AppRoutes.EDIT_PROFILE) {
+                EditProfileScreen(navController = navController)
+            }
+
+            composable(AppRoutes.CHANGE_PASSWORD) {
+                ChangePasswordScreen(navController = navController)
+            }
+
+            composable(AppRoutes.SETTINGS) {
+                SettingsScreen(navController = navController)
+            }
+
+            composable(AppRoutes.ASSOCIATIONS) {
+                AssociationScreen(
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+
+            composable(AppRoutes.SHOWCASE) {
+                ComponentsShowcaseScreen(
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    }
+                )
+            }
         }
     }
 }
