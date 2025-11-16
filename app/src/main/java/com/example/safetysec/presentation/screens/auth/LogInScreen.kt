@@ -33,22 +33,18 @@ fun LogInScreen(
     var email = remember { mutableStateOf("") }
     var password = remember { mutableStateOf("") }
 
-    // Create state directly - don't use collectAsStateWithLifecycle
     val authState = remember { mutableStateOf(AuthState()) }
 
     LaunchedEffect(Unit) {
         viewModel.authState.collect { state ->
-            println("LogInScreen collecting fresh state: isAuthenticated=${state.isAuthenticated}, user=${state.user}")
             authState.value = state
 
             if (state.isAuthenticated && state.user != null) {
-                println("Navigating to HOME")
                 onLoginSuccess()
             }
         }
     }
 
-    println("LogInScreen rendering: isAuthenticated=${authState.value.isAuthenticated}, user=${authState.value.user}")
 
     Column(
         modifier = modifier

@@ -137,7 +137,6 @@ class AuthViewModel @Inject constructor(
                 }
             }
         }
-        System.out.println("AuthViewModel: authState: ${_authState.value}")
     }
 
     private fun checkCurrentUser() {

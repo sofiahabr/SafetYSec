@@ -22,7 +22,6 @@ fun AppNavHost(
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
-    // Determine start destination based on auth state
     val startDestination = if (authState.isAuthenticated && authState.user != null) {
         AppRoutes.HOME
     } else {

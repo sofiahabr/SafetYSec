@@ -59,10 +59,8 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout(): AuthResult<Unit> = try {
         firebaseAuth.signOut()
-        println("DEBUG: Firebase signed out. Current user: ${firebaseAuth.currentUser}")
         AuthResult.Success(Unit)
     } catch (e: Exception) {
-        println("DEBUG: Logout error: ${e.message}")
         AuthResult.Error(e.message ?: "Logout failed")
     }
 
