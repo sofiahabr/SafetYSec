@@ -10,6 +10,7 @@ import com.example.safetysec.domain.usecase.auth.LogoutUseCase
 import com.example.safetysec.domain.usecase.auth.RegisterUseCase
 import com.example.safetysec.domain.usecase.auth.UpdateProfileUseCase
 import com.example.safetysec.domain.usecase.auth.ChangePasswordUseCase
+import com.example.safetysec.domain.usecase.auth.DeleteUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +35,8 @@ class AuthViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val updateProfileUseCase: UpdateProfileUseCase,
-    private val changePasswordUseCase: ChangePasswordUseCase
+    private val changePasswordUseCase: ChangePasswordUseCase,
+    private val deleteUserProfileUseCase: DeleteUserProfileUseCase
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow(AuthState())
@@ -202,6 +204,29 @@ class AuthViewModel @Inject constructor(
                 is AuthResult.Loading -> {
                     _authState.update { it.copy(isLoading = true) }
                 }
+            }
+        }
+    }
+
+    fun deleteUserProfile() {
+        viewModelScope.launch {
+            _authState.value = _authState.value.copy(isLoading = true, error = null)
+            val result = deleteUserProfileUseCase()
+            when (result) {
+                is AuthResult.Success -> {
+                    _authState.value = _authState.value.copy(
+                        user = null,
+                        isAuthenticated = false,
+                        isLoading = false
+                    )
+                }
+                is AuthResult.Error -> {
+                    _authState.value = _authState.value.copy(
+                        error = result.message,
+                        isLoading = false
+                    )
+                }
+                else -> {}
             }
         }
     }
