@@ -1,30 +1,25 @@
 package com.example.safetysec.domain.model
 
+import com.google.firebase.firestore.IgnoreExtraProperties
 /**
  * User Model
  *
  * Represents a user in the SafetYSec system
  */
+@IgnoreExtraProperties
 data class User(
-    val id: String,
-    val name: String,
-    val email: String,
-    val phone: String,
-    val role: UserRole,
+    val id: String = "",
+    val email: String = "",
+    val name: String = "",
+    val role: UserRole = UserRole.MONITOR,
+    val phone: String = "",
+    val alertCancellationCode: String? = null,
     val profileImageUrl: String? = null,
     val isEmailVerified: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )
 
-/**
- * User Role
- * Defines what type of user this is
- */
-enum class UserRole {
-    MONITOR,      // Can monitor others
-    PROTECTED,    // Being monitored
-    BOTH          // Can be both monitor and protected
-}
+
 
 /**
  * Mock User Data
@@ -40,7 +35,7 @@ object MockUserData {
         name = "John Doe",
         email = "john.doe@example.com",
         phone = "+1 234 567 8900",
-        role = UserRole.BOTH,
+        role = UserRole.DUAL,
         profileImageUrl = null,
         isEmailVerified = true,
         createdAt = System.currentTimeMillis() - 86400000 // 1 day ago
@@ -71,7 +66,7 @@ object MockUserData {
         return when (role) {
             UserRole.MONITOR -> "Monitor"
             UserRole.PROTECTED -> "Protected"
-            UserRole.BOTH -> "Monitor & Protected"
+            UserRole.DUAL -> "Monitor & Protected"
         }
     }
 
