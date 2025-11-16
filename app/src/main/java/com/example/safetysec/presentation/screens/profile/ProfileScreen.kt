@@ -15,12 +15,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.safetysec.domain.model.MockUserData
 import com.example.safetysec.domain.model.UserRole
 import com.example.safetysec.navigation.AppRoutes
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.theme.PrimaryPurple
+import com.example.safetysec.presentation.viewmodel.AuthViewModel
+
 
 /**
  * Profile Screen
@@ -34,7 +37,19 @@ import com.example.safetysec.presentation.theme.PrimaryPurple
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
-    val user = MockUserData.currentUser
+
+    // Get the ViewModel (injected via Hilt)
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val authState by authViewModel.authState.collectAsState()
+
+    val user = authState.user
+
+    // Show loading state if user is not loaded
+    if (user == null) {
+        FullScreenLoading(message = "Loading your profile...")
+        return
+    }
+
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -132,7 +147,7 @@ fun ProfileScreen(navController: NavController) {
         LogoutConfirmationDialog(
             onConfirm = {
                 showLogoutDialog = false
-                // TODO: Implement actual logout
+                authViewModel.logout()
                 navController.navigate(AppRoutes.LOGIN) {
                     popUpTo(0) { inclusive = true }
                 }
