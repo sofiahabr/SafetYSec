@@ -21,6 +21,9 @@ class AssociationViewModel @Inject constructor(
     private val _viewState = MutableStateFlow(AssociationUiState())
     val viewState: StateFlow<AssociationUiState> = _viewState.asStateFlow()
 
+    // Current user flow
+    private val currentUserFlow = getCurrentUserUseCase()
+
     init {
         loadAssociations()
     }
@@ -70,52 +73,57 @@ class AssociationViewModel @Inject constructor(
         viewModelScope.launch {
             _viewState.update { it.copy(isLoading = true, error = null) }
 
-            val currentUser = getCurrentUserUseCase() ?: run {
-                _viewState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "User not authenticated. Please login again."
-                    )
-                }
-                return@launch
-            }
-
-            // Validate email format
-            if (!isValidEmail(_viewState.value.protectedEmail)) {
-                _viewState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "Please enter a valid email address"
-                    )
-                }
-                return@launch
-            }
-
-            val result = generateOTPUseCase(
-                monitorId = currentUser.id,
-                protectedEmail = _viewState.value.protectedEmail,
-                monitorEmail = currentUser.email
-            )
-
-            result.fold(
-                onSuccess = { otpInfo ->
+            // Get current user from flow
+            currentUserFlow.first { user ->
+                if (user == null) {
                     _viewState.update {
                         it.copy(
                             isLoading = false,
-                            generatedOTP = otpInfo.otp,
-                            error = null
+                            error = "User not authenticated. Please login again."
                         )
                     }
-                },
-                onFailure = { exception ->
+                    return@first true
+                }
+
+                // Validate email format
+                if (!isValidEmail(_viewState.value.protectedEmail)) {
                     _viewState.update {
                         it.copy(
                             isLoading = false,
-                            error = exception.message ?: "Failed to generate OTP. Please try again."
+                            error = "Please enter a valid email address"
                         )
                     }
+                    return@first true
                 }
-            )
+
+                val result = generateOTPUseCase(
+                    monitorId = user.id,
+                    protectedEmail = _viewState.value.protectedEmail,
+                    monitorEmail = user.email
+                )
+
+                result.fold(
+                    onSuccess = { otpInfo ->
+                        _viewState.update {
+                            it.copy(
+                                isLoading = false,
+                                generatedOTP = otpInfo.otp,
+                                error = null
+                            )
+                        }
+                    },
+                    onFailure = { exception ->
+                        _viewState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = exception.message ?: "Failed to generate OTP. Please try again."
+                            )
+                        }
+                    }
+                )
+
+                true
+            }
         }
     }
 
@@ -126,64 +134,69 @@ class AssociationViewModel @Inject constructor(
         viewModelScope.launch {
             _viewState.update { it.copy(isLoading = true, error = null) }
 
-            val currentUser = getCurrentUserUseCase() ?: run {
-                _viewState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "User not authenticated. Please login again."
-                    )
-                }
-                return@launch
-            }
-
-            // Validate inputs
-            if (!isValidEmail(_viewState.value.monitorEmail)) {
-                _viewState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "Please enter a valid monitor email address"
-                    )
-                }
-                return@launch
-            }
-
-            if (_viewState.value.otp.length != 6) {
-                _viewState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "OTP must be 6 digits"
-                    )
-                }
-                return@launch
-            }
-
-            val result = validateOTPUseCase(
-                protectedId = currentUser.id,
-                otp = _viewState.value.otp,
-                monitorEmail = _viewState.value.monitorEmail
-            )
-
-            result.fold(
-                onSuccess = { association ->
+            // Get current user from flow
+            currentUserFlow.first { user ->
+                if (user == null) {
                     _viewState.update {
                         it.copy(
                             isLoading = false,
-                            otp = "",
-                            monitorEmail = "",
-                            error = null
+                            error = "User not authenticated. Please login again."
                         )
                     }
-                    // Associations will be automatically updated via Flow
-                },
-                onFailure = { exception ->
+                    return@first true
+                }
+
+                // Validate inputs
+                if (!isValidEmail(_viewState.value.monitorEmail)) {
                     _viewState.update {
                         it.copy(
                             isLoading = false,
-                            error = exception.message ?: "Failed to validate OTP. Please check the code and try again."
+                            error = "Please enter a valid monitor email address"
                         )
                     }
+                    return@first true
                 }
-            )
+
+                if (_viewState.value.otp.length != 6) {
+                    _viewState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "OTP must be 6 digits"
+                        )
+                    }
+                    return@first true
+                }
+
+                val result = validateOTPUseCase(
+                    protectedId = user.id,
+                    otp = _viewState.value.otp,
+                    monitorEmail = _viewState.value.monitorEmail
+                )
+
+                result.fold(
+                    onSuccess = { association ->
+                        _viewState.update {
+                            it.copy(
+                                isLoading = false,
+                                otp = "",
+                                monitorEmail = "",
+                                error = null
+                            )
+                        }
+                        // Associations will be automatically updated via Flow
+                    },
+                    onFailure = { exception ->
+                        _viewState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = exception.message ?: "Failed to validate OTP. Please check the code and try again."
+                            )
+                        }
+                    }
+                )
+
+                true
+            }
         }
     }
 
@@ -194,32 +207,37 @@ class AssociationViewModel @Inject constructor(
         viewModelScope.launch {
             _viewState.update { it.copy(isLoading = true, error = null) }
 
-            val currentUser = getCurrentUserUseCase() ?: run {
-                _viewState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "User not authenticated"
-                    )
-                }
-                return@launch
-            }
-
-            val result = removeAssociationUseCase(associationId, currentUser.id)
-
-            result.fold(
-                onSuccess = {
-                    _viewState.update { it.copy(isLoading = false) }
-                    // Associations will be automatically updated via Flow
-                },
-                onFailure = { exception ->
+            // Get current user from flow
+            currentUserFlow.first { user ->
+                if (user == null) {
                     _viewState.update {
                         it.copy(
                             isLoading = false,
-                            error = exception.message ?: "Failed to remove association. Please try again."
+                            error = "User not authenticated"
                         )
                     }
+                    return@first true
                 }
-            )
+
+                val result = removeAssociationUseCase(associationId, user.id)
+
+                result.fold(
+                    onSuccess = {
+                        _viewState.update { it.copy(isLoading = false) }
+                        // Associations will be automatically updated via Flow
+                    },
+                    onFailure = { exception ->
+                        _viewState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = exception.message ?: "Failed to remove association. Please try again."
+                            )
+                        }
+                    }
+                )
+
+                true
+            }
         }
     }
 
@@ -228,19 +246,26 @@ class AssociationViewModel @Inject constructor(
      */
     private fun loadAssociations() {
         viewModelScope.launch {
-            val currentUser = getCurrentUserUseCase() ?: return@launch
-
-            getAssociationsUseCase.getAllForUser(currentUser.id)
-                .catch { exception ->
+            currentUserFlow.collectLatest { user ->
+                if (user == null) {
                     _viewState.update {
-                        it.copy(
-                            error = exception.message ?: "Failed to load associations"
-                        )
+                        it.copy(error = "Failed to load associations. Please login again.")
                     }
+                    return@collectLatest
                 }
-                .collect { associations ->
-                    _viewState.update { it.copy(associations = associations) }
-                }
+
+                getAssociationsUseCase.getAllForUser(user.id)
+                    .catch { exception ->
+                        _viewState.update {
+                            it.copy(
+                                error = exception.message ?: "Failed to load associations"
+                            )
+                        }
+                    }
+                    .collect { associations ->
+                        _viewState.update { it.copy(associations = associations) }
+                    }
+            }
         }
     }
 
