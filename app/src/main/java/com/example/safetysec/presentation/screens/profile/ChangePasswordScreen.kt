@@ -195,7 +195,7 @@ fun ChangePasswordScreen(navController: NavController) {
  * Password Strength Indicator
  */
 @Composable
-private fun PasswordStrengthIndicator(password: String) {
+fun PasswordStrengthIndicator(password: String) {
     val strength = calculatePasswordStrength(password)
 
     Column(
@@ -221,7 +221,7 @@ private fun PasswordStrengthIndicator(password: String) {
 /**
  * Password Strength Data
  */
-private data class PasswordStrength(
+data class PasswordStrength(
     val label: String,
     val progress: Float,
     val color: androidx.compose.ui.graphics.Color
@@ -230,7 +230,7 @@ private data class PasswordStrength(
 /**
  * Calculate password strength
  */
-private fun calculatePasswordStrength(password: String): PasswordStrength {
+fun calculatePasswordStrength(password: String): PasswordStrength {
     var score = 0
 
     // Length check

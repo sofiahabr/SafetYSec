@@ -20,13 +20,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.safetysec.presentation.components.CustomTextField
 import com.example.safetysec.presentation.components.PhoneTextField
 import com.example.safetysec.presentation.components.EmailTextField
+import com.example.safetysec.presentation.components.InfoAlert
 import com.example.safetysec.presentation.components.PasswordTextField
 import com.example.safetysec.presentation.components.PrimaryButton
+import com.example.safetysec.presentation.screens.profile.PasswordStrengthIndicator
+import com.example.safetysec.presentation.screens.profile.calculatePasswordStrength
+
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 
 @Composable
@@ -39,7 +44,12 @@ fun RegistrationScreen(
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var selectedRole by remember { mutableStateOf("MONITOR") }
+
+    // Error states
+    var passwordError by remember { mutableStateOf<String?>(null) }
+    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
 
     val authState by viewModel.authState.collectAsStateWithLifecycle()
 
@@ -63,6 +73,16 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Info Card
+        InfoAlert(
+            title = "Password Requirements",
+            message = "• At least 8 characters\n• Contains uppercase and lowercase\n• Contains at least one number\n• Contains special character"
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Email
+
         EmailTextField(
             value = email,
             onValueChange = { email = it }
@@ -78,7 +98,6 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-
         PhoneTextField(
             value = phone,
             onValueChange = { phone = it },
@@ -86,9 +105,37 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Password
         PasswordTextField(
             value = password,
-            onValueChange = { password = it }
+            onValueChange = {
+                password = it
+                passwordError = null
+            },
+            label = "Password",
+            isError = passwordError != null,
+            errorMessage = passwordError,
+            imeAction = ImeAction.Next
+        )
+
+        // Password Strength Indicator
+        if (password.isNotEmpty()) {
+            PasswordStrengthIndicator(password = password)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Confirm Password
+        PasswordTextField(
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
+                confirmPasswordError = null
+            },
+            label = "Confirm Password",
+            isError = confirmPasswordError != null,
+            errorMessage = confirmPasswordError,
+            imeAction = ImeAction.Done
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -169,7 +216,21 @@ fun RegistrationScreen(
         PrimaryButton(
             text = "Register",
             onClick = {
-                if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty() && phone.isNotEmpty()) {
+                var isValid = true
+
+                if (password != confirmPassword) {
+                    confirmPasswordError = "Passwords do not match"
+                    isValid = false
+                }
+
+
+                if (calculatePasswordStrength(password).label == "Weak") {
+                    passwordError = "Password is too weak"
+                    isValid = false
+                }
+
+
+                if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty() && phone.isNotEmpty() && isValid) {
                     viewModel.register(email, password, name, phone, selectedRole)
                 }
             },
