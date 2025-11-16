@@ -19,9 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.example.safetysec.navigation.AppRoutes
 import com.example.safetysec.presentation.screens.association.AssociationScreen
-import com.example.safetysec.presentation.screens.dashboard.DashboardScreen
-import com.example.safetysec.presentation.screens.rules.RulesScreen
-import com.example.safetysec.presentation.screens.alerts.AlertsScreen
 
 @Composable
 fun AppNavHost(
@@ -31,9 +28,8 @@ fun AppNavHost(
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
-    // Start at Dashboard instead of HOME when authenticated
     val startDestination = if (authState.isAuthenticated && authState.user != null) {
-        AppRoutes.DASHBOARD
+        AppRoutes.HOME
     } else {
         AppRoutes.LOGIN
     }
@@ -43,12 +39,11 @@ fun AppNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        // Auth Screens
         composable(AppRoutes.LOGIN) {
             LogInScreen(
                 viewModel = authViewModel,
                 onLoginSuccess = {
-                    navController.navigate(AppRoutes.DASHBOARD) {
+                    navController.navigate(AppRoutes.HOME) {
                         popUpTo(AppRoutes.LOGIN) { inclusive = true }
                     }
                 },
@@ -57,21 +52,27 @@ fun AppNavHost(
                 }
             )
         }
-
-        composable(AppRoutes.REGISTER) {
-            RegistrationScreen(
-                viewModel = authViewModel,
-                onRegistrationSuccess = {
-                    navController.navigate(AppRoutes.DASHBOARD) {
-                        popUpTo(AppRoutes.REGISTER) { inclusive = true }
-                    }
+        composable(AppRoutes.HOME) {
+            HomeScreen(navController = navController)
+        }
+        composable(AppRoutes.PROFILE) {
+            ProfileScreen(navController = navController)
+        }
+        composable(AppRoutes.SHOWCASE) {
+            ComponentsShowcaseScreen(
+                onNavigateBack = {
+                    navController.navigate(AppRoutes.LOGIN)
                 }
             )
         }
-
-        // Main Navigation Screens (with bottom nav)
-        composable(AppRoutes.DASHBOARD) {
-            DashboardScreen(navController = navController)
+        composable(AppRoutes.EDIT_PROFILE) {
+            EditProfileScreen(navController = navController)
+        }
+        composable(AppRoutes.CHANGE_PASSWORD) {
+            ChangePasswordScreen(navController = navController)
+        }
+        composable(AppRoutes.SETTINGS) {
+            SettingsScreen(navController = navController)
         }
 
         composable(AppRoutes.ASSOCIATIONS) {
@@ -82,43 +83,22 @@ fun AppNavHost(
             )
         }
 
-        composable(AppRoutes.RULES) {
-            RulesScreen(navController = navController)
-        }
-
-        composable(AppRoutes.ALERTS) {
-            AlertsScreen(navController = navController)
-        }
-
-        composable(AppRoutes.PROFILE) {
-            ProfileScreen(navController = navController)
-        }
-
-        // Profile Sub-Screens
-        composable(AppRoutes.EDIT_PROFILE) {
-            EditProfileScreen(navController = navController)
-        }
-
-        composable(AppRoutes.CHANGE_PASSWORD) {
-            ChangePasswordScreen(navController = navController)
-        }
-
-        composable(AppRoutes.SETTINGS) {
-            SettingsScreen(navController = navController)
-        }
-
-        // Utility Screens
         composable(AppRoutes.SHOWCASE) {
             ComponentsShowcaseScreen(
                 onNavigateBack = {
-                    navController.navigateUp()
+                    navController.navigate(AppRoutes.LOGIN)
                 }
             )
         }
-
-        // Kept for backward compatibility, but redirects to Dashboard
-        composable(AppRoutes.HOME) {
-            HomeScreen(navController = navController)
+        composable(AppRoutes.REGISTER) {
+            RegistrationScreen(
+                viewModel = authViewModel,
+                onRegistrationSuccess = {
+                    navController.navigate(AppRoutes.HOME) {
+                        popUpTo(AppRoutes.REGISTER) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
