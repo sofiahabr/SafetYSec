@@ -195,7 +195,6 @@ fun EditProfileScreen(navController: NavController) {
                     if (isValid) {
                         authViewModel.updateProfile(
                             email = email,
-                            password = "",
                             name = name,
                             phone = phone,
                             role = selectedRole.name

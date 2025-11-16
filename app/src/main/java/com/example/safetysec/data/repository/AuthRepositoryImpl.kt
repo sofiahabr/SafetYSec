@@ -22,6 +22,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String,
         name: String,
+        phone: String,
         role: String
     ): AuthResult<User> = try {
         val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
@@ -32,6 +33,7 @@ class AuthRepositoryImpl @Inject constructor(
             id = userId,
             email = email,
             name = name,
+            phone = phone,
             role = userRole,
             alertCancellationCode = generateRandomCode()
         )
@@ -44,12 +46,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun updateUser(
         email: String,
-        password: String,
         name: String,
         phone: String,
         role: String
     ): AuthResult<User> = try {
-        // ✅ Add null check - this was causing the 6 compilation errors
         val currentUser = firebaseAuth.currentUser
             ?: return AuthResult.Error("No user currently logged in")
 
@@ -67,10 +67,6 @@ class AuthRepositoryImpl @Inject constructor(
             currentUser.updateEmail(email).await()
         }
 
-        // Step 3: Update password if provided (non-empty)
-        if (password.isNotEmpty() && password.length >= 6) {
-            currentUser.updatePassword(password).await()
-        }
 
         // Step 4: Create user role from string
         val userRole = try {
@@ -172,6 +168,38 @@ class AuthRepositoryImpl @Inject constructor(
         } else {
             emit(null)
         }
+    }
+    override suspend fun changePassword(
+        currentPassword: String,
+        newPassword: String
+    ): AuthResult<User> = try {
+        val currentUser = firebaseAuth.currentUser
+            ?: return AuthResult.Error("No user currently logged in")
+
+        val userId = currentUser.uid
+
+        // Verify current password by re-authenticating
+        val credentials = com.google.firebase.auth.EmailAuthProvider.getCredential(
+            currentUser.email ?: "",
+            currentPassword
+        )
+        currentUser.reauthenticate(credentials).await()
+
+        // Update to new password
+        currentUser.updatePassword(newPassword).await()
+
+        // Fetch updated user from Firestore
+        val userDoc = firestore.collection("users").document(userId).get().await()
+        val user = userDoc.toObject(User::class.java)
+            ?: throw Exception("User not found")
+
+        AuthResult.Success(user)
+    } catch (e: com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
+        AuthResult.Error("Current password is incorrect")
+    } catch (e: com.google.firebase.auth.FirebaseAuthWeakPasswordException) {
+        AuthResult.Error("New password is too weak. Use at least 6 characters")
+    } catch (e: Exception) {
+        AuthResult.Error(e.message ?: "Failed to change password")
     }
 
     private fun generateRandomCode(): String {

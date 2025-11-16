@@ -10,11 +10,10 @@ class UpdateProfileUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         email: String,
-        password: String,
         name: String,
         phone: String,
         role: String
     ): AuthResult<User> {
-        return authRepository.updateUser(email, password, name, phone, role)
+        return authRepository.updateUser(email, name, phone, role)
     }
 }

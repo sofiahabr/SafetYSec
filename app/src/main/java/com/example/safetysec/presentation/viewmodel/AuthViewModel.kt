@@ -9,6 +9,7 @@ import com.example.safetysec.domain.usecase.auth.LoginUseCase
 import com.example.safetysec.domain.usecase.auth.LogoutUseCase
 import com.example.safetysec.domain.usecase.auth.RegisterUseCase
 import com.example.safetysec.domain.usecase.auth.UpdateProfileUseCase
+import com.example.safetysec.domain.usecase.auth.ChangePasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,13 +26,15 @@ data class AuthState(
     val isAuthenticated: Boolean = false,
     val registrationSuccess: Boolean = false
 )
+
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
-    private val updateProfileUseCase: UpdateProfileUseCase
+    private val updateProfileUseCase: UpdateProfileUseCase,
+    private val changePasswordUseCase: ChangePasswordUseCase
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow(AuthState())
@@ -45,14 +48,13 @@ class AuthViewModel @Inject constructor(
 
     fun updateProfile(
         email: String,
-        password: String,
         name: String,
         phone: String,
         role: String
     ) {
         viewModelScope.launch {
             _authState.value = _authState.value.copy(isLoading = true, error = null)
-            val result = updateProfileUseCase(email, password, name, phone, role)
+            val result = updateProfileUseCase(email, name, phone, role)
             when (result) {
                 is AuthResult.Success -> {
                     _authState.value = _authState.value.copy(
@@ -60,15 +62,41 @@ class AuthViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
+
                 is AuthResult.Error -> {
                     _authState.value = _authState.value.copy(
                         error = result.message,
                         isLoading = false
                     )
                 }
+
                 is AuthResult.Loading -> {
                     _authState.update { it.copy(isLoading = true) }
                 }
+            }
+        }
+    }
+
+    fun changePassword(currentPassword: String, newPassword: String) {
+        viewModelScope.launch {
+            _authState.value = _authState.value.copy(isLoading = true, error = null)
+            val result = changePasswordUseCase(currentPassword, newPassword)
+            when (result) {
+                is AuthResult.Success -> {
+                    _authState.value = _authState.value.copy(
+                        user = result.data,
+                        isLoading = false
+                    )
+                }
+
+                is AuthResult.Error -> {
+                    _authState.value = _authState.value.copy(
+                        error = result.message,
+                        isLoading = false
+                    )
+                }
+
+                else -> {}
             }
         }
     }
@@ -90,6 +118,7 @@ class AuthViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is AuthResult.Error -> {
                     _authState.update {
                         it.copy(
@@ -98,6 +127,7 @@ class AuthViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is AuthResult.Loading -> {
                     _authState.update { it.copy(isLoading = true) }
                 }
@@ -105,11 +135,11 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun register(email: String, password: String, name: String, role: String) {
+    fun register(email: String, password: String, name: String, phone: String, role: String) {
         viewModelScope.launch {
             _authState.update { it.copy(isLoading = true, error = null) }
 
-            val result = registerUseCase(email, password, name, role)
+            val result = registerUseCase(email, password, name, phone, role)
 
             when (result) {
                 is AuthResult.Success -> {
@@ -122,6 +152,7 @@ class AuthViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is AuthResult.Error -> {
                     _authState.update {
                         it.copy(
@@ -130,6 +161,7 @@ class AuthViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is AuthResult.Loading -> {
                     _authState.update { it.copy(isLoading = true) }
                 }
@@ -157,6 +189,7 @@ class AuthViewModel @Inject constructor(
                     kotlinx.coroutines.delay(100)
                     checkCurrentUser()
                 }
+
                 is AuthResult.Error -> {
                     _authState.update {
                         it.copy(
@@ -165,6 +198,7 @@ class AuthViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is AuthResult.Loading -> {
                     _authState.update { it.copy(isLoading = true) }
                 }

@@ -5,16 +5,13 @@ import com.example.safetysec.domain.model.User
 import com.example.safetysec.domain.repository.AuthRepository
 import javax.inject.Inject
 
-class RegisterUseCase @Inject constructor(
+class ChangePasswordUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(
-        email: String,
-        password: String,
-        name: String,
-        phone: String,
-        role: String
+        currentPassword: String,
+        newPassword: String
     ): AuthResult<User> {
-        return authRepository.register(email, password, name, phone, role)
+        return authRepository.changePassword(currentPassword, newPassword)
     }
 }

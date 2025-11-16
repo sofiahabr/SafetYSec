@@ -13,6 +13,7 @@ interface AuthRepository {
         email: String,
         password: String,
         name: String,
+        phone: String,
         role: String
     ): AuthResult<User>
 
@@ -21,10 +22,17 @@ interface AuthRepository {
      */
     suspend fun updateUser(
         email: String,
-        password: String,
         name: String,
         phone: String,
         role: String
+    ): AuthResult<User>
+
+    /**
+     * Change current user's password
+     */
+    suspend fun changePassword(
+        currentPassword: String,
+        newPassword: String
     ): AuthResult<User>
 
     /**
