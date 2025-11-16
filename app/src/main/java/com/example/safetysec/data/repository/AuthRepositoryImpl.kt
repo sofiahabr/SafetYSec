@@ -7,35 +7,39 @@ import com.example.safetysec.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlinx.coroutines.channels.awaitClose
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) : AuthRepository {
+
     override suspend fun register(
         email: String,
         password: String,
         name: String,
         role: String
-    ) : AuthResult<User> = try {
+    ): AuthResult<User> = try {
         val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
         val userId = authResult.user?.uid ?: throw Exception("Failed to create user")
 
-        val userRole = UserRole(valueOf(role.uppercase()))
+        val userRole = UserRole.valueOf(role.uppercase())
         val user = User(
             id = userId,
             email = email,
             name = name,
-            role = userRole
+            role = userRole,
             alertCancellationCode = generateRandomCode()
         )
+
         firestore.collection("users").document(userId).set(user.toMap()).await()
         AuthResult.Success(user)
     } catch (e: Exception) {
-        AuthResult.Error(e.message ?: "Unknown error occurred")
+        AuthResult.Error(e.message ?: "Registration failed")
     }
 
     override suspend fun login(
@@ -43,26 +47,60 @@ class AuthRepositoryImpl @Inject constructor(
         password: String
     ): AuthResult<User> = try {
         val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+        val userId = authResult.user?.uid ?: throw Exception("Login failed")
+
+        val userDoc = firestore.collection("users").document(userId).get().await()
+        val user = userDoc.toObject(User::class.java) ?: throw Exception("User not found")
 
         AuthResult.Success(user)
     } catch (e: Exception) {
         AuthResult.Error(e.message ?: "Login failed")
     }
 
-    override suspend fun logout(): AuthResult<Unit> = try{
+    override suspend fun logout(): AuthResult<Unit> = try {
         firebaseAuth.signOut()
+        println("DEBUG: Firebase signed out. Current user: ${firebaseAuth.currentUser}")
         AuthResult.Success(Unit)
-        } catch (e: Exception) {
+    } catch (e: Exception) {
+        println("DEBUG: Logout error: ${e.message}")
         AuthResult.Error(e.message ?: "Logout failed")
     }
 
-    override fun getCurrentUser(): Flow<User?> = flow {
+    override fun getCurrentUser(): Flow<User?> = callbackFlow {
+        val authStateListener = FirebaseAuth.AuthStateListener { auth ->
+            val currentUser = auth.currentUser
+            if (currentUser != null) {
+                firestore.collection("users").document(currentUser.uid).get()
+                    .addOnSuccessListener { snapshot ->
+                        val user = snapshot.toObject(User::class.java)
+                        trySend(user)
+                    }
+                    .addOnFailureListener {
+                        trySend(null)
+                    }
+            } else {
+                trySend(null)
+            }
+        }
+
+        firebaseAuth.addAuthStateListener(authStateListener)
+
+        awaitClose {
+            firebaseAuth.removeAuthStateListener(authStateListener)
+        }
+    }
+
+    override fun isUserAuthenticated(): Flow<Boolean> = flow {
+        emit(firebaseAuth.currentUser != null)
+    }
+
+    override fun getUserRole(): Flow<String?> = flow {
         val currentUser = firebaseAuth.currentUser
         if (currentUser != null) {
             try {
-
                 val userDoc = firestore.collection("users").document(currentUser.uid).get().await()
-                emit(userDoc.toObject(User::class.java))
+                val user = userDoc.toObject(User::class.java)
+                emit(user?.role?.name)
             } catch (e: Exception) {
                 emit(null)
             }
@@ -70,7 +108,16 @@ class AuthRepositoryImpl @Inject constructor(
             emit(null)
         }
     }
-    override fun isUserAuthenticated(): Flow<Boolean> = flow {
-        emit(firebaseAuth.currentUser != null)
+
+    private fun generateRandomCode(): String {
+        return (100000..999999).random().toString()
     }
+
+    private fun User.toMap(): Map<String, Any?> = mapOf(
+        "id" to id,
+        "email" to email,
+        "name" to name,
+        "role" to role.name,
+        "alertCancellationCode" to alertCancellationCode
+    )
 }

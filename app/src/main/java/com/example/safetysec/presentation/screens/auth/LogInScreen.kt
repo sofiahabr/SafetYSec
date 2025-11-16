@@ -1,63 +1,102 @@
 package com.example.safetysec.presentation.screens.auth
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import com.example.safetysec.navigation.AppRoutes
+import androidx.compose.ui.unit.dp
+import com.example.safetysec.presentation.components.EmailTextField
+import com.example.safetysec.presentation.components.PrimaryButton
+import com.example.safetysec.presentation.components.PasswordTextField
+import com.example.safetysec.presentation.components.SecondaryButton
+import com.example.safetysec.presentation.viewmodel.AuthViewModel
+import com.example.safetysec.presentation.viewmodel.AuthState
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun LogInScreen(navController: NavController) {
+fun LogInScreen(
     viewModel: AuthViewModel,
     onLoginSuccess: () -> Unit,
-    onNavigateToRegister: () -> Unit
-    ) {
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        val snackbarHostState = remember { SnackbarHostState() }
+    onNavigateToRegister: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var email = remember { mutableStateOf("") }
+    var password = remember { mutableStateOf("") }
 
-        val authState by viewModel.authState.colectAsStateWithLifecycle
+    // Create state directly - don't use collectAsStateWithLifecycle
+    val authState = remember { mutableStateOf(AuthState()) }
 
-        LaunchedEffect(authState.isAuthenticated) {
-            if (authState.isAuthenticated && authState.user != null) {
+    LaunchedEffect(Unit) {
+        viewModel.authState.collect { state ->
+            println("LogInScreen collecting fresh state: isAuthenticated=${state.isAuthenticated}, user=${state.user}")
+            authState.value = state
+
+            if (state.isAuthenticated && state.user != null) {
+                println("Navigating to HOME")
                 onLoginSuccess()
             }
         }
+    }
 
-        LaunchedEffect(authState.error) {
-            if (authState.error != null) {
-                snackbarHostState.showSnackbar(authState.error ?: "Unknown error")
-                viewModel.clearError()
-            }
-        }
+    println("LogInScreen rendering: isAuthenticated=${authState.value.isAuthenticated}, user=${authState.value.user}")
 
-        Column(
-            modifier = modifier
-                .filMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Login", style = MaterialTheme.typography.headlineMedium)
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            "Login",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        EmailTextField(
+            value = email.value,
+            onValueChange = { email.value = it }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        PasswordTextField(
+            value = password.value,
+            onValueChange = { password.value = it }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        PrimaryButton(
+            text = "Login",
+            onClick = { viewModel.login(email.value, password.value) },
+            isLoading = authState.value.isLoading
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SecondaryButton(
+            text = "Don't have an account? Register here",
+            onClick = onNavigateToRegister,
+            isLoading = authState.value.isLoading
+        )
+
+        if (!authState.value.error.isNullOrEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
-
-
+            Text(
+                authState.value.error ?: "Unknown error",
+                color = MaterialTheme.colorScheme.error
+            )
         }
-//    Column (
-//
-//        modifier = Modifier.fillMaxSize(),
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center
-//    ) {
-//        Text("Login Screen")
-//        Button(onClick = {
-//            navController.navigate(AppRoutes.HOME)
-//        }) {
-//            Text("Go home")
-//        }
-//    }
+    }
 }

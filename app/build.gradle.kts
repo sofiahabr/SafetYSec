@@ -112,4 +112,6 @@ dependencies {
 
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation("androidx.compose.material:material-icons-extended:1.7.5")
+
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 }

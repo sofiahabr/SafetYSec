@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.safetysec.domain.model.AuthResult
 import com.example.safetysec.domain.model.User
-import com.example.safetysec.domain.usecase.GetCurrentUserUseCase
-import com.example.safetysec.domain.usecase.LoginUseCase
-import com.example.safetysec.domain.usecase.LogoutUseCase
-import com.example.safetysec.domain.usecase.RegisterUseCase
+import com.example.safetysec.domain.usecase.auth.GetCurrentUserUseCase
+import com.example.safetysec.domain.usecase.auth.LoginUseCase
+import com.example.safetysec.domain.usecase.auth.LogoutUseCase
+import com.example.safetysec.domain.usecase.auth.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 
 data class AuthState(
     val isLoading: Boolean = false,
@@ -23,7 +24,6 @@ data class AuthState(
     val isAuthenticated: Boolean = false,
     val registrationSuccess: Boolean = false
 )
-
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
@@ -34,6 +34,8 @@ class AuthViewModel @Inject constructor(
 
     private val _authState = MutableStateFlow(AuthState())
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
+
+    private var currentUserJob: Job? = null
 
     init {
         checkCurrentUser()
@@ -110,9 +112,17 @@ class AuthViewModel @Inject constructor(
 
             when (result) {
                 is AuthResult.Success -> {
-                    _authState.update {
-                        AuthState() // Reset to initial state
-                    }
+                    currentUserJob?.cancel()
+                    currentUserJob = null
+
+                    _authState.value = AuthState(
+                        isLoading = false,
+                        user = null,
+                        error = null,
+                        isAuthenticated = false
+                    )
+                    kotlinx.coroutines.delay(100)
+                    checkCurrentUser()
                 }
                 is AuthResult.Error -> {
                     _authState.update {
@@ -127,11 +137,18 @@ class AuthViewModel @Inject constructor(
                 }
             }
         }
+        System.out.println("AuthViewModel: authState: ${_authState.value}")
     }
 
     private fun checkCurrentUser() {
-        viewModelScope.launch {
+        currentUserJob?.cancel()
+
+        currentUserJob = viewModelScope.launch {
             getCurrentUserUseCase().collect { user ->
+                val newState = AuthState(
+                    user = user,
+                    isAuthenticated = user != null
+                )
                 _authState.update {
                     it.copy(
                         user = user,
