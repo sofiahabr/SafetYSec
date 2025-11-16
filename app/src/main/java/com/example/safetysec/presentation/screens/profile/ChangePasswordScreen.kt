@@ -10,8 +10,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.safetysec.presentation.components.*
+import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -26,6 +28,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangePasswordScreen(navController: NavController) {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val authState by authViewModel.authState.collectAsState()
+
     // Form state
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
@@ -37,11 +42,13 @@ fun ChangePasswordScreen(navController: NavController) {
     var confirmPasswordError by remember { mutableStateOf<String?>(null) }
 
     // UI state
-    var isSaving by remember { mutableStateOf(false) }
     var showSuccessAlert by remember { mutableStateOf(false) }
-    var showErrorAlert by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
+    var wasLoading by remember { mutableStateOf(false) }
+
+    if (wasLoading && !authState.isLoading && authState.error == null) {
+        showSuccessAlert = true
+    }
+    wasLoading = authState.isLoading
 
     Scaffold(
         topBar = {
@@ -73,11 +80,11 @@ fun ChangePasswordScreen(navController: NavController) {
             }
 
             // Error Alert
-            if (showErrorAlert) {
+            if (authState.error != null) {
                 ErrorAlert(
-                    message = errorMessage,
+                    message = authState.error ?: "An error occurred",
                     onDismiss = {
-                        showErrorAlert = false
+                        authViewModel.clearError()
                     }
                 )
             }
@@ -136,55 +143,41 @@ fun ChangePasswordScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Change Password Button
             PrimaryButton(
                 text = "Change Password",
                 onClick = {
-                    // Validate
                     var isValid = true
 
-                    // Current password check
                     if (currentPassword.isBlank()) {
                         currentPasswordError = "Current password is required"
                         isValid = false
                     }
 
-                    // New password validation
                     val passwordValidation = validatePassword(newPassword)
                     if (!passwordValidation.isValid) {
                         newPasswordError = passwordValidation.message
                         isValid = false
                     }
 
-                    // Confirm password check
                     if (newPassword != confirmPassword) {
                         confirmPasswordError = "Passwords do not match"
                         isValid = false
                     }
 
-                    // Same password check
                     if (currentPassword == newPassword) {
                         newPasswordError = "New password must be different from current password"
                         isValid = false
                     }
 
                     if (isValid) {
-                        isSaving = true
+                        authViewModel.changePassword(
+                            currentPassword,
+                            newPassword
 
-                        // Simulate password change (replace with Firebase later)
-                        // In real app: verify current password with Firebase Auth
-                        // For now, just show success
-
-                        // Simulate API call delay
-                        scope.launch {
-                            delay(1000)
-                            isSaving = false
-                            showSuccessAlert = true
-                        }
-
+                        )
                     }
                 },
-                isLoading = isSaving
+                isLoading = authState.isLoading
             )
 
             // Cancel Button
@@ -202,7 +195,7 @@ fun ChangePasswordScreen(navController: NavController) {
  * Password Strength Indicator
  */
 @Composable
-private fun PasswordStrengthIndicator(password: String) {
+fun PasswordStrengthIndicator(password: String) {
     val strength = calculatePasswordStrength(password)
 
     Column(
@@ -228,7 +221,7 @@ private fun PasswordStrengthIndicator(password: String) {
 /**
  * Password Strength Data
  */
-private data class PasswordStrength(
+data class PasswordStrength(
     val label: String,
     val progress: Float,
     val color: androidx.compose.ui.graphics.Color
@@ -237,7 +230,7 @@ private data class PasswordStrength(
 /**
  * Calculate password strength
  */
-private fun calculatePasswordStrength(password: String): PasswordStrength {
+fun calculatePasswordStrength(password: String): PasswordStrength {
     var score = 0
 
     // Length check

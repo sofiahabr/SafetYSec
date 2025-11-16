@@ -10,10 +10,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.safetysec.domain.model.MockUserData
 import com.example.safetysec.domain.model.UserRole
 import com.example.safetysec.presentation.components.*
+import com.example.safetysec.presentation.viewmodel.AuthViewModel
 
 /**
  * Edit Profile Screen
@@ -22,12 +24,22 @@ import com.example.safetysec.presentation.components.*
  * - Name
  * - Email
  * - Phone
- * - Role (Monitor/Protected/Both)
+ * - Role (Monitor/Protected/Dual)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(navController: NavController) {
-    val user = MockUserData.currentUser
+    // Get the ViewModel (injected via Hilt)
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val authState by authViewModel.authState.collectAsState()
+
+    val user = authState.user
+
+    // Show loading state if user is not loaded
+    if (user == null) {
+        FullScreenLoading(message = "Loading your profile...")
+        return
+    }
 
     // Form state
     var name by remember { mutableStateOf(user.name) }
@@ -44,6 +56,17 @@ fun EditProfileScreen(navController: NavController) {
     var isSaving by remember { mutableStateOf(false) }
     var showSuccessAlert by remember { mutableStateOf(false) }
     var showRoleDialog by remember { mutableStateOf(false) }
+
+    // Show error alert if there's an error
+    if (authState.error != null) {
+        ErrorAlert(
+            message = authState.error ?: "An error occurred",
+            onDismiss = {
+                authViewModel.clearError()
+            }
+        )
+    }
+
 
     Scaffold(
         topBar = {
@@ -170,15 +193,11 @@ fun EditProfileScreen(navController: NavController) {
                     }
 
                     if (isValid) {
-                        // Save changes
-                        isSaving = true
-
-                        // Simulate saving (replace with Firebase later)
-                        MockUserData.updateUser(
-                            name = name,
+                        authViewModel.updateProfile(
                             email = email,
+                            name = name,
                             phone = phone,
-                            role = selectedRole
+                            role = selectedRole.name
                         )
 
                         // Show success
@@ -186,15 +205,7 @@ fun EditProfileScreen(navController: NavController) {
                         showSuccessAlert = true
                     }
                 },
-                isLoading = isSaving
-            )
-
-            // Cancel Button
-            CustomTextButton(
-                text = "Cancel",
-                onClick = {
-                    navController.navigateUp()
-                }
+                isLoading = authState.isLoading
             )
         }
     }
@@ -290,7 +301,7 @@ private fun getRoleDescription(role: UserRole): String {
     return when (role) {
         UserRole.MONITOR -> "Monitor and protect others"
         UserRole.PROTECTED -> "Receive protection from monitors"
-        UserRole.BOTH -> "Both monitor others and receive protection"
+        UserRole.DUAL -> "Both monitor others and receive protection"
     }
 }
 
