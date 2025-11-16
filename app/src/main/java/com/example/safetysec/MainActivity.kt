@@ -15,7 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.safetysec.data.preferences.ThemeMode
 import com.example.safetysec.data.preferences.ThemePreferences
-import com.example.safetysec.navigation.AppNavHost
+import com.example.safetysec.presentation.navigation.AppNavHost
 import com.example.safetysec.presentation.theme.SafetYSecTheme
 
 
