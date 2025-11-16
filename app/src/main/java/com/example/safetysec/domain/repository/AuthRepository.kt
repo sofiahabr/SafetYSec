@@ -17,6 +17,17 @@ interface AuthRepository {
     ): AuthResult<User>
 
     /**
+     * Update current user's profile information
+     */
+    suspend fun updateUser(
+        email: String,
+        password: String,
+        name: String,
+        phone: String,
+        role: String
+    ): AuthResult<User>
+
+    /**
      * Log in with email and password
      */
 

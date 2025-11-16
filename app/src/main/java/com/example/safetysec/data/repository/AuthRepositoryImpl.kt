@@ -42,6 +42,73 @@ class AuthRepositoryImpl @Inject constructor(
         AuthResult.Error(e.message ?: "Registration failed")
     }
 
+    override suspend fun updateUser(
+        email: String,
+        password: String,
+        name: String,
+        phone: String,
+        role: String
+    ): AuthResult<User> = try {
+        // ✅ Add null check - this was causing the 6 compilation errors
+        val currentUser = firebaseAuth.currentUser
+            ?: return AuthResult.Error("No user currently logged in")
+
+        val userId = currentUser.uid
+
+        // Step 1: Update profile information (name)
+        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            .build()
+
+        currentUser.updateProfile(profileUpdates).await()
+
+        // Step 2: Update email if it has changed
+        if (currentUser.email != email) {
+            currentUser.updateEmail(email).await()
+        }
+
+        // Step 3: Update password if provided (non-empty)
+        if (password.isNotEmpty() && password.length >= 6) {
+            currentUser.updatePassword(password).await()
+        }
+
+        // Step 4: Create user role from string
+        val userRole = try {
+            UserRole.valueOf(role.uppercase())
+        } catch (e: IllegalArgumentException) {
+            return AuthResult.Error("Invalid role: $role")
+        }
+
+        // Step 5: Create user object with all fields
+        val user = User(
+            id = userId,
+            email = email,
+            name = name,
+            phone = phone,  // Include phone field
+            role = userRole,
+            isEmailVerified = currentUser.isEmailVerified,
+            alertCancellationCode = generateRandomCode()
+        )
+
+        // Step 6: Update Firestore with new user data
+        firestore.collection("users")
+            .document(userId)
+            .set(user.toMap(), com.google.firebase.firestore.SetOptions.merge())
+            .await()
+
+        AuthResult.Success(user)
+
+    } catch (e: com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+        AuthResult.Error("Email is already in use by another account")
+    } catch (e: com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
+        AuthResult.Error("Invalid credentials provided")
+    } catch (e: com.google.firebase.auth.FirebaseAuthWeakPasswordException) {
+        AuthResult.Error("Password is too weak. Use at least 6 characters")
+    } catch (e: Exception) {
+        AuthResult.Error(e.message ?: "Failed to update user profile")
+    }
+
+
     override suspend fun login(
         email: String,
         password: String
@@ -115,6 +182,7 @@ class AuthRepositoryImpl @Inject constructor(
         "id" to id,
         "email" to email,
         "name" to name,
+        "phone" to phone,
         "role" to role.name,
         "alertCancellationCode" to alertCancellationCode
     )

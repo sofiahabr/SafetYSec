@@ -8,6 +8,7 @@ import com.example.safetysec.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.safetysec.domain.usecase.auth.LoginUseCase
 import com.example.safetysec.domain.usecase.auth.LogoutUseCase
 import com.example.safetysec.domain.usecase.auth.RegisterUseCase
+import com.example.safetysec.domain.usecase.auth.UpdateProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +30,8 @@ class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val updateProfileUseCase: UpdateProfileUseCase
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow(AuthState())
@@ -40,6 +42,37 @@ class AuthViewModel @Inject constructor(
     init {
         checkCurrentUser()
     }
+
+    fun updateProfile(
+        email: String,
+        password: String,
+        name: String,
+        phone: String,
+        role: String
+    ) {
+        viewModelScope.launch {
+            _authState.value = _authState.value.copy(isLoading = true, error = null)
+            val result = updateProfileUseCase(email, password, name, phone, role)
+            when (result) {
+                is AuthResult.Success -> {
+                    _authState.value = _authState.value.copy(
+                        user = result.data,
+                        isLoading = false
+                    )
+                }
+                is AuthResult.Error -> {
+                    _authState.value = _authState.value.copy(
+                        error = result.message,
+                        isLoading = false
+                    )
+                }
+                is AuthResult.Loading -> {
+                    _authState.update { it.copy(isLoading = true) }
+                }
+            }
+        }
+    }
+
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
