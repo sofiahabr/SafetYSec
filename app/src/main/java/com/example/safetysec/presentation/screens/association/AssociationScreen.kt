@@ -536,7 +536,7 @@ private fun AssociationCard(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "ID: ${association.id.take(8)}...",
+                            text = "ID: ${association.id.take(8).uppercase()}",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
@@ -557,14 +557,22 @@ private fun AssociationCard(
                 DetailRow(
                     icon = Icons.Default.Shield,
                     label = "Monitor",
-                    value = association.monitorId.take(10) + "..."
+                    value = association.monitorName.ifEmpty {
+                        association.monitorEmail.ifEmpty {
+                            association.monitorId.take(10) + "..."
+                        }
+                    }
                 )
 
                 // Protected ID
                 DetailRow(
                     icon = Icons.Default.Person,
                     label = "Protected",
-                    value = association.protectedId.take(10) + "..."
+                    value = association.protectedName.ifEmpty {
+                        association.protectedEmail.ifEmpty {
+                            association.protectedId.take(10) + "..."
+                        }
+                    }
                 )
 
                 // Created Date

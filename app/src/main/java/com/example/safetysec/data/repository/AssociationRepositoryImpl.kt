@@ -14,6 +14,7 @@ import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
 import kotlin.random.Random
+import com.google.firebase.firestore.FieldValue
 
 class AssociationRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
@@ -35,6 +36,14 @@ class AssociationRepositoryImpl @Inject constructor(
         // Get protected user ID
         val protectedUser = getUserByEmail(protectedEmail).getOrThrow()
 
+        // Get monitor user
+        val monitorDoc = firestore.collection(COLLECTION_USERS)
+            .document(monitorId)
+            .get()
+            .await()
+        val monitorUser = monitorDoc.toObject(User::class.java)?.copy(id = monitorDoc.id)
+            ?: throw Exception("Monitor user not found")
+
         // Calculate expiration time
         val expiresAt = Calendar.getInstance().apply {
             add(Calendar.MINUTE, OTP_EXPIRATION_MINUTES)
@@ -43,7 +52,11 @@ class AssociationRepositoryImpl @Inject constructor(
         // Create pending association with OTP
         val association = hashMapOf(
             "monitorId" to monitorId,
+            "monitorName" to monitorUser.name,
+            "monitorEmail" to monitorUser.email,
             "protectedId" to protectedUser.id,
+            "protectedName" to protectedUser.name,
+            "protectedEmail" to protectedUser.email,
             "status" to AssociationStatus.PENDING.name,
             "otp" to otp,
             "otpExpiresAt" to expiresAt,
@@ -98,8 +111,8 @@ class AssociationRepositoryImpl @Inject constructor(
             // Update association to ACTIVE and remove OTP
             val updates = hashMapOf<String, Any>(
                 "status" to AssociationStatus.ACTIVE.name,
-                "otp" to "",
-                "otpExpiresAt" to "",
+                "otp" to FieldValue.delete(),
+                "otpExpiresAt" to FieldValue.delete(),
                 "updatedAt" to Date()
             )
 
@@ -132,7 +145,11 @@ class AssociationRepositoryImpl @Inject constructor(
 
                 val associations = snapshot?.documents
                     ?.mapNotNull { doc ->
-                        doc.toObject(Association::class.java)?.copy(id = doc.id)
+                        try {
+                            doc.toObject(Association::class.java)?.copy(id = doc.id)
+                        } catch (e: Exception) {
+                            null
+                        }
                     }
                     ?.filter { it.monitorId == userId || it.protectedId == userId }
                     ?: emptyList()
@@ -156,7 +173,11 @@ class AssociationRepositoryImpl @Inject constructor(
 
                 val associations = snapshot?.documents
                     ?.mapNotNull { doc ->
-                        doc.toObject(Association::class.java)?.copy(id = doc.id)
+                        try {
+                            doc.toObject(Association::class.java)?.copy(id = doc.id)
+                        } catch (e: Exception) {
+                            null
+                        }
                     }
                     ?: emptyList()
 
@@ -179,7 +200,11 @@ class AssociationRepositoryImpl @Inject constructor(
 
                 val associations = snapshot?.documents
                     ?.mapNotNull { doc ->
-                        doc.toObject(Association::class.java)?.copy(id = doc.id)
+                        try {
+                            doc.toObject(Association::class.java)?.copy(id = doc.id)
+                        } catch (e: Exception) {
+                            null
+                        }
                     }
                     ?: emptyList()
 
