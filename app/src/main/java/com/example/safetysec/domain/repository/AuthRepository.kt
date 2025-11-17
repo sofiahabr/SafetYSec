@@ -51,6 +51,12 @@ interface AuthRepository {
     suspend fun logout(): AuthResult<Unit>
 
     /**
+     * Delete current user's profile
+     */
+    suspend fun deleteUserProfile(): AuthResult<Unit>
+
+
+    /**
      * Get the currently logged in user
      */
 

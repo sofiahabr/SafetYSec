@@ -12,10 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.safetysec.presentation.components.CustomTopAppBar
 import com.example.safetysec.data.preferences.ThemeMode
 import com.example.safetysec.data.preferences.ThemePreferences
+import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
 /**
@@ -31,6 +33,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navController: NavController) {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val authState by authViewModel.authState.collectAsState()
+
+    val user = authState.user
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val themePreferences = remember { ThemePreferences(context) }
@@ -161,7 +168,10 @@ fun SettingsScreen(navController: NavController) {
                     icon = Icons.Default.DeleteForever,
                     title = "Delete Account",
                     subtitle = "Permanently delete your account",
-                    onClick = { /* TODO: Show delete confirmation */ },
+                    onClick = {
+                        authViewModel.deleteUserProfile()
+                        navController.navigate("login")
+                    },
                     tint = MaterialTheme.colorScheme.error
                 )
             }

@@ -44,6 +44,22 @@ class AuthRepositoryImpl @Inject constructor(
         AuthResult.Error(e.message ?: "Registration failed")
     }
 
+    override suspend fun deleteUserProfile(): AuthResult<Unit> = try {
+        val currentUser = firebaseAuth.currentUser
+            ?: return AuthResult.Error("No user currently logged in")
+
+        val userId = currentUser.uid
+
+        firestore.collection("users").document(userId).delete().await()
+        currentUser.delete().await()
+
+        AuthResult.Success(Unit)
+    } catch (e: com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException) {
+        AuthResult.Error("Please log in again before deleting your account")
+    } catch (e: Exception) {
+        AuthResult.Error(e.message ?: "Failed to delete profile")
+    }
+
     override suspend fun updateUser(
         email: String,
         name: String,
