@@ -335,27 +335,53 @@ fun AlertEventCard(
 }
 
 @Composable
-fun ProtectedInfoCard (
+fun ProtectedInfoCard(
     name: String,
+    email: String = "",
+    isActive: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
+            .fillMaxWidth()
             .background(Color.White, shape = MaterialTheme.shapes.medium)
             .border(
-                width = 4.dp,
+                width = 2.dp,
                 color = Color(0xFF4CAF50),
                 shape = MaterialTheme.shapes.medium
             )
             .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = name,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            if (isActive) {
+                Text(
+                    text = "ACTIVE",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color(0xFF4CAF50),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        if (email.isNotEmpty()) {
+            Text(
+                text = email,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+        }
     }
 
 }

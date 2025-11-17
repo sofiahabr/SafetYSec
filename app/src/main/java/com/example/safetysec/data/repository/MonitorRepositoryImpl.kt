@@ -29,26 +29,14 @@ class MonitorRepositoryImpl @Inject constructor(
      */
     override suspend fun getActiveProtectedUsersCount(): Int {
         return try {
-            val monitorDoc = firestore
-                .collection("users")
-                .document(currentUserId)
+            val querySnapshot = firestore
+                .collection("associations")
+                .whereEqualTo("monitorId", currentUserId)
+                .whereEqualTo("status", "ACTIVE")
                 .get()
                 .await()
 
-            val protectedUserIds =
-                monitorDoc.get("protectedUsers") as? List<String> ?: emptyList()
-
-            val activeCount = protectedUserIds.count { protectedUserId ->
-                val protectedUser = firestore
-                    .collection("users")
-                    .document(protectedUserId)
-                    .get()
-                    .await()
-
-                protectedUser.getBoolean("isActive") ?: false
-            }
-
-            activeCount
+            querySnapshot.size()
         } catch (e: Exception) {
             0
         }
@@ -59,36 +47,25 @@ class MonitorRepositoryImpl @Inject constructor(
      */
     override suspend fun getProtectedUsers(): List<ProtectedUserSummary> {
         return try {
-            val monitorDoc = firestore
-                .collection("users")
-                .document(currentUserId)
+            val querySnapshot = firestore
+                .collection("associations")
+                .whereEqualTo("monitorId", currentUserId)
+                .whereEqualTo("status", "ACTIVE")
                 .get()
                 .await()
 
-            val protectedUserIds =
-                monitorDoc.get("protectedUsers") as? List<String> ?: emptyList()
-
-            val protectedUsers = mutableListOf<ProtectedUserSummary>()
-            protectedUserIds.forEach { protectedUserId ->
-                val userDoc = firestore
-                    .collection("users")
-                    .document(protectedUserId)
-                    .get()
-                    .await()
-
-                if (userDoc.exists()) {
-                    protectedUsers.add(
-                        ProtectedUserSummary(
-                            id = userDoc.id,
-                            name = userDoc.getString("name") ?: "Unknown",
-                            email = userDoc.getString("email") ?: "",
-                            isActive = userDoc.getBoolean("isActive") ?: false
-                        )
+            querySnapshot.documents.mapNotNull { doc ->
+                try {
+                    ProtectedUserSummary(
+                        id = doc.getString("protectedId") ?: return@mapNotNull null,
+                        name = doc.getString("protectedName") ?: "Unknown",
+                        email = doc.getString("protectedEmail") ?: "",
+                        isActive = doc.getString("status") == "ACTIVE"
                     )
+                } catch (e: Exception) {
+                    null
                 }
             }
-
-            protectedUsers
         } catch (e: Exception) {
             emptyList()
         }

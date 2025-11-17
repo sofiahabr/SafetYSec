@@ -102,20 +102,21 @@ fun MonitorDashboardContent(
             )
 
             StatInfoBox(
-                label = "recent alerts",
+                label = "Recent alerts",
                 value = recentAlerts.size.toString(),
                 borderColor = Color(0xFFEF5350),
                 textColor = Color(0xFFC62828),
                 modifier = Modifier.weight(1f)
             )
         }
-        Text(
-            text = "Recent Alerts",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
-        )
 
         if (recentAlerts.isNotEmpty()) {
+            Text(
+                text = "Recent Alerts",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+            )
+
             recentAlerts.forEach { alert ->
                 AlertEventCard(
                     title = alert.type.toDisplayString(),
@@ -126,32 +127,25 @@ fun MonitorDashboardContent(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-        } else {
-            NoAlertsState(
-                modifier = Modifier.fillMaxWidth()
-            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Protected Individuals",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
-        )
         if (activeProtected.isNotEmpty()) {
-            activeProtected.forEach { protected ->
+            Text(
+                text = "Protected Individuals",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+            )
+
+            activeProtected.forEach { protectedUser ->
                 ProtectedInfoCard(
-                    name = protected.name,
+                    name = protectedUser.name,
+                    email = protectedUser.email,
+                    isActive = protectedUser.isActive,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-        } else {
-            EmptyListState(
-                title = "No Protected",
-                message = "You don't have any protected individuals yet.",
-                modifier = Modifier.fillMaxWidth()
-            )
         }
     }
 }

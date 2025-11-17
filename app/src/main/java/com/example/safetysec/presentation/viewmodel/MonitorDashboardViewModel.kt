@@ -16,6 +16,7 @@ import javax.inject.Inject
 import com.example.safetysec.domain.usecase.monitoring.GetActiveProtectedUseCase
 import com.example.safetysec.domain.usecase.monitoring.GetRecentAlertsUseCase
 import com.example.safetysec.domain.usecase.monitoring.GetProtectedUsersUseCase
+import android.util.Log
 
 
 
@@ -37,13 +38,14 @@ class MonitorDashboardViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _dashboardState.value = _dashboardState.value.copy(isLoading = true)
-                 val activeCount = getActiveProtectedUseCase()
-                 val alerts = getRecentAlertsUseCase()
+                val activeCount = getActiveProtectedUseCase()
+                val alerts = getRecentAlertsUseCase()
                 val protectedUsers = getProtectedUsersUseCase()
 
                 _dashboardState.value = MonitorDashboardState(
                     activeProtectedCount = activeCount,
                     recentAlerts = alerts,
+                    activeProtected = protectedUsers,
                     isLoading = false
                 )
             } catch (e: Exception) {
