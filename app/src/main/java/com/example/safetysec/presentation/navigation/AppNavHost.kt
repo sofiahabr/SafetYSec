@@ -17,6 +17,8 @@ import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import com.example.safetysec.presentation.screens.auth.RegistrationScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
+import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
+import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
 
 @Composable
 fun AppNavHost(
@@ -24,6 +26,8 @@ fun AppNavHost(
     modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
+    val monitorViewModel: MonitorDashboardViewModel = hiltViewModel()
+
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
     val startDestination = if (authState.isAuthenticated && authState.user != null) {
@@ -49,6 +53,10 @@ fun AppNavHost(
                     navController.navigate(AppRoutes.REGISTER)
                 }
             )
+        }
+
+        composable(AppRoutes.MONITOR) {
+            MonitorDashScreen(navController = navController, viewModel = monitorViewModel)
         }
         composable(AppRoutes.HOME) {
             HomeScreen(navController = navController)

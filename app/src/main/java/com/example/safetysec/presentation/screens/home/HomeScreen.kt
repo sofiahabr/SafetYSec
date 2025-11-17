@@ -54,5 +54,13 @@ fun HomeScreen(navController: NavController) {
         }) {
             Text("Logout")
         }
+
+        Button(onClick = {
+            navController.navigate(AppRoutes.MONITOR) {
+                popUpTo(AppRoutes.MONITOR) { inclusive = true }
+            }
+        }) {
+            Text("Monitor Dashboard")
+        }
     }
 }

@@ -7,10 +7,16 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 /**
@@ -239,4 +245,117 @@ fun InlineAlert(
             color = iconColor
         )
     }
+}
+
+@Composable
+fun AlertEventCard(
+    title: String,
+    subtitle: String,
+    details: String? = null,
+    location: String? = null,
+    onActionClick: (() -> Unit)? = null,
+    actionIcon: ImageVector = Icons.Default.Videocam,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .background(Color.White, shape = MaterialTheme.shapes.medium)
+            .border(
+                width = 2.dp,
+                color = Color(0xFFEF5350),  // Red border for alerts
+                shape = MaterialTheme.shapes.medium
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Title and action button row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            if (onActionClick != null) {
+                IconButton(
+                    onClick = onActionClick,
+                    modifier = Modifier.padding(0.dp)
+                ) {
+                    Icon(
+                        imageVector = actionIcon,
+                        contentDescription = "Action",
+                        tint = Color(0xFFEF5350),
+                        modifier = Modifier.padding(0.dp)
+                    )
+                }
+            }
+        }
+
+        // Subtitle (person name and time)
+        Text(
+            text = subtitle,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Gray
+        )
+
+        // Location
+        if (location != null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Location",
+                    tint = Color.Gray,
+                    modifier = Modifier.padding(0.dp)
+                )
+                Text(
+                    text = location,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray
+                )
+            }
+        }
+
+        // Additional details (speed, etc.)
+        if (details != null) {
+            Text(
+                text = details,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+        }
+    }
+}
+
+@Composable
+fun ProtectedInfoCard (
+    name: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .background(Color.White, shape = MaterialTheme.shapes.medium)
+            .border(
+                width = 4.dp,
+                color = Color(0xFF4CAF50),
+                shape = MaterialTheme.shapes.medium
+            )
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+    }
+
 }

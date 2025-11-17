@@ -9,4 +9,6 @@ object AppRoutes {
     const val CHANGE_PASSWORD = "change_password"
     const val SETTINGS = "settings"
     const val REGISTER = "register"
+
+    const val MONITOR = "monitor"
 }
