@@ -72,15 +72,16 @@ fun LoadingDialog(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(16.dp),
+                .wrapContentSize()
+                .padding(horizontal = 32.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
             )
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(48.dp),

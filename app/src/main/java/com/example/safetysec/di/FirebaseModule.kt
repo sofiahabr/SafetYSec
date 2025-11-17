@@ -1,6 +1,8 @@
 package com.example.safetysec.di
 
+import com.example.safetysec.data.repository.AssociationRepositoryImpl
 import com.example.safetysec.data.repository.AuthRepositoryImpl
+import com.example.safetysec.domain.repository.AssociationRepository
 import com.example.safetysec.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,4 +30,10 @@ object FirebaseModule {
         firebaseAuth: FirebaseAuth,
         firestore: FirebaseFirestore
     ): AuthRepository = AuthRepositoryImpl(firebaseAuth, firestore)
+
+    @Provides
+    @Singleton
+    fun provideAssociationRepository(
+        firestore: FirebaseFirestore
+    ): AssociationRepository = AssociationRepositoryImpl(firestore)
 }

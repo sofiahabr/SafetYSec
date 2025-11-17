@@ -18,12 +18,10 @@ import com.example.safetysec.domain.usecase.monitoring.GetRecentAlertsUseCase
 import com.example.safetysec.domain.usecase.monitoring.GetProtectedUsersUseCase
 import android.util.Log
 
-
-
 @HiltViewModel
 class MonitorDashboardViewModel @Inject constructor(
-     private val getActiveProtectedUseCase: GetActiveProtectedUseCase,
-     private val getRecentAlertsUseCase: GetRecentAlertsUseCase,
+    private val getActiveProtectedUseCase: GetActiveProtectedUseCase,
+    private val getRecentAlertsUseCase: GetRecentAlertsUseCase,
     private val getProtectedUsersUseCase: GetProtectedUsersUseCase
 ) : ViewModel() {
 
@@ -37,10 +35,34 @@ class MonitorDashboardViewModel @Inject constructor(
     private fun loadDashboardData() {
         viewModelScope.launch {
             try {
+                Log.d("MonitorViewModel", "Starting to load dashboard data...")
                 _dashboardState.value = _dashboardState.value.copy(isLoading = true)
-                val activeCount = getActiveProtectedUseCase()
-                val alerts = getRecentAlertsUseCase()
-                val protectedUsers = getProtectedUsersUseCase()
+
+                Log.d("MonitorViewModel", "Fetching active protected count...")
+                val activeCount = try {
+                    getActiveProtectedUseCase()
+                } catch (e: Exception) {
+                    Log.e("MonitorViewModel", "Error getting active count", e)
+                    0
+                }
+
+                Log.d("MonitorViewModel", "Fetching recent alerts...")
+                val alerts = try {
+                    getRecentAlertsUseCase()
+                } catch (e: Exception) {
+                    Log.e("MonitorViewModel", "Error getting alerts", e)
+                    emptyList()
+                }
+
+                Log.d("MonitorViewModel", "Fetching protected users...")
+                val protectedUsers = try {
+                    getProtectedUsersUseCase()
+                } catch (e: Exception) {
+                    Log.e("MonitorViewModel", "Error getting protected users", e)
+                    emptyList()
+                }
+
+                Log.d("MonitorViewModel", "Loaded: count=$activeCount, alerts=${alerts.size}, protected=${protectedUsers.size}")
 
                 _dashboardState.value = MonitorDashboardState(
                     activeProtectedCount = activeCount,
@@ -48,10 +70,13 @@ class MonitorDashboardViewModel @Inject constructor(
                     activeProtected = protectedUsers,
                     isLoading = false
                 )
+
+                Log.d("MonitorViewModel", "Dashboard data loaded successfully")
             } catch (e: Exception) {
+                Log.e("MonitorViewModel", "Unexpected error loading dashboard", e)
                 _dashboardState.value = _dashboardState.value.copy(
                     isLoading = false,
-                    error = e.message
+                    error = "Error: ${e.message}"
                 )
             }
         }
