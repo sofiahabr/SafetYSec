@@ -72,7 +72,12 @@ fun AppNavHost(
         }
 
         composable(AppRoutes.MONITOR) {
-            MonitorDashScreen(navController = navController, viewModel = monitorViewModel)
+            MonitorDashScreen(
+                navController = navController,
+                viewModel = monitorViewModel,
+                onNavigateBack = {
+                navController.navigateUp()
+            })
         }
 
         // Assuming you have a HomeScreen composable defined elsewhere
@@ -81,7 +86,12 @@ fun AppNavHost(
         }
 
         composable(AppRoutes.DASHBOARD) {
-            MonitorDashScreen(navController = navController, viewModel = monitorViewModel)
+            MonitorDashScreen(
+                navController = navController,
+                viewModel = monitorViewModel,
+                onNavigateBack = {
+                navController.navigateUp()
+            })
 
         }
 

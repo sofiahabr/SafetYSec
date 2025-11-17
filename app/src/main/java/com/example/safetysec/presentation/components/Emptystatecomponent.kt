@@ -25,10 +25,10 @@ import com.example.safetysec.presentation.theme.PrimaryPurple
  */
 @Composable
 fun EmptyState(
-    icon: ImageVector,
     title: String,
     message: String,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
     actionButton: (@Composable () -> Unit)? = null
 ) {
     Column(
@@ -38,15 +38,17 @@ fun EmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Icon
-        Icon(
-            imageVector = icon,
-            contentDescription = title,
-            modifier = Modifier.size(120.dp),
-            tint = Color.Gray.copy(alpha = 0.3f)
-        )
+        // Icon (optional)
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                modifier = Modifier.size(120.dp),
+                tint = Color.Gray.copy(alpha = 0.3f)
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
         // Title
         Text(
@@ -75,7 +77,6 @@ fun EmptyState(
         }
     }
 }
-
 /**
  * Empty List State - For empty lists
  */

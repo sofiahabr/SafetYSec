@@ -3,6 +3,7 @@ package com.example.safetysec.presentation.screens.monitor
 
 import com.example.safetysec.presentation.components.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,33 +11,49 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
 import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.domain.model.ProtectedUserSummary
 import com.example.safetysec.presentation.components.BottomNavigationBar
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 
 
 @Composable
 fun MonitorDashScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: MonitorDashboardViewModel
+    viewModel: MonitorDashboardViewModel,
+    onNavigateBack: () -> Unit
+
 
 ) {
     val state = viewModel.dashboardState.value
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            CustomTopAppBar(
+                title = "Monitor Dashboard",
+                onNavigationClick = onNavigateBack
+            )
+        },
         bottomBar = {
             BottomNavigationBar(navController = navController)
         }
@@ -56,7 +73,8 @@ fun MonitorDashScreen(
                     activeProtectedCount = state.activeProtectedCount,
                     recentAlerts = state.recentAlerts,
                     modifier = Modifier.padding(innerPadding),
-                    activeProtected = state.activeProtected
+                    activeProtected = state.activeProtected,
+                    navController = navController
                 )
             }
         }
@@ -68,25 +86,17 @@ fun MonitorDashboardContent(
     activeProtectedCount: Int,
     recentAlerts: List<AlertEvent>,
     modifier: Modifier = Modifier,
-    activeProtected: List<ProtectedUserSummary>
+    activeProtected: List<ProtectedUserSummary>,
+    navController: NavController
 ) {
 
-
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
-
-
-        Text(
-            text = "Monitor Dashboard",
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
 
         Row(
             modifier = Modifier
@@ -112,13 +122,13 @@ fun MonitorDashboardContent(
             )
         }
 
-        if (recentAlerts.isNotEmpty()) {
-            Text(
-                text = "Recent Alerts",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
-            )
+        Text(
+            text = "Recent Alerts",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+        )
 
+        if (recentAlerts.isNotEmpty()) {
             recentAlerts.forEach { alert ->
                 AlertEventCard(
                     title = alert.type.toDisplayString(),
@@ -129,16 +139,22 @@ fun MonitorDashboardContent(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+        } else {
+            EmptyState(
+                title = "No recent alerts",
+                message = "You don't have any alerts yet. When alerts are triggered, they'll appear here.",
+                modifier = Modifier.fillMaxWidth(),
+                actionButton = {}
+            )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
+        Text(
+            text = "Protected Individuals",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+        )
         if (activeProtected.isNotEmpty()) {
-            Text(
-                text = "Protected Individuals",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
-            )
+
 
             activeProtected.forEach { protectedUser ->
                 ProtectedInfoCard(
@@ -148,6 +164,18 @@ fun MonitorDashboardContent(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+        } else {
+            EmptyState(
+                title = "No protected individuals",
+                message = "When you assosiate with a person, they will appear here.",
+                modifier = Modifier.fillMaxWidth(),
+                actionButton = {
+                    PrimaryButton(
+                        text = "Assosiate Protected",
+                        onClick = { navController.navigate("associations") }
+                    )
+                }
+            )
         }
     }
 }
@@ -165,4 +193,5 @@ private fun getTimeAgo(timestamp: java.time.LocalDateTime): String {
         else -> "$days days ago"
     }
 }
+
 
