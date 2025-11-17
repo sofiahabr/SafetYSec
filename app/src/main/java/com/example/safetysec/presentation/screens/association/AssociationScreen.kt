@@ -1,9 +1,9 @@
 package com.example.safetysec.presentation.screens.association
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -17,14 +17,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.safetysec.domain.model.Association
+import com.example.safetysec.domain.model.AssociationStatus
 import com.example.safetysec.presentation.components.*
-import com.example .safetysec.presentation.theme.PrimaryPurple
+import com.example.safetysec.presentation.theme.PrimaryPurple
 import java.text.SimpleDateFormat
 import java.util.*
-import androidx.navigation.NavController
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
 
 @Composable
 fun AssociationScreen(
@@ -82,16 +81,8 @@ fun AssociationScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Associations List Header
-                Text(
-                    text = "Active Associations",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                // Associations List
-                AssociationsList(
+                // Associations List with Filter
+                AssociationsListWithFilter(
                     associations = viewState.associations,
                     onRemove = viewModel::removeAssociation
                 )
@@ -271,7 +262,7 @@ private fun MonitorModeContent(
                             style = MaterialTheme.typography.displaySmall,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryPurple,
-                            letterSpacing = 4.dp.value.toInt().sp
+                            letterSpacing = 4.sp
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -449,6 +440,123 @@ private fun ProtectedModeContent(
 }
 
 /**
+ * Associations List with Status Filter
+ */
+@Composable
+private fun AssociationsListWithFilter(
+    associations: List<Association>,
+    onRemove: (String) -> Unit
+) {
+    // Track selected filter - null means "All"
+    var selectedStatus by remember { mutableStateOf(AssociationStatus.ACTIVE) }
+
+    Column {
+        // Header
+        Text(
+            text = "Associations",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Status Filter Chips
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Active
+            FilterChip(
+                selected = selectedStatus == AssociationStatus.ACTIVE,
+                onClick = { selectedStatus = AssociationStatus.ACTIVE },
+                label = {
+                    Text(
+                        text = "Active",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                leadingIcon = if (selectedStatus == AssociationStatus.ACTIVE) {
+                    {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                } else null,
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = PrimaryPurple,
+                    selectedLabelColor = Color.White,
+                    selectedLeadingIconColor = Color.White
+                )
+            )
+
+            // Pending
+            FilterChip(
+                selected = selectedStatus == AssociationStatus.PENDING,
+                onClick = { selectedStatus = AssociationStatus.PENDING },
+                label = {
+                    Text(
+                        text = "Pending",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                leadingIcon = if (selectedStatus == AssociationStatus.PENDING) {
+                    {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                } else null,
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = Color(0xFFFF9800),
+                    selectedLabelColor = Color.White,
+                    selectedLeadingIconColor = Color.White
+                )
+            )
+
+            // Cancelled
+            FilterChip(
+                selected = selectedStatus == AssociationStatus.CANCELLED,
+                onClick = { selectedStatus = AssociationStatus.CANCELLED },
+                label = {
+                    Text(
+                        text = "Cancelled",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                leadingIcon = if (selectedStatus == AssociationStatus.CANCELLED) {
+                    {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                } else null,
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = Color(0xFFF44336),
+                    selectedLabelColor = Color.White,
+                    selectedLeadingIconColor = Color.White
+                )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Filter associations based on selected status
+        val filteredAssociations = associations.filter { it.status == selectedStatus }
+
+        // Display filtered list
+        AssociationsList(
+            associations = filteredAssociations,
+            onRemove = onRemove
+        )
+    }
+}
+
+/**
  * Associations List
  */
 @Composable
@@ -467,8 +575,8 @@ private fun AssociationsList(
         ) {
             EmptyState(
                 icon = Icons.Default.PersonOff,
-                title = "No Active Associations",
-                message = "You don't have any active associations yet. Create an association to get started.",
+                title = "No Associations",
+                message = "No associations match the selected filter.",
                 modifier = Modifier.padding(32.dp)
             )
         }
@@ -497,12 +605,16 @@ private fun AssociationCard(
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     val dateFormat = remember { SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()) }
+    val isCancelled = association.status == AssociationStatus.CANCELLED
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = if (isCancelled)
+                MaterialTheme.colorScheme.surfaceVariant
+            else
+                MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
@@ -556,7 +668,7 @@ private fun AssociationCard(
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Monitor ID
+                // Monitor
                 DetailRow(
                     icon = Icons.Default.Shield,
                     label = "Monitor",
@@ -567,7 +679,7 @@ private fun AssociationCard(
                     }
                 )
 
-                // Protected ID
+                // Protected
                 DetailRow(
                     icon = Icons.Default.Person,
                     label = "Protected",
@@ -588,12 +700,34 @@ private fun AssociationCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Remove Button
-            DangerButton(
-                text = "Remove Association",
-                onClick = { showDeleteDialog = true },
-                modifier = Modifier.fillMaxWidth()
-            )
+            // Remove Button - Disabled for CANCELLED associations
+            if (isCancelled) {
+                // Disabled button with explanation
+                OutlinedButton(
+                    onClick = { },
+                    enabled = false,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        disabledContainerColor = Color.Transparent,
+                        disabledContentColor = Color.Gray
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Block,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Association Cancelled")
+                }
+            } else {
+                // Active remove button
+                DangerButton(
+                    text = "Remove Association",
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 

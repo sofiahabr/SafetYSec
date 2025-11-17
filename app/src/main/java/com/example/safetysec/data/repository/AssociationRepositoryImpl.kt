@@ -136,7 +136,6 @@ class AssociationRepositoryImpl @Inject constructor(
 
     override fun getAssociationsForUser(userId: String): Flow<List<Association>> = callbackFlow {
         val listenerRegistration = firestore.collection(COLLECTION_ASSOCIATIONS)
-            .whereEqualTo("status", AssociationStatus.ACTIVE.name)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     close(error)
@@ -163,7 +162,6 @@ class AssociationRepositoryImpl @Inject constructor(
     override fun getAssociationsAsMonitor(monitorId: String): Flow<List<Association>> = callbackFlow {
         val listenerRegistration = firestore.collection(COLLECTION_ASSOCIATIONS)
             .whereEqualTo("monitorId", monitorId)
-            .whereEqualTo("status", AssociationStatus.ACTIVE.name)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
@@ -190,7 +188,6 @@ class AssociationRepositoryImpl @Inject constructor(
     override fun getAssociationsAsProtected(protectedId: String): Flow<List<Association>> = callbackFlow {
         val listenerRegistration = firestore.collection(COLLECTION_ASSOCIATIONS)
             .whereEqualTo("protectedId", protectedId)
-            .whereEqualTo("status", AssociationStatus.ACTIVE.name)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
