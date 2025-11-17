@@ -23,6 +23,8 @@ import com.example .safetysec.presentation.theme.PrimaryPurple
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.navigation.NavController
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 
 @Composable
 fun AssociationScreen(
@@ -51,6 +53,7 @@ fun AssociationScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
                     .padding(16.dp)
             ) {
                 // Mode Toggle Chips
@@ -104,7 +107,7 @@ fun AssociationScreen(
                 ) {
                     ErrorAlert(
                         message = error,
-                        onDismiss = { /* Clear error in viewModel if needed */ }
+                        onDismiss = { viewModel.clearError() }
                     )
                 }
             }
@@ -470,11 +473,11 @@ private fun AssociationsList(
             )
         }
     } else {
-        LazyColumn(
+        Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            items(associations, key = { it.id }) { association ->
+            associations.forEach { association ->
                 AssociationCard(
                     association = association,
                     onRemove = { onRemove(association.id) }
