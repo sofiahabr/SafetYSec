@@ -8,7 +8,6 @@ package com.example.safetysec.navigation
 object AppRoutes {
     // Auth Routes
     const val LOGIN = "login"
-    const val REGISTER = "register"
 
     // Main Navigation Routes (Bottom Nav)
     const val DASHBOARD = "dashboard"
@@ -21,6 +20,9 @@ object AppRoutes {
     const val EDIT_PROFILE = "edit_profile"
     const val CHANGE_PASSWORD = "change_password"
     const val SETTINGS = "settings"
+    const val REGISTER = "register"
+
+    const val MONITOR = "monitor"
 
     // Utility Routes
     const val SHOWCASE = "showcase"

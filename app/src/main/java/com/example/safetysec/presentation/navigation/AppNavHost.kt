@@ -15,10 +15,14 @@ import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import com.example.safetysec.presentation.screens.auth.RegistrationScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
+import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
+import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
 import androidx.compose.ui.Modifier
 import com.example.safetysec.navigation.AppRoutes
 import com.example.safetysec.presentation.screens.association.AssociationScreen
 import com.example.safetysec.presentation.screens.dashboard.DashboardScreen
+// Assuming HomeScreen exists, you might need to add its import.
+ import com.example.safetysec.presentation.screens.home.HomeScreen
 
 @Composable
 fun AppNavHost(
@@ -26,10 +30,13 @@ fun AppNavHost(
     modifier: Modifier = Modifier
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
+    val monitorViewModel: MonitorDashboardViewModel = hiltViewModel()
+
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
+
     val startDestination = if (authState.isAuthenticated && authState.user != null) {
-        AppRoutes.DASHBOARD
+        AppRoutes.PROFILE
     } else {
         AppRoutes.LOGIN
     }
@@ -64,8 +71,18 @@ fun AppNavHost(
             )
         }
 
+        composable(AppRoutes.MONITOR) {
+            MonitorDashScreen(navController = navController, viewModel = monitorViewModel)
+        }
+
+        // Assuming you have a HomeScreen composable defined elsewhere
+        composable(AppRoutes.HOME) {
+            HomeScreen(navController = navController)
+        }
+
         composable(AppRoutes.DASHBOARD) {
-            DashboardScreen(navController = navController)
+            MonitorDashScreen(navController = navController, viewModel = monitorViewModel)
+
         }
 
         composable(AppRoutes.PROFILE) {
