@@ -70,6 +70,9 @@ fun ProfileScreen(navController: NavController) {
                     }
                 }
             )
+        },
+                bottomBar = {
+            BottomNavigationBar(navController = navController)
         }
     ) { paddingValues ->
         Column(
@@ -126,8 +129,6 @@ fun ProfileScreen(navController: NavController) {
                         navController.navigate("settings")
                     }
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
 
                 // Logout Button
                 DangerButton(

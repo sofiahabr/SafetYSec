@@ -22,9 +22,11 @@ import com.example.safetysec.presentation.components.*
 import com.example .safetysec.presentation.theme.PrimaryPurple
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.navigation.NavController
 
 @Composable
 fun AssociationScreen(
+    navController: NavController,
     viewModel: AssociationViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit
 ) {
@@ -36,6 +38,9 @@ fun AssociationScreen(
                 title = "Associations",
                 onNavigationClick = onNavigateBack
             )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
         }
     ) { padding ->
         Box(

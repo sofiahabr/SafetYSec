@@ -16,25 +16,32 @@ import com.example.safetysec.presentation.components.*
 fun DashboardScreen(navController: NavController) {
     val viewModel: AuthViewModel = hiltViewModel()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Dashboard",
-            style = MaterialTheme.typography.headlineMedium
-        )
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Dashboard",
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        PrimaryButton(
-            text = "🎨 View Components Showcase",
-            onClick = {
-                navController.navigate(AppRoutes.SHOWCASE)
-            }
-        )
+            PrimaryButton(
+                text = "🎨 View Components Showcase",
+                onClick = {
+                    navController.navigate(AppRoutes.SHOWCASE)
+                }
+            )
+        }
     }
 }
