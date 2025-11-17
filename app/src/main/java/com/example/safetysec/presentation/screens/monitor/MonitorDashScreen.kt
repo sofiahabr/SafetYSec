@@ -1,7 +1,6 @@
 package com.example.safetysec.presentation.screens.monitor
 
 
-import com.example.safetysec.presentation.*
 import com.example.safetysec.presentation.components.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,15 +16,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.graphics.Color
 import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
-import androidx.compose.runtime.collectAsState
 import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.domain.model.ProtectedUserSummary
+import com.example.safetysec.presentation.components.BottomNavigationBar
+
 
 @Composable
 fun MonitorDashScreen(
@@ -38,6 +37,9 @@ fun MonitorDashScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        bottomBar = {
+            BottomNavigationBar(navController = navController)
+        }
     ) { innerPadding ->
 
         when {
