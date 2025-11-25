@@ -8,6 +8,7 @@ package com.example.safetysec.navigation
 object AppRoutes {
     // Auth Routes
     const val LOGIN = "login"
+    const val REGISTER = "register"
 
     // Main Navigation Routes (Bottom Nav)
     const val DASHBOARD = "dashboard"
@@ -16,15 +17,29 @@ object AppRoutes {
     const val ALERTS = "alerts"
     const val PROFILE = "profile"
 
+    // Rules Sub-Routes
+    const val CREATE_RULE = "create_rule"
+    const val EDIT_RULE = "edit_rule/{ruleId}"
+    const val RULE_DETAILS = "rule_details/{ruleId}"
+
+    // Time Windows Sub-Routes
+    const val TIME_WINDOWS = "time_windows"
+    const val CREATE_TIME_WINDOW = "create_time_window"
+    const val EDIT_TIME_WINDOW = "edit_time_window/{windowId}"
+
     // Profile Sub-Routes
     const val EDIT_PROFILE = "edit_profile"
     const val CHANGE_PASSWORD = "change_password"
     const val SETTINGS = "settings"
-    const val REGISTER = "register"
 
     const val MONITOR = "monitor"
 
     // Utility Routes
     const val SHOWCASE = "showcase"
-    const val HOME = "home" // Kept for backward compatibility
+    const val HOME = "home"
+
+    // Helper functions for parameterized routes
+    fun editRule(ruleId: String) = "edit_rule/$ruleId"
+    fun ruleDetails(ruleId: String) = "rule_details/$ruleId"
+    fun editTimeWindow(windowId: String) = "edit_time_window/$windowId"
 }
