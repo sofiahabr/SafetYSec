@@ -83,6 +83,7 @@ fun RulesScreen(
                         rules = uiState.filteredRules,
                         isMonitor = uiState.isMonitor,
                         selectedFilter = uiState.selectedFilter,
+                        navController = navController, // ADDED
                         onFilterChanged = { viewModel.filterByStatus(it) },
                         onAuthorize = { viewModel.authorizeRule(it) },
                         onReject = { viewModel.rejectRule(it) },
@@ -112,6 +113,7 @@ private fun RulesContent(
     rules: List<Rule>,
     isMonitor: Boolean,
     selectedFilter: RuleStatus?,
+    navController: NavController, // ADDED
     onFilterChanged: (RuleStatus?) -> Unit,
     onAuthorize: (String) -> Unit,
     onReject: (String) -> Unit,
@@ -153,6 +155,7 @@ private fun RulesContent(
                     RuleCard(
                         rule = rule,
                         isMonitor = isMonitor,
+                        navController = navController, // ADDED
                         onAuthorize = { onAuthorize(rule.id) },
                         onReject = { onReject(rule.id) },
                         onRevoke = { onRevoke(rule.id) },
@@ -247,6 +250,7 @@ private fun StatusFilterChips(
 private fun RuleCard(
     rule: Rule,
     isMonitor: Boolean,
+    navController: NavController, // ADDED
     onAuthorize: () -> Unit,
     onReject: () -> Unit,
     onRevoke: () -> Unit,
@@ -333,7 +337,43 @@ private fun RuleCard(
                 color = Color.Gray
             )
 
-            // Action buttons
+            // Action buttons row for monitors
+            if (isMonitor && rule.status != RuleStatus.CANCELLED) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // ADDED: Edit button (only for authorized rules)
+                    if (rule.status == RuleStatus.AUTHORIZED) {
+                        IconButton(
+                            onClick = {
+                                navController.navigate("edit_rule/${rule.id}")
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit Rule",
+                                tint = PrimaryPurple
+                            )
+                        }
+                    }
+
+                    // Delete button
+                    IconButton(
+                        onClick = { showDeleteDialog = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Rule",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+
+            // Action buttons for protected users
             if (!isMonitor && rule.status == RuleStatus.PENDING) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
@@ -358,15 +398,6 @@ private fun RuleCard(
                 DangerButton(
                     text = "Revoke Authorization",
                     onClick = { showRevokeDialog = true },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            if (isMonitor) {
-                Spacer(modifier = Modifier.height(16.dp))
-                DangerButton(
-                    text = "Delete Rule",
-                    onClick = { showDeleteDialog = true },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -452,7 +483,7 @@ private fun RuleParametersDisplay(rule: Rule) {
                     )
                     rule.parameters.geofenceAreas.forEach { area ->
                         Text(
-                            text = "â€¢ ${area.name} (${area.radius.toInt()}m)",
+                            text = "• ${area.name} (${area.radius.toInt()}m)",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }

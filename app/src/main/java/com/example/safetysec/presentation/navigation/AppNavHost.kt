@@ -6,8 +6,10 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.safetysec.navigation.AppRoutes
 import com.example.safetysec.presentation.screens.association.AssociationScreen
 import com.example.safetysec.presentation.screens.auth.LogInScreen
@@ -19,6 +21,7 @@ import com.example.safetysec.presentation.screens.profile.EditProfileScreen
 import com.example.safetysec.presentation.screens.profile.ProfileScreen
 import com.example.safetysec.presentation.screens.profile.SettingsScreen
 import com.example.safetysec.presentation.screens.rules.CreateRuleScreen
+import com.example.safetysec.presentation.screens.rules.EditRuleScreen
 import com.example.safetysec.presentation.screens.rules.RulesScreen
 import com.example.safetysec.presentation.screens.showcase.ComponentsShowcaseScreen
 import com.example.safetysec.presentation.screens.timewindows.TimeWindowsScreen
@@ -138,6 +141,17 @@ fun AppNavHost(
         composable(AppRoutes.SHOWCASE) {
             ComponentsShowcaseScreen(
                 onNavigateBack = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            route = "edit_rule/{ruleId}",
+            arguments = listOf(navArgument("ruleId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val ruleId = backStackEntry.arguments?.getString("ruleId") ?: ""
+            EditRuleScreen(
+                ruleId = ruleId,
+                navController = navController
             )
         }
     }

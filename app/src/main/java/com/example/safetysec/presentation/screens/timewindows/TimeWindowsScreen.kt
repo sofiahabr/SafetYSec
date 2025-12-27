@@ -1,7 +1,5 @@
 package com.example.safetysec.presentation.screens.timewindows
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,10 +20,7 @@ import com.example.safetysec.domain.model.TimeWindow
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.TimeWindowViewModel
-import java.text.SimpleDateFormat
-import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeWindowsScreen(
     navController: NavController,
@@ -100,15 +95,18 @@ fun TimeWindowsScreen(
     if (showCreateDialog) {
         CreateTimeWindowDialog(
             onDismiss = { showCreateDialog = false },
-            onCreate = { timeWindow ->
-                viewModel.createTimeWindow(timeWindow)
+            onCreate = { days, startTime, endTime ->
+                viewModel.createTimeWindow(
+                    daysOfWeek = days,
+                    startTime = startTime,
+                    endTime = endTime
+                )
                 showCreateDialog = false
             }
         )
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun TimeWindowsContent(
     timeWindows: List<TimeWindow>,
@@ -152,7 +150,6 @@ private fun TimeWindowsContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun TimeWindowCard(
     timeWindow: TimeWindow,
@@ -193,11 +190,13 @@ private fun TimeWindowCard(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-                        Text(
-                            text = "Monitor: ${timeWindow.monitorName}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
+                        if (timeWindow.monitorName.isNotBlank()) {
+                            Text(
+                                text = "Monitor: ${timeWindow.monitorName}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
 
@@ -302,7 +301,7 @@ private fun TimeWindowCard(
 @Composable
 private fun CreateTimeWindowDialog(
     onDismiss: () -> Unit,
-    onCreate: (TimeWindow) -> Unit
+    onCreate: (List<DayOfWeek>, String, String) -> Unit
 ) {
     var selectedDays by remember { mutableStateOf(setOf<DayOfWeek>()) }
     var startTime by remember { mutableStateOf("09:00") }
@@ -343,7 +342,7 @@ private fun CreateTimeWindowDialog(
                     }
                 }
 
-                // Time selection (simplified)
+                // Time selection
                 Text(
                     text = "Time Range",
                     style = MaterialTheme.typography.titleSmall,
@@ -368,17 +367,7 @@ private fun CreateTimeWindowDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    // Create time window (monitor info will be filled by ViewModel)
-                    val timeWindow = TimeWindow(
-                        daysOfWeek = selectedDays.toList(),
-                        startTime = startTime,
-                        endTime = endTime,
-                        isActive = true,
-                        protectedId = "", // Will be set by ViewModel
-                        monitorId = "",   // Will be set by ViewModel
-                        monitorName = ""  // Will be set by ViewModel
-                    )
-                    onCreate(timeWindow)
+                    onCreate(selectedDays.toList(), startTime, endTime)
                 },
                 enabled = selectedDays.isNotEmpty() && startTime.isNotBlank() && endTime.isNotBlank()
             ) {

@@ -1,5 +1,7 @@
 package com.example.safetysec.data.repository
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.safetysec.domain.model.*
 import com.example.safetysec.domain.repository.RuleRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -426,6 +428,7 @@ class RuleRepositoryImpl @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getActiveTimeWindows(protectedId: String): Result<List<TimeWindow>> {
         return try {
             val snapshot = firestore.collection(COLLECTION_TIME_WINDOWS)

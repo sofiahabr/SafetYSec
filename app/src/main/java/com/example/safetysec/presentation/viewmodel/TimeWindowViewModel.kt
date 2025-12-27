@@ -84,27 +84,54 @@ class TimeWindowViewModel @Inject constructor(
     /**
      * Create a new time window
      */
-    fun createTimeWindow(timeWindow: TimeWindow) {
+    fun createTimeWindow(
+        daysOfWeek: List<DayOfWeek>,
+        startTime: String,
+        endTime: String,
+        monitorId: String = "",
+        monitorName: String = "All Monitors"
+    ) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
-
-            val result = createTimeWindowUseCase(timeWindow)
-
-            result.fold(
-                onSuccess = {
+            currentUserFlow.first { user ->
+                if (user == null) {
                     _uiState.update {
-                        it.copy(isLoading = false)
+                        it.copy(error = "User not authenticated")
                     }
-                },
-                onFailure = { exception ->
-                    _uiState.update {
-                        it.copy(
-                            error = exception.message ?: "Failed to create time window",
-                            isLoading = false
-                        )
-                    }
+                    return@first true
                 }
-            )
+
+                _uiState.update { it.copy(isLoading = true, error = null) }
+
+                val timeWindow = TimeWindow(
+                    protectedId = user.id,
+                    monitorId = monitorId,
+                    monitorName = monitorName,
+                    daysOfWeek = daysOfWeek,
+                    startTime = startTime,
+                    endTime = endTime,
+                    isActive = true
+                )
+
+                val result = createTimeWindowUseCase(timeWindow)
+
+                result.fold(
+                    onSuccess = {
+                        _uiState.update {
+                            it.copy(isLoading = false)
+                        }
+                    },
+                    onFailure = { exception ->
+                        _uiState.update {
+                            it.copy(
+                                error = exception.message ?: "Failed to create time window",
+                                isLoading = false
+                            )
+                        }
+                    }
+                )
+
+                true
+            }
         }
     }
 
