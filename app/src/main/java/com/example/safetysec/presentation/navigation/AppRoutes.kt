@@ -1,4 +1,4 @@
-package com.example.safetysec.navigation
+package com.example.safetysec.presentation.navigation
 
 /**
  * App Navigation Routes

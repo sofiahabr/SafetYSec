@@ -10,7 +10,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.safetysec.navigation.AppRoutes
 import com.example.safetysec.presentation.screens.association.AssociationScreen
 import com.example.safetysec.presentation.screens.auth.LogInScreen
 import com.example.safetysec.presentation.screens.auth.RegistrationScreen

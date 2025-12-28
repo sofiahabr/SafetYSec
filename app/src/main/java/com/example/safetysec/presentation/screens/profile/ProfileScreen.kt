@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.safetysec.domain.model.MockUserData
 import com.example.safetysec.domain.model.UserRole
-import com.example.safetysec.navigation.AppRoutes
+import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
