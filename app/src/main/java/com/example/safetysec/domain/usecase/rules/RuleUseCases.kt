@@ -125,3 +125,18 @@ class GetAuthorizedRulesUseCase @Inject constructor(
     operator fun invoke(monitorId: String, protectedId: String) =
         ruleRepository.getAuthorizedRules(monitorId, protectedId)
 }
+
+/**
+ * Get Rule By ID Use Case
+ */
+class GetRuleByIdUseCase @Inject constructor(
+    private val ruleRepository: RuleRepository
+) {
+    suspend operator fun invoke(ruleId: String): Result<Rule> {
+        if (ruleId.isBlank()) {
+            return Result.failure(IllegalArgumentException("Rule ID is required"))
+        }
+
+        return ruleRepository.getRuleById(ruleId)
+    }
+}

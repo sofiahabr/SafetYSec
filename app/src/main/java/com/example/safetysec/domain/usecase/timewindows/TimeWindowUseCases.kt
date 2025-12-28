@@ -12,17 +12,26 @@ class CreateTimeWindowUseCase @Inject constructor(
     private val ruleRepository: RuleRepository
 ) {
     suspend operator fun invoke(timeWindow: TimeWindow): Result<TimeWindow> {
+        if (timeWindow.protectedId.isBlank()) {
+            return Result.failure(IllegalArgumentException("Protected user ID is required"))
+        }
         // Validate time window
         if (timeWindow.daysOfWeek.isEmpty()) {
             return Result.failure(
                 IllegalArgumentException("At least one day must be selected")
             )
         }
-
         if (timeWindow.startTime >= timeWindow.endTime) {
             return Result.failure(
                 IllegalArgumentException("Start time must be before end time")
             )
+        }
+        val timeRegex = Regex("^([01]?[0-9]|2[0-3]):[0-5][0-9]$")
+        if (!timeWindow.startTime.matches(timeRegex)) {
+            return Result.failure(IllegalArgumentException("Invalid start time format. Use HH:mm"))
+        }
+        if (!timeWindow.endTime.matches(timeRegex)) {
+            return Result.failure(IllegalArgumentException("Invalid end time format. Use HH:mm"))
         }
 
         return ruleRepository.createTimeWindow(timeWindow)
@@ -60,6 +69,9 @@ class DeleteTimeWindowUseCase @Inject constructor(
     private val ruleRepository: RuleRepository
 ) {
     suspend operator fun invoke(timeWindowId: String): Result<Unit> {
+        if (timeWindowId.isBlank()) {
+            return Result.failure(IllegalArgumentException("Time window ID is required"))
+        }
         return ruleRepository.deleteTimeWindow(timeWindowId)
     }
 }
@@ -93,6 +105,9 @@ class IsMonitoringActiveUseCase @Inject constructor(
     private val ruleRepository: RuleRepository
 ) {
     suspend operator fun invoke(protectedId: String): Result<Boolean> {
+        if (protectedId.isBlank()) {
+            return Result.failure(IllegalArgumentException("Protected user ID is required"))
+        }
         return ruleRepository.isMonitoringActive(protectedId)
     }
 }

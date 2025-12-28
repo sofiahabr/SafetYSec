@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.safetysec.domain.model.*
-import com.example.safetysec.domain.usecase.rules.GetRulesUseCase
+import com.example.safetysec.domain.usecase.rules.GetRuleByIdUseCase
 import com.example.safetysec.domain.usecase.rules.UpdateRuleUseCase
 import com.example.safetysec.presentation.components.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,25 +42,60 @@ data class EditRuleUiState(
  */
 @HiltViewModel
 class EditRuleViewModel @Inject constructor(
-    private val getRulesUseCase: GetRulesUseCase,
+    private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val updateRuleUseCase: UpdateRuleUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EditRuleUiState())
     val uiState: StateFlow<EditRuleUiState> = _uiState.asStateFlow()
 
+    /**
+     * Load rule by ID
+     */
     fun loadRule(ruleId: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, error = null) }
 
-            // Note: In a real implementation, you'd have a getRuleById use case
-            // For now, this is a placeholder
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    error = "Rule loading not yet implemented. Use the repository's getRuleById method."
-                )
-            }
+            val result = getRuleByIdUseCase(ruleId)
+
+            result.fold(
+                onSuccess = { rule ->
+                    // Initialize form fields based on rule parameters
+                    val maxSpeed = when {
+                        rule.type == RuleType.SPEED_CONTROL -> rule.parameters.maxSpeed.toString()
+                        else -> "120"
+                    }
+
+                    val inactivityDuration = when {
+                        rule.type == RuleType.PROLONGED_INACTIVITY -> rule.parameters.inactivityDuration.toString()
+                        else -> "30"
+                    }
+
+                    val geofenceAreas = when {
+                        rule.type == RuleType.GEOFENCING -> rule.parameters.geofenceAreas
+                        else -> emptyList()
+                    }
+
+                    _uiState.update {
+                        it.copy(
+                            rule = rule,
+                            maxSpeed = maxSpeed,
+                            inactivityDuration = inactivityDuration,
+                            geofenceAreas = geofenceAreas,
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                },
+                onFailure = { exception ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = exception.message ?: "Failed to load rule"
+                        )
+                    }
+                }
+            )
         }
     }
 
@@ -160,6 +195,10 @@ class EditRuleViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    fun resetSuccess() {
+        _uiState.update { it.copy(success = false) }
     }
 }
 

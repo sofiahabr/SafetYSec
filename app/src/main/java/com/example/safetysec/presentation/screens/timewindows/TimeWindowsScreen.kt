@@ -28,6 +28,7 @@ fun TimeWindowsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showCreateDialog by remember { mutableStateOf(false) }
+    var editingWindow by remember { mutableStateOf<TimeWindow?>(null) }
 
     Scaffold(
         topBar = {
@@ -76,6 +77,7 @@ fun TimeWindowsScreen(
                 else -> {
                     TimeWindowsContent(
                         timeWindows = uiState.timeWindows,
+                        onEdit = { editingWindow = it },
                         onDelete = { viewModel.deleteTimeWindow(it) },
                         onToggleActive = { window ->
                             viewModel.updateTimeWindow(
@@ -92,16 +94,34 @@ fun TimeWindowsScreen(
         }
     }
 
-    if (showCreateDialog) {
-        CreateTimeWindowDialog(
-            onDismiss = { showCreateDialog = false },
-            onCreate = { days, startTime, endTime ->
-                viewModel.createTimeWindow(
-                    daysOfWeek = days,
-                    startTime = startTime,
-                    endTime = endTime
-                )
+    // Create/Edit Dialog
+    if (showCreateDialog || editingWindow != null) {
+        TimeWindowDialog(
+            timeWindow = editingWindow,
+            onDismiss = {
                 showCreateDialog = false
+                editingWindow = null
+            },
+            onSave = { days, startTime, endTime ->
+                if (editingWindow != null) {
+                    // Update existing window
+                    viewModel.updateTimeWindow(
+                        editingWindow!!.copy(
+                            daysOfWeek = days,
+                            startTime = startTime,
+                            endTime = endTime
+                        )
+                    )
+                } else {
+                    // Create new window
+                    viewModel.createTimeWindow(
+                        daysOfWeek = days,
+                        startTime = startTime,
+                        endTime = endTime
+                    )
+                }
+                showCreateDialog = false
+                editingWindow = null
             }
         )
     }
@@ -110,6 +130,7 @@ fun TimeWindowsScreen(
 @Composable
 private fun TimeWindowsContent(
     timeWindows: List<TimeWindow>,
+    onEdit: (TimeWindow) -> Unit,
     onDelete: (String) -> Unit,
     onToggleActive: (TimeWindow) -> Unit
 ) {
@@ -141,6 +162,7 @@ private fun TimeWindowsContent(
                 items(timeWindows) { window ->
                     TimeWindowCard(
                         timeWindow = window,
+                        onEdit = { onEdit(window) },
                         onDelete = { onDelete(window.id) },
                         onToggleActive = { onToggleActive(window) }
                     )
@@ -153,6 +175,7 @@ private fun TimeWindowsContent(
 @Composable
 private fun TimeWindowCard(
     timeWindow: TimeWindow,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     onToggleActive: () -> Unit
 ) {
@@ -258,16 +281,26 @@ private fun TimeWindowCard(
                         fontWeight = FontWeight.Bold
                     )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // Edit and Delete buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SecondaryButton(
+                    text = "Edit",
+                    onClick = onEdit,
+                    modifier = Modifier.weight(1f)
+                )
 
-            // Delete button
-            DangerButton(
-                text = "Delete Window",
-                onClick = { showDeleteDialog = true },
-                modifier = Modifier.fillMaxWidth()
-            )
+                DangerButton(
+                    text = "Delete",
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 
@@ -299,17 +332,26 @@ private fun TimeWindowCard(
 }
 
 @Composable
-private fun CreateTimeWindowDialog(
+private fun TimeWindowDialog(
+    timeWindow: TimeWindow? = null,
     onDismiss: () -> Unit,
-    onCreate: (List<DayOfWeek>, String, String) -> Unit
+    onSave: (List<DayOfWeek>, String, String) -> Unit
 ) {
-    var selectedDays by remember { mutableStateOf(setOf<DayOfWeek>()) }
-    var startTime by remember { mutableStateOf("09:00") }
-    var endTime by remember { mutableStateOf("17:00") }
+    var selectedDays by remember {
+        mutableStateOf(timeWindow?.daysOfWeek?.toSet() ?: setOf())
+    }
+    var startTime by remember {
+        mutableStateOf(timeWindow?.startTime ?: "09:00")
+    }
+    var endTime by remember {
+        mutableStateOf(timeWindow?.endTime ?: "17:00")
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Create Time Window") },
+        title = {
+            Text(if (timeWindow == null) "Create Time Window" else "Edit Time Window")
+        },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -367,11 +409,11 @@ private fun CreateTimeWindowDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onCreate(selectedDays.toList(), startTime, endTime)
+                    onSave(selectedDays.toList(), startTime, endTime)
                 },
                 enabled = selectedDays.isNotEmpty() && startTime.isNotBlank() && endTime.isNotBlank()
             ) {
-                Text("Create")
+                Text(if (timeWindow == null) "Create" else "Save")
             }
         },
         dismissButton = {
