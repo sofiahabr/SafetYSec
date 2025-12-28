@@ -173,8 +173,12 @@ class TimeWindowViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = {
-                    _uiState.update {
-                        it.copy(isLoading = false)
+                    // Optimistically remove the time window from UI immediately
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            timeWindows = currentState.timeWindows.filter { it.id != timeWindowId },
+                            isLoading = false
+                        )
                     }
                 },
                 onFailure = { exception ->

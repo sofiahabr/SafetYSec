@@ -205,8 +205,14 @@ class RulesViewModel @Inject constructor(
 
                 result.fold(
                     onSuccess = {
-                        _uiState.update {
-                            it.copy(isLoading = false)
+                        // Optimistically remove the rule from UI immediately
+                        _uiState.update { currentState ->
+                            val updatedRules = currentState.rules.filter { it.id != ruleId }
+                            currentState.copy(
+                                rules = updatedRules,
+                                filteredRules = filterRules(updatedRules, currentState.selectedFilter),
+                                isLoading = false
+                            )
                         }
                     },
                     onFailure = { exception ->
@@ -242,9 +248,17 @@ class RulesViewModel @Inject constructor(
                 val result = authorizeRuleUseCase(ruleId, user.id)
 
                 result.fold(
-                    onSuccess = {
-                        _uiState.update {
-                            it.copy(isLoading = false)
+                    onSuccess = { updatedRule ->
+                        // Optimistically update the rule in UI
+                        _uiState.update { currentState ->
+                            val updatedRules = currentState.rules.map { rule ->
+                                if (rule.id == ruleId) updatedRule else rule
+                            }
+                            currentState.copy(
+                                rules = updatedRules,
+                                filteredRules = filterRules(updatedRules, currentState.selectedFilter),
+                                isLoading = false
+                            )
                         }
                     },
                     onFailure = { exception ->
@@ -280,9 +294,17 @@ class RulesViewModel @Inject constructor(
                 val result = rejectRuleUseCase(ruleId, user.id)
 
                 result.fold(
-                    onSuccess = {
-                        _uiState.update {
-                            it.copy(isLoading = false)
+                    onSuccess = { updatedRule ->
+                        // Optimistically update the rule in UI
+                        _uiState.update { currentState ->
+                            val updatedRules = currentState.rules.map { rule ->
+                                if (rule.id == ruleId) updatedRule else rule
+                            }
+                            currentState.copy(
+                                rules = updatedRules,
+                                filteredRules = filterRules(updatedRules, currentState.selectedFilter),
+                                isLoading = false
+                            )
                         }
                     },
                     onFailure = { exception ->
@@ -318,9 +340,17 @@ class RulesViewModel @Inject constructor(
                 val result = revokeRuleUseCase(ruleId, user.id)
 
                 result.fold(
-                    onSuccess = {
-                        _uiState.update {
-                            it.copy(isLoading = false)
+                    onSuccess = { updatedRule ->
+                        // Optimistically update the rule in UI
+                        _uiState.update { currentState ->
+                            val updatedRules = currentState.rules.map { rule ->
+                                if (rule.id == ruleId) updatedRule else rule
+                            }
+                            currentState.copy(
+                                rules = updatedRules,
+                                filteredRules = filterRules(updatedRules, currentState.selectedFilter),
+                                isLoading = false
+                            )
                         }
                     },
                     onFailure = { exception ->
