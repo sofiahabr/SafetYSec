@@ -58,11 +58,8 @@ fun ProfileScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(
+            MainTopAppBar(
                 title = "Profile",
-                onNavigationClick = {
-                    navController.navigateUp()
-                },
                 actions = {
                     IconButton(onClick = {
                         navController.navigate("settings")
@@ -129,7 +126,7 @@ fun ProfileScreen(navController: NavController) {
                 // Time Windows Button (only for Protected users)
                 if (isProtected) {
                     SecondaryButton(
-                        text = "⏰ Monitoring Time Windows",
+                        text = "Monitoring Time Windows",
                         onClick = {
                             navController.navigate(AppRoutes.TIME_WINDOWS)
                         }

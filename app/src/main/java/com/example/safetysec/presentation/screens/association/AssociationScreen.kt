@@ -35,9 +35,8 @@ fun AssociationScreen(
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(
-                title = "Associations",
-                onNavigationClick = onNavigateBack
+            MainTopAppBar(
+                title = "Associations"
             )
         },
         bottomBar = {

@@ -34,9 +34,8 @@ fun RulesScreen(
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(
-                title = "Safety Rules",
-                onNavigationClick = { navController.navigateUp() }
+            MainTopAppBar(
+                title = "Safety Rules"
             )
         },
         bottomBar = {
