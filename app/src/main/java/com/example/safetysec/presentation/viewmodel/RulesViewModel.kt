@@ -16,7 +16,8 @@ import javax.inject.Inject
 data class RulesUiState(
     val rules: List<Rule> = emptyList(),
     val filteredRules: List<Rule> = emptyList(),
-    val selectedFilter: RuleStatus? = null,
+    val selectedFilter: RuleStatus? = RuleStatus.AUTHORIZED,
+    val pendingCount: Int = 0,
     val isLoading: Boolean = false,
     val error: String? = null,
     val isMonitor: Boolean = true
@@ -78,10 +79,12 @@ class RulesViewModel @Inject constructor(
                             }
                         }
                         .collect { rules ->
+                            val pendingCount = rules.count { it.status == RuleStatus.PENDING }
                             _uiState.update {
                                 it.copy(
                                     rules = rules,
                                     filteredRules = filterRules(rules, it.selectedFilter),
+                                    pendingCount = pendingCount,
                                     isLoading = false,
                                     error = null
                                 )
@@ -98,10 +101,12 @@ class RulesViewModel @Inject constructor(
                             }
                         }
                         .collect { rules ->
+                            val pendingCount = rules.count { it.status == RuleStatus.PENDING }
                             _uiState.update {
                                 it.copy(
                                     rules = rules,
                                     filteredRules = filterRules(rules, it.selectedFilter),
+                                    pendingCount = pendingCount,
                                     isLoading = false,
                                     error = null
                                 )
@@ -125,11 +130,9 @@ class RulesViewModel @Inject constructor(
     }
 
     private fun filterRules(rules: List<Rule>, status: RuleStatus?): List<Rule> {
-        return if (status == null) {
-            rules
-        } else {
-            rules.filter { it.status == status }
-        }
+        // Always filter by status (default to AUTHORIZED if null)
+        val filterStatus = status ?: RuleStatus.AUTHORIZED
+        return rules.filter { it.status == filterStatus }
     }
 
     /**

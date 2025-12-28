@@ -82,6 +82,7 @@ fun RulesScreen(
                         rules = uiState.filteredRules,
                         isMonitor = uiState.isMonitor,
                         selectedFilter = uiState.selectedFilter,
+                        pendingCount = uiState.pendingCount,
                         navController = navController, // ADDED
                         onFilterChanged = { viewModel.filterByStatus(it) },
                         onAuthorize = { viewModel.authorizeRule(it) },
@@ -112,6 +113,7 @@ private fun RulesContent(
     rules: List<Rule>,
     isMonitor: Boolean,
     selectedFilter: RuleStatus?,
+    pendingCount: Int,
     navController: NavController, // ADDED
     onFilterChanged: (RuleStatus?) -> Unit,
     onAuthorize: (String) -> Unit,
@@ -127,6 +129,7 @@ private fun RulesContent(
         // Filter chips
         StatusFilterChips(
             selectedFilter = selectedFilter,
+            pendingCount = pendingCount,
             onFilterChanged = onFilterChanged,
             isMonitor = isMonitor
         )
@@ -169,6 +172,7 @@ private fun RulesContent(
 @Composable
 private fun StatusFilterChips(
     selectedFilter: RuleStatus?,
+    pendingCount: Int,
     onFilterChanged: (RuleStatus?) -> Unit,
     isMonitor: Boolean
 ) {
@@ -178,12 +182,12 @@ private fun StatusFilterChips(
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // All filter
+        // Authorized filter
         FilterChip(
-            selected = selectedFilter == null,
-            onClick = { onFilterChanged(null) },
-            label = { Text("All") },
-            leadingIcon = if (selectedFilter == null) {
+            selected = selectedFilter == RuleStatus.AUTHORIZED,
+            onClick = { onFilterChanged(RuleStatus.AUTHORIZED) },
+            label = { Text("Authorized") },
+            leadingIcon = if (selectedFilter == RuleStatus.AUTHORIZED) {
                 {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
@@ -193,14 +197,28 @@ private fun StatusFilterChips(
                 }
             } else null,
             colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = PrimaryPurple,
+                selectedContainerColor = Color(0xFF4CAF50),
                 selectedLabelColor = Color.White,
                 selectedLeadingIconColor = Color.White
             )
         )
 
-        if (!isMonitor) {
-            // Pending filter (Protected user)
+        // Pending filter - with badge
+        BadgedBox(
+            badge = {
+                if (pendingCount > 0) {
+                    Badge(
+                        containerColor = Color(0xFFFF5722),
+                        contentColor = Color.White
+                    ) {
+                        Text(
+                            text = pendingCount.toString(),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+            }
+        ) {
             FilterChip(
                 selected = selectedFilter == RuleStatus.PENDING,
                 onClick = { onFilterChanged(RuleStatus.PENDING) },
@@ -222,12 +240,12 @@ private fun StatusFilterChips(
             )
         }
 
-        // Authorized filter
+        // Cancelled filter
         FilterChip(
-            selected = selectedFilter == RuleStatus.AUTHORIZED,
-            onClick = { onFilterChanged(RuleStatus.AUTHORIZED) },
-            label = { Text("Authorized") },
-            leadingIcon = if (selectedFilter == RuleStatus.AUTHORIZED) {
+            selected = selectedFilter == RuleStatus.CANCELLED,
+            onClick = { onFilterChanged(RuleStatus.CANCELLED) },
+            label = { Text("Cancelled") },
+            leadingIcon = if (selectedFilter == RuleStatus.CANCELLED) {
                 {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
@@ -237,7 +255,7 @@ private fun StatusFilterChips(
                 }
             } else null,
             colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = Color(0xFF4CAF50),
+                selectedContainerColor = Color(0xFF9E9E9E),
                 selectedLabelColor = Color.White,
                 selectedLeadingIconColor = Color.White
             )

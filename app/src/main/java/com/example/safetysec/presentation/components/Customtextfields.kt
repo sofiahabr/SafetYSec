@@ -38,6 +38,7 @@ fun CustomTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     errorMessage: String? = null,
+    supportingText: String? = null,
     enabled: Boolean = true,
     singleLine: Boolean = true,
     maxLines: Int = 1,
@@ -74,17 +75,23 @@ fun CustomTextField(
                 onDone = { onImeAction() },
                 onNext = { onImeAction() },
                 onSearch = { onImeAction() }
-            )
+            ),
+            supportingText = if (isError && errorMessage != null) {
+                {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            } else if (supportingText != null) {
+                {
+                    Text(
+                        text = supportingText,
+                        color = Color.Gray
+                    )
+                }
+            } else null
         )
-
-        if (isError && errorMessage != null) {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-            )
-        }
     }
 }
 

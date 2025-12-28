@@ -405,50 +405,128 @@ private fun AddGeofenceAreaDialog(
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
     var radius by remember { mutableStateOf("100") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Validation functions
+    fun validateLatitude(value: String): Boolean {
+        val lat = value.toDoubleOrNull() ?: return false
+        return lat in -90.0..90.0
+    }
+
+    fun validateLongitude(value: String): Boolean {
+        val lon = value.toDoubleOrNull() ?: return false
+        return lon in -180.0..180.0
+    }
+
+    fun validateRadius(value: String): Boolean {
+        val rad = value.toDoubleOrNull() ?: return false
+        return rad > 0 && rad <= 100000 // Max 100km radius
+    }
+
+    fun validateAndCreate() {
+        when {
+            name.isBlank() -> {
+                errorMessage = "Area name is required"
+            }
+            latitude.isBlank() -> {
+                errorMessage = "Latitude is required"
+            }
+            !validateLatitude(latitude) -> {
+                errorMessage = "Latitude must be between -90 and 90"
+            }
+            longitude.isBlank() -> {
+                errorMessage = "Longitude is required"
+            }
+            !validateLongitude(longitude) -> {
+                errorMessage = "Longitude must be between -180 and 180"
+            }
+            radius.isBlank() -> {
+                errorMessage = "Radius is required"
+            }
+            !validateRadius(radius) -> {
+                errorMessage = "Radius must be between 1 and 100,000 meters"
+            }
+            else -> {
+                val area = GeofenceArea(
+                    id = UUID.randomUUID().toString(),
+                    name = name,
+                    latitude = latitude.toDouble(),
+                    longitude = longitude.toDouble(),
+                    radius = radius.toDouble()
+                )
+                onConfirm(area)
+            }
+        }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Add Geofence Area") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                // Error message
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage ?: "",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
                 CustomTextField(
                     value = name,
-                    onValueChange = { name = it },
-                    label = "Area Name"
+                    onValueChange = {
+                        name = it
+                        errorMessage = null
+                    },
+                    label = "Area Name",
+                    placeholder = "e.g., Home, School"
                 )
+
                 CustomTextField(
                     value = latitude,
-                    onValueChange = { latitude = it },
+                    onValueChange = {
+                        latitude = it
+                        errorMessage = null
+                    },
                     label = "Latitude",
-                    keyboardType = KeyboardType.Decimal
+                    placeholder = "e.g., 41.1579",
+                    keyboardType = KeyboardType.Decimal,
+                    supportingText = "Range: -90 to 90"
                 )
+
                 CustomTextField(
                     value = longitude,
-                    onValueChange = { longitude = it },
+                    onValueChange = {
+                        longitude = it
+                        errorMessage = null
+                    },
                     label = "Longitude",
-                    keyboardType = KeyboardType.Decimal
+                    placeholder = "e.g., -8.6291",
+                    keyboardType = KeyboardType.Decimal,
+                    supportingText = "Range: -180 to 180"
                 )
+
                 CustomTextField(
                     value = radius,
-                    onValueChange = { radius = it },
+                    onValueChange = {
+                        radius = it
+                        errorMessage = null
+                    },
                     label = "Radius (meters)",
-                    keyboardType = KeyboardType.Number
+                    placeholder = "100",
+                    keyboardType = KeyboardType.Number,
+                    supportingText = "Range: 1 to 100,000m"
                 )
             }
         },
         confirmButton = {
             Button(
-                onClick = {
-                    val area = GeofenceArea(
-                        id = UUID.randomUUID().toString(),
-                        name = name,
-                        latitude = latitude.toDoubleOrNull() ?: 0.0,
-                        longitude = longitude.toDoubleOrNull() ?: 0.0,
-                        radius = radius.toDoubleOrNull() ?: 100.0
-                    )
-                    onConfirm(area)
-                },
-                enabled = name.isNotBlank() && latitude.isNotBlank() && longitude.isNotBlank()
+                onClick = { validateAndCreate() },
+                enabled = name.isNotBlank() &&
+                        latitude.isNotBlank() &&
+                        longitude.isNotBlank() &&
+                        radius.isNotBlank()
             ) {
                 Text("Add")
             }
