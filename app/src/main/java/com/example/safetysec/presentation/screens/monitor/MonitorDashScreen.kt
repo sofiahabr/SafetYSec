@@ -36,7 +36,7 @@ fun MonitorDashScreen(
     viewModel: MonitorDashboardViewModel = hiltViewModel(),
     showBottomBar: Boolean = true
 ) {
-    val state = viewModel.dashboardState.value
+    val state by viewModel.dashboardState.collectAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -52,7 +52,7 @@ fun MonitorDashScreen(
             }
 
             state.error != null -> {
-                ErrorAlert(message = state.error)
+                ErrorAlert(message = state.error!!)
             }
 
             else -> {
@@ -245,7 +245,7 @@ fun MonitorDashboardContent(
             recentAlerts.take(3).forEach { alert ->
                 AlertEventCard(
                     title = alert.type.toDisplayString(),
-                    subtitle = "${alert.protectedUserName} • ${getTimeAgo(alert.timestamp)}",
+                    subtitle = "${alert.protectedUserName} â€¢ ${getTimeAgo(alert.timestamp)}",
                     details = alert.details,
                     location = alert.getFormattedLocation(),
                     onActionClick = { /* Handle action */ },
