@@ -32,7 +32,12 @@ object AppRoutes {
     const val CHANGE_PASSWORD = "change_password"
     const val SETTINGS = "settings"
 
+    // Dashboard Routes
     const val MONITOR = "monitor"
+    const val PROTECTED_DASHBOARD = "protected_dashboard"
+
+    // Monitoring Routes (NEW)
+    const val MONITORING_CONTROL = "monitoring_control"
 
     // Utility Routes
     const val SHOWCASE = "showcase"

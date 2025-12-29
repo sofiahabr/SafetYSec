@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.theme.PrimaryPurple
 
 /**
@@ -43,31 +44,31 @@ data class BottomNavItem(
 fun getBottomNavItems(): List<BottomNavItem> {
     return listOf(
         BottomNavItem(
-            route = "dashboard",
+            route = AppRoutes.DASHBOARD,
             label = "Dashboard",
             selectedIcon = Icons.Filled.Dashboard,
             unselectedIcon = Icons.Outlined.Dashboard
         ),
         BottomNavItem(
-            route = "associations",
+            route = AppRoutes.ASSOCIATIONS,
             label = "Association",
             selectedIcon = Icons.Filled.People,
             unselectedIcon = Icons.Outlined.People
         ),
         BottomNavItem(
-            route = "rules",
+            route = AppRoutes.RULES,
             label = "Rules",
             selectedIcon = Icons.Filled.Rule,
             unselectedIcon = Icons.Outlined.Rule
         ),
         BottomNavItem(
-            route = "alerts",
+            route = AppRoutes.ALERTS,
             label = "Alerts",
             selectedIcon = Icons.Filled.Notifications,
             unselectedIcon = Icons.Outlined.Notifications
         ),
         BottomNavItem(
-            route = "profile",
+            route = AppRoutes.PROFILE,
             label = "Profile",
             selectedIcon = Icons.Filled.Person,
             unselectedIcon = Icons.Outlined.Person
@@ -131,15 +132,29 @@ fun BottomNavigationBar(
                 selected = isSelected,
                 onClick = {
                     if (!isSelected) {
-                        navController.navigate(item.route) {
-                            // Pop up to the start destination to avoid building up a large stack
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
+                        // Special handling for Dashboard - always clear back stack
+                        if (item.route == AppRoutes.DASHBOARD) {
+                            navController.navigate(item.route) {
+                                // Pop everything up to and including the current dashboard
+                                popUpTo(AppRoutes.DASHBOARD) {
+                                    inclusive = true
+                                }
+                                // Launch fresh dashboard
+                                launchSingleTop = true
+                                // Don't restore state for dashboard - always fresh
+                                restoreState = false
                             }
-                            // Avoid multiple copies of the same destination
-                            launchSingleTop = true
-                            // Restore state when reselecting a previously selected item
-                            restoreState = true
+                        } else {
+                            // For other tabs, pop to dashboard and navigate
+                            navController.navigate(item.route) {
+                                // Pop up to dashboard but don't remove it
+                                popUpTo(AppRoutes.DASHBOARD) {
+                                    saveState = true
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
                 },
@@ -165,7 +180,7 @@ fun BottomNavigationBarWithBadges(
     alertCount: Int = 0
 ) {
     val items = getBottomNavItems().map { item ->
-        if (item.route == "alerts") {
+        if (item.route == AppRoutes.ALERTS) {
             item.copy(badgeCount = alertCount)
         } else {
             item

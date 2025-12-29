@@ -13,17 +13,20 @@ import androidx.navigation.navArgument
 import com.example.safetysec.presentation.screens.association.AssociationScreen
 import com.example.safetysec.presentation.screens.auth.LogInScreen
 import com.example.safetysec.presentation.screens.auth.RegistrationScreen
+import com.example.safetysec.presentation.screens.dashboard.DashboardScreen
 import com.example.safetysec.presentation.screens.home.HomeScreen
 import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
 import com.example.safetysec.presentation.screens.profile.ChangePasswordScreen
 import com.example.safetysec.presentation.screens.profile.EditProfileScreen
 import com.example.safetysec.presentation.screens.profile.ProfileScreen
 import com.example.safetysec.presentation.screens.profile.SettingsScreen
+import com.example.safetysec.presentation.screens.protected.ProtectedDashboardScreen
 import com.example.safetysec.presentation.screens.rules.CreateRuleScreen
 import com.example.safetysec.presentation.screens.rules.EditRuleScreen
 import com.example.safetysec.presentation.screens.rules.RulesScreen
 import com.example.safetysec.presentation.screens.showcase.ComponentsShowcaseScreen
 import com.example.safetysec.presentation.screens.timewindows.TimeWindowsScreen
+import com.example.safetysec.presentation.protectedUser.MonitoringControlScreen
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
 
@@ -74,14 +77,34 @@ fun AppNavHost(
             )
         }
 
-        // Main screens (with bottom navigation)
+        // Main Dashboard - Smart routing based on user role
         composable(AppRoutes.DASHBOARD) {
+            DashboardScreen(
+                navController = navController,
+                authViewModel = authViewModel
+            )
+        }
+
+        // Role-specific dashboards (can be accessed directly)
+        composable(AppRoutes.MONITOR) {
             MonitorDashScreen(
                 navController = navController,
                 viewModel = monitorViewModel
             )
         }
 
+        composable(AppRoutes.PROTECTED_DASHBOARD) {
+            ProtectedDashboardScreen(navController = navController)
+        }
+
+        // Monitoring Control Screen (NEW)
+        composable(AppRoutes.MONITORING_CONTROL) {
+            MonitoringControlScreen(
+                onNavigateBack = { navController.navigateUp() }
+            )
+        }
+
+        // Main screens (with bottom navigation)
         composable(AppRoutes.ASSOCIATIONS) {
             AssociationScreen(
                 navController = navController,
@@ -126,13 +149,6 @@ fun AppNavHost(
         }
 
         // Other screens
-        composable(AppRoutes.MONITOR) {
-            MonitorDashScreen(
-                navController = navController,
-                viewModel = monitorViewModel
-            )
-        }
-
         composable(AppRoutes.HOME) {
             HomeScreen(navController = navController)
         }
