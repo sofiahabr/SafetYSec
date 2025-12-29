@@ -12,10 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.navigation.AppRoutes
-import com.example.safetysec.presentation.protected.MonitoringViewModel
+import com.example.safetysec.presentation.protectedUser.MonitoringViewModel
 import com.example.safetysec.presentation.theme.*
 
 /**
@@ -31,6 +30,7 @@ import com.example.safetysec.presentation.theme.*
 fun ProtectedDashboardScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
+    showBottomBar: Boolean = true,
     monitoringViewModel: MonitoringViewModel = hiltViewModel()
 ) {
     val monitoringState by monitoringViewModel.monitoringState.collectAsState()
@@ -38,7 +38,9 @@ fun ProtectedDashboardScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
-            BottomNavigationBar(navController = navController)
+            if (showBottomBar) {
+                BottomNavigationBar(navController = navController)
+            }
         }
     ) { innerPadding ->
         Column(

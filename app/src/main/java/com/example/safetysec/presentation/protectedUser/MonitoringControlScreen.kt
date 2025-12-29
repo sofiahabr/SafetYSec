@@ -28,6 +28,7 @@ import com.example.safetysec.presentation.theme.*
  *
  * Allows Protected users to start/stop monitoring and trigger panic button
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonitoringControlScreen(
     modifier: Modifier = Modifier,
