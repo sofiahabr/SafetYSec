@@ -1,6 +1,9 @@
 package com.example.safetysec.di
+
 import com.example.safetysec.data.repository.MonitorRepositoryImpl
+import com.example.safetysec.data.repository.RuleRepositoryImpl
 import com.example.safetysec.domain.repository.MonitorRepository
+import com.example.safetysec.domain.repository.RuleRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,4 +19,10 @@ abstract class RepositoryModule {
     abstract fun bindMonitorRepository(
         impl: MonitorRepositoryImpl
     ): MonitorRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRuleRepository(
+        impl: RuleRepositoryImpl
+    ): RuleRepository
 }

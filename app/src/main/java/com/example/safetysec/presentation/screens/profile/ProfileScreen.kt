@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.safetysec.domain.model.MockUserData
 import com.example.safetysec.domain.model.UserRole
-import com.example.safetysec.navigation.AppRoutes
+import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
@@ -31,6 +31,7 @@ import com.example.safetysec.presentation.viewmodel.AuthViewModel
  * Displays user profile information and provides access to:
  * - Edit profile
  * - Change password
+ * - Time Windows (for Protected users)
  * - Settings
  * - Logout
  */
@@ -52,13 +53,13 @@ fun ProfileScreen(navController: NavController) {
 
     var showLogoutDialog by remember { mutableStateOf(false) }
 
+    // Check if user has Protected role
+    val isProtected = user.role == UserRole.PROTECTED || user.role == UserRole.DUAL
+
     Scaffold(
         topBar = {
-            CustomTopAppBar(
+            MainTopAppBar(
                 title = "Profile",
-                onNavigationClick = {
-                    navController.navigateUp()
-                },
                 actions = {
                     IconButton(onClick = {
                         navController.navigate("settings")
@@ -71,7 +72,7 @@ fun ProfileScreen(navController: NavController) {
                 }
             )
         },
-                bottomBar = {
+        bottomBar = {
             BottomNavigationBar(navController = navController)
         }
     ) { paddingValues ->
@@ -121,6 +122,16 @@ fun ProfileScreen(navController: NavController) {
                         navController.navigate("change_password")
                     }
                 )
+
+                // Time Windows Button (only for Protected users)
+                if (isProtected) {
+                    SecondaryButton(
+                        text = "Monitoring Time Windows",
+                        onClick = {
+                            navController.navigate(AppRoutes.TIME_WINDOWS)
+                        }
+                    )
+                }
 
                 // Settings Button
                 SecondaryButton(

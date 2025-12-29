@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.safetysec.navigation.AppRoutes
+import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.safetysec.presentation.components.*
