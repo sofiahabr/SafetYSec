@@ -55,6 +55,7 @@ dependencies {
 
     // Hilt Dependency Injection
     implementation("com.google.dagger:hilt-android:2.48.1")
+    implementation(libs.androidx.media3.exoplayer)
     ksp("com.google.dagger:hilt-compiler:2.48.1")
 
     // Jetpack Compose - Use BOM for version alignment
