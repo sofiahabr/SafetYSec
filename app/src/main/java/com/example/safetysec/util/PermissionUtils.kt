@@ -30,6 +30,11 @@ object PermissionUtils {
             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
         }
 
+        // Android 14+ (API 34+) requires FOREGROUND_SERVICE_LOCATION for location-based foreground services
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            permissions.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION)
+        }
+
         return permissions
     }
 

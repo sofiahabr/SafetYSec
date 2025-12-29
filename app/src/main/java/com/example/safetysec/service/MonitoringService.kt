@@ -1,5 +1,6 @@
 package com.example.safetysec.service
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,9 +8,14 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import com.example.safetysec.MainActivity
 import com.example.safetysec.R
 import com.example.safetysec.domain.model.DetectionResult
@@ -55,12 +61,43 @@ class MonitoringService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand: action=${intent?.action}")
+
         when (intent?.action) {
-            ACTION_START_MONITORING -> startMonitoring()
+            ACTION_START_MONITORING -> {
+                // CRITICAL: Check permissions before starting
+                if (!hasRequiredPermissions()) {
+                    Log.e(TAG, "Cannot start monitoring: missing required permissions")
+                    stopSelf()
+                    return START_NOT_STICKY
+                }
+                startMonitoring()
+            }
             ACTION_STOP_MONITORING -> stopMonitoring()
         }
 
         return START_STICKY
+    }
+
+    /**
+     * CRITICAL: Check if all required permissions are granted
+     * Required for Android 14+ (API 34+) to start foreground service
+     */
+    private fun hasRequiredPermissions(): Boolean {
+        val requiredPermissions = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+
+        // Android 14+ requires FOREGROUND_SERVICE_LOCATION
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            requiredPermissions.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION)
+        }
+
+        return requiredPermissions.all { permission ->
+            ContextCompat.checkSelfPermission(this, permission) ==
+                    PackageManager.PERMISSION_GRANTED
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -74,36 +111,62 @@ class MonitoringService : Service() {
     }
 
     private fun startMonitoring() {
-        // Save monitoring state for boot receiver
-        saveMonitoringState(true)
+        try {
+            // Save monitoring state for boot receiver
+            saveMonitoringState(true)
 
-        // Create foreground notification
-        val notification = createNotification(
-            "Monitoring Active",
-            "SafetYSec is protecting you"
-        )
+            // Create foreground notification
+            val notification = createNotification(
+                "Monitoring Active",
+                "SafetYSec is protecting you"
+            )
 
-        startForeground(NOTIFICATION_ID, notification)
+            // Start foreground with proper type for Android 14+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                // Android 14+ (API 34+): Use ServiceInfo constant for location
+                ServiceCompat.startForeground(
+                    this,
+                    NOTIFICATION_ID,
+                    notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                )
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10-13: Use standard startForeground
+                startForeground(NOTIFICATION_ID, notification)
+            } else {
+                // Android 9 and below
+                startForeground(NOTIFICATION_ID, notification)
+            }
 
-        // Start monitoring loop
-        monitoringJob = serviceScope.launch {
-            // Start monitoring in repository
-            monitoringRepository.startMonitoring()
+            Log.d(TAG, "Foreground service started successfully")
 
-            // Start collecting sensor data
-            sensorDataCollector.startCollecting()
-            locationTracker.startTracking()
+            // Start monitoring loop
+            monitoringJob = serviceScope.launch {
+                // Start monitoring in repository
+                monitoringRepository.startMonitoring()
 
-            // Main monitoring loop
-            while (isActive) {
-                try {
-                    performMonitoringCycle()
-                    delay(MONITORING_INTERVAL_MS)
-                } catch (e: Exception) {
-                    // Log error but continue monitoring
-                    e.printStackTrace()
+                // Start collecting sensor data
+                sensorDataCollector.startCollecting()
+                locationTracker.startTracking()
+
+                // Main monitoring loop
+                while (isActive) {
+                    try {
+                        performMonitoringCycle()
+                        delay(MONITORING_INTERVAL_MS)
+                    } catch (e: Exception) {
+                        // Log error but continue monitoring
+                        Log.e(TAG, "Error in monitoring cycle", e)
+                        e.printStackTrace()
+                    }
                 }
             }
+        } catch (e: SecurityException) {
+            Log.e(TAG, "SecurityException starting foreground service", e)
+            stopSelf()
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception starting monitoring", e)
+            stopSelf()
         }
     }
 
@@ -121,7 +184,7 @@ class MonitoringService : Service() {
             monitoringRepository.stopMonitoring()
         }
 
-        stopForeground(true)
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
@@ -250,7 +313,7 @@ class MonitoringService : Service() {
         val activeDetections = detectionResults.count { it.isTriggered }
 
         val title = if (activeDetections > 0) {
-            "⚠️ $activeDetections Detection(s)"
+            "âš ï¸ $activeDetections Detection(s)"
         } else {
             "Monitoring Active"
         }
@@ -348,6 +411,7 @@ class MonitoringService : Service() {
     }
 
     companion object {
+        private const val TAG = "MonitoringService"
         const val ACTION_START_MONITORING = "com.example.safetysec.START_MONITORING"
         const val ACTION_STOP_MONITORING = "com.example.safetysec.STOP_MONITORING"
 
@@ -365,10 +429,14 @@ class MonitoringService : Service() {
                 action = ACTION_START_MONITORING
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to start monitoring service", e)
             }
         }
 

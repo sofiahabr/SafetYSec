@@ -1,4 +1,4 @@
-package com.example.safetysec.presentation.screens.protected
+package com.example.safetysec.presentation.screens.protectedUser
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -31,12 +31,20 @@ fun ProtectedDashboardScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     showBottomBar: Boolean = true,
+    showTopBar: Boolean = true,
     monitoringViewModel: MonitoringViewModel = hiltViewModel()
 ) {
     val monitoringState by monitoringViewModel.monitoringState.collectAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            if (showTopBar) {
+                MainTopAppBar(
+                    title = "Protected Dashboard"
+                )
+            }
+        },
         bottomBar = {
             if (showBottomBar) {
                 BottomNavigationBar(navController = navController)
@@ -51,15 +59,6 @@ fun ProtectedDashboardScreen(
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Header
-            Text(
-                text = "Protected Dashboard",
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
             // Monitoring Control Card - Primary feature
             MonitoringDashboardCard(
                 monitoringState = monitoringState,

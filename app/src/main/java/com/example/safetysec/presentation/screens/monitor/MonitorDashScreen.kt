@@ -34,12 +34,20 @@ fun MonitorDashScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: MonitorDashboardViewModel = hiltViewModel(),
-    showBottomBar: Boolean = true
+    showBottomBar: Boolean = true,
+    showTopBar: Boolean = true
 ) {
-    val state = viewModel.dashboardState.value
+    val state by viewModel.dashboardState.collectAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            if (showTopBar) {
+                MainTopAppBar(
+                    title = "Monitor Dashboard"
+                )
+            }
+        },
         bottomBar = {
             if (showBottomBar) {
                 BottomNavigationBar(navController = navController)
@@ -52,7 +60,7 @@ fun MonitorDashScreen(
             }
 
             state.error != null -> {
-                ErrorAlert(message = state.error)
+                ErrorAlert(message = state.error!!)
             }
 
             else -> {
@@ -83,15 +91,6 @@ fun MonitorDashboardContent(
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Header
-        Text(
-            text = "Monitor Dashboard",
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
         // Stats Row
         Row(
             modifier = Modifier
@@ -245,7 +244,7 @@ fun MonitorDashboardContent(
             recentAlerts.take(3).forEach { alert ->
                 AlertEventCard(
                     title = alert.type.toDisplayString(),
-                    subtitle = "${alert.protectedUserName} • ${getTimeAgo(alert.timestamp)}",
+                    subtitle = "${alert.protectedUserName} â€¢ ${getTimeAgo(alert.timestamp)}",
                     details = alert.details,
                     location = alert.getFormattedLocation(),
                     onActionClick = { /* Handle action */ },
