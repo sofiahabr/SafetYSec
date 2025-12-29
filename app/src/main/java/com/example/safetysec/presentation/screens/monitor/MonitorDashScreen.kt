@@ -244,7 +244,7 @@ fun MonitorDashboardContent(
             recentAlerts.take(3).forEach { alert ->
                 AlertEventCard(
                     title = alert.type.toDisplayString(),
-                    subtitle = "${alert.protectedUserName} â€¢ ${getTimeAgo(alert.timestamp)}",
+                    subtitle = "${alert.protectedUserName}  ${getTimeAgo(alert.timestamp)}",
                     details = alert.details,
                     location = alert.getFormattedLocation(),
                     onActionClick = { /* Handle action */ },
