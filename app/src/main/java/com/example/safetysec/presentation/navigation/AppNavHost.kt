@@ -20,7 +20,7 @@ import com.example.safetysec.presentation.screens.profile.ChangePasswordScreen
 import com.example.safetysec.presentation.screens.profile.EditProfileScreen
 import com.example.safetysec.presentation.screens.profile.ProfileScreen
 import com.example.safetysec.presentation.screens.profile.SettingsScreen
-import com.example.safetysec.presentation.screens.protected.ProtectedDashboardScreen
+import com.example.safetysec.presentation.screens.protectedUser.ProtectedDashboardScreen
 import com.example.safetysec.presentation.screens.rules.CreateRuleScreen
 import com.example.safetysec.presentation.screens.rules.EditRuleScreen
 import com.example.safetysec.presentation.screens.rules.RulesScreen

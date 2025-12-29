@@ -34,16 +34,19 @@ fun MonitorDashScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: MonitorDashboardViewModel = hiltViewModel(),
-    showBottomBar: Boolean = true
+    showBottomBar: Boolean = true,
+    showTopBar: Boolean = true
 ) {
     val state by viewModel.dashboardState.collectAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            MainTopAppBar(
-                title = "Monitor Dashboard"
-            )
+            if (showTopBar) {
+                MainTopAppBar(
+                    title = "Monitor Dashboard"
+                )
+            }
         },
         bottomBar = {
             if (showBottomBar) {

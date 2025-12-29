@@ -1,5 +1,6 @@
 package com.example.safetysec.presentation.screens.dashboard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -7,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -104,47 +106,65 @@ fun DualDashboardScreen(
 
     Scaffold(
         topBar = {
-            // TopAppBar with Tabs inside
-            TopAppBar(
-                title = {
-                    TabRow(
-                        selectedTabIndex = selectedTab,
-                        containerColor = Color.Transparent,
-                        contentColor = Color.White,
-                        indicator = { tabPositions ->
-                            TabRowDefaults.SecondaryIndicator(
-                                Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                                color = Color.White
-                            )
-                        }
-                    ) {
-                        Tab(
-                            selected = selectedTab == 0,
-                            onClick = { selectedTab = 0 },
-                            text = {
-                                Text(
-                                    "Protected",
-                                    color = Color.White
-                                )
-                            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(PrimaryPurple)
+            ) {
+                // Title bar
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Dashboard",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge
                         )
-                        Tab(
-                            selected = selectedTab == 1,
-                            onClick = { selectedTab = 1 },
-                            text = {
-                                Text(
-                                    "Monitor",
-                                    color = Color.White
-                                )
-                            }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = PrimaryPurple,
+                        titleContentColor = Color.White
+                    )
+                )
+
+                // Tab row below title
+                TabRow(
+                    selectedTabIndex = selectedTab,
+                    containerColor = PrimaryPurple,
+                    contentColor = Color.White,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.SecondaryIndicator(
+                            Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                            color = Color.White,
+                            height = 3.dp
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = PrimaryPurple,
-                    titleContentColor = Color.White
-                )
-            )
+                ) {
+                    Tab(
+                        selected = selectedTab == 0,
+                        onClick = { selectedTab = 0 },
+                        text = {
+                            Text(
+                                text = "Protected",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    )
+                    Tab(
+                        selected = selectedTab == 1,
+                        onClick = { selectedTab = 1 },
+                        text = {
+                            Text(
+                                text = "Monitor",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    )
+                }
+            }
         },
         bottomBar = {
             BottomNavigationBar(navController = navController)
@@ -157,19 +177,21 @@ fun DualDashboardScreen(
         ) {
             when (selectedTab) {
                 0 -> {
-                    // Protected Dashboard (no bottom nav - parent has it)
+                    // Protected Dashboard (no top bar or bottom nav - parent has them)
                     ProtectedDashboardScreen(
                         navController = navController,
                         showBottomBar = false,
+                        showTopBar = false,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
                 1 -> {
-                    // Monitor Dashboard (no bottom nav - parent has it)
+                    // Monitor Dashboard (no top bar or bottom nav - parent has them)
                     MonitorDashScreen(
                         navController = navController,
                         viewModel = monitorViewModel,
-                        showBottomBar = false
+                        showBottomBar = false,
+                        showTopBar = false
                     )
                 }
             }

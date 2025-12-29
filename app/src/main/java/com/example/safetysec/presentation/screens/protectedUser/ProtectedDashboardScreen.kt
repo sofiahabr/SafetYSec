@@ -31,6 +31,7 @@ fun ProtectedDashboardScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     showBottomBar: Boolean = true,
+    showTopBar: Boolean = true,
     monitoringViewModel: MonitoringViewModel = hiltViewModel()
 ) {
     val monitoringState by monitoringViewModel.monitoringState.collectAsState()
@@ -38,9 +39,11 @@ fun ProtectedDashboardScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            MainTopAppBar(
-                title = "Protected Dashboard"
-            )
+            if (showTopBar) {
+                MainTopAppBar(
+                    title = "Protected Dashboard"
+                )
+            }
         },
         bottomBar = {
             if (showBottomBar) {
