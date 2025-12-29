@@ -13,7 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.safetysec.domain.model.UserRole
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
-import com.example.safetysec.presentation.screens.protected.ProtectedDashboardScreen
+import com.example.safetysec.presentation.screens.protectedUser.ProtectedDashboardScreen
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel

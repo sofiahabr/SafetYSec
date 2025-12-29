@@ -40,6 +40,11 @@ fun MonitorDashScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            MainTopAppBar(
+                title = "Monitor Dashboard"
+            )
+        },
         bottomBar = {
             if (showBottomBar) {
                 BottomNavigationBar(navController = navController)
@@ -83,15 +88,6 @@ fun MonitorDashboardContent(
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Header
-        Text(
-            text = "Monitor Dashboard",
-            style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
         // Stats Row
         Row(
             modifier = Modifier
