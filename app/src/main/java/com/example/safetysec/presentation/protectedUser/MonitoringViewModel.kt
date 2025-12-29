@@ -3,7 +3,14 @@ package com.example.safetysec.presentation.protectedUser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.safetysec.domain.model.MonitoringState
-import com.example.safetysec.domain.usecase.*
+import com.example.safetysec.domain.model.SensorData
+import com.example.safetysec.domain.repository.MonitoringRepository
+import com.example.safetysec.domain.usecase.StartMonitoringUseCase
+import com.example.safetysec.domain.usecase.StopMonitoringUseCase
+import com.example.safetysec.domain.usecase.alert.TriggerPanicButtonUseCase
+import com.example.safetysec.domain.usecase.monitoring.*
+import com.example.safetysec.service.LocationTracker
+import com.example.safetysec.service.SensorDataCollector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,70 +25,55 @@ import javax.inject.Inject
 class MonitoringViewModel @Inject constructor(
     private val startMonitoringUseCase: StartMonitoringUseCase,
     private val stopMonitoringUseCase: StopMonitoringUseCase,
-    private val getMonitoringStateUseCase: GetMonitoringStateUseCase,
-    private val checkActiveTimeWindowUseCase: CheckActiveTimeWindowUseCase,
+    private val monitoringRepository: MonitoringRepository,
+    private val sensorDataCollector: SensorDataCollector,
+    private val locationTracker: LocationTracker,
     private val triggerPanicButtonUseCase: TriggerPanicButtonUseCase
 ) : ViewModel() {
 
-    // Monitoring state from repository
-    val monitoringState: StateFlow<MonitoringState> = getMonitoringStateUseCase()
+    private val _uiState = MutableStateFlow<MonitoringUiState>(MonitoringUiState.Idle)
+    val uiState: StateFlow<MonitoringUiState> = _uiState.asStateFlow()
+
+    // Add permission tracking
+    private val _hasRequiredPermissions = MutableStateFlow(false)
+    val hasRequiredPermissions: StateFlow<Boolean> = _hasRequiredPermissions.asStateFlow()
+
+    val monitoringState: StateFlow<MonitoringState> = monitoringRepository
+        .getMonitoringStateFlow()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = MonitoringState()
         )
 
-    // UI state
-    private val _uiState = MutableStateFlow<MonitoringUiState>(MonitoringUiState.Idle)
-    val uiState: StateFlow<MonitoringUiState> = _uiState.asStateFlow()
+    // Add permission update method
+    fun updatePermissionStatus(granted: Boolean) {
+        _hasRequiredPermissions.value = granted
+    }
 
-    // Permission state
-    private val _hasRequiredPermissions = MutableStateFlow(false)
-    val hasRequiredPermissions: StateFlow<Boolean> = _hasRequiredPermissions.asStateFlow()
-
-    /**
-     * Start monitoring
-     */
     fun startMonitoring() {
         viewModelScope.launch {
             _uiState.value = MonitoringUiState.Loading
 
             val result = startMonitoringUseCase()
-
-            _uiState.value = if (result.isSuccess) {
-                MonitoringUiState.Success("Monitoring started successfully")
-            } else {
-                MonitoringUiState.Error(
-                    result.exceptionOrNull()?.message ?: "Failed to start monitoring"
-                )
+            result.onSuccess {
+                _uiState.value = MonitoringUiState.Success("Monitoring started")
+            }.onFailure { error ->
+                _uiState.value = MonitoringUiState.Error(error.message ?: "Failed to start monitoring")
             }
-
-            // Reset to idle after showing message
-            kotlinx.coroutines.delay(2000)
-            _uiState.value = MonitoringUiState.Idle
         }
     }
 
-    /**
-     * Stop monitoring
-     */
     fun stopMonitoring() {
         viewModelScope.launch {
             _uiState.value = MonitoringUiState.Loading
 
             val result = stopMonitoringUseCase()
-
-            _uiState.value = if (result.isSuccess) {
-                MonitoringUiState.Success("Monitoring stopped")
-            } else {
-                MonitoringUiState.Error(
-                    result.exceptionOrNull()?.message ?: "Failed to stop monitoring"
-                )
+            result.onSuccess {
+                _uiState.value = MonitoringUiState.Success("Monitoring stopped")
+            }.onFailure { error ->
+                _uiState.value = MonitoringUiState.Error(error.message ?: "Failed to stop monitoring")
             }
-
-            // Reset to idle after showing message
-            kotlinx.coroutines.delay(2000)
-            _uiState.value = MonitoringUiState.Idle
         }
     }
 
@@ -92,49 +84,49 @@ class MonitoringViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = MonitoringUiState.Loading
 
-            val result = triggerPanicButtonUseCase()
-
-            _uiState.value = if (result.isSuccess) {
-                MonitoringUiState.Success("Panic alert sent to monitors")
-            } else {
-                MonitoringUiState.Error(
-                    result.exceptionOrNull()?.message ?: "Failed to send panic alert"
-                )
-            }
-
-            // Reset to idle after showing message
-            kotlinx.coroutines.delay(2000)
-            _uiState.value = MonitoringUiState.Idle
-        }
-    }
-
-    /**
-     * Update permission status
-     */
-    fun updatePermissionStatus(hasPermissions: Boolean) {
-        _hasRequiredPermissions.value = hasPermissions
-    }
-
-    /**
-     * Check if currently in active time window
-     */
-    fun checkTimeWindow(protectedUserId: String) {
-        viewModelScope.launch {
             try {
-                val isInWindow = checkActiveTimeWindowUseCase(protectedUserId)
-                // State is already updated via monitoringState flow
-            } catch (e: Exception) {
-                _uiState.value = MonitoringUiState.Error(
-                    "Failed to check time window: ${e.message}"
+                // Collect current sensor data
+                val accelerometerData = sensorDataCollector.getAccelerometerData()
+                val gyroscopeData = sensorDataCollector.getGyroscopeData()
+                val activityData = sensorDataCollector.getActivityData()
+                val locationData = locationTracker.getCurrentLocation()
+
+                val sensorData = SensorData(
+                    timestamp = System.currentTimeMillis(),
+                    accelerometerX = accelerometerData.x,
+                    accelerometerY = accelerometerData.y,
+                    accelerometerZ = accelerometerData.z,
+                    gyroscopeX = gyroscopeData.x,
+                    gyroscopeY = gyroscopeData.y,
+                    gyroscopeZ = gyroscopeData.z,
+                    latitude = locationData.latitude,
+                    longitude = locationData.longitude,
+                    speed = locationData.speed,
+                    accuracy = locationData.accuracy,
+                    activityType = activityData.type,
+                    activityConfidence = activityData.confidence
                 )
+
+                // Trigger panic button alert
+                val result = triggerPanicButtonUseCase(sensorData)
+
+                result.onSuccess { alert ->
+                    _uiState.value = MonitoringUiState.Success("Emergency alert sent to monitors!")
+                }.onFailure { error ->
+                    _uiState.value = MonitoringUiState.Error(error.message ?: "Failed to send panic alert")
+                }
+            } catch (e: Exception) {
+                _uiState.value = MonitoringUiState.Error("Error: ${e.message}")
             }
         }
+    }
+
+    // Add method to clear UI state
+    fun clearUiState() {
+        _uiState.value = MonitoringUiState.Idle
     }
 }
 
-/**
- * Monitoring UI State
- */
 sealed class MonitoringUiState {
     object Idle : MonitoringUiState()
     object Loading : MonitoringUiState()

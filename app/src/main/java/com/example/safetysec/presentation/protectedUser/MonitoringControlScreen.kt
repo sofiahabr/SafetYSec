@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.safetysec.domain.model.MonitoringState
@@ -75,12 +76,16 @@ fun MonitoringControlScreen(
                     message = state.message,
                     duration = SnackbarDuration.Short
                 )
+                // Clear state after showing
+                viewModel.clearUiState()
             }
             is MonitoringUiState.Error -> {
                 snackbarHostState.showSnackbar(
                     message = state.message,
                     duration = SnackbarDuration.Long
                 )
+                // Clear state after showing
+                viewModel.clearUiState()
             }
             else -> {}
         }
@@ -159,22 +164,21 @@ fun MonitoringControlScreen(
                 )
             } else {
                 if (monitoringState.isRunning) {
+                    // Panic Button - Prominent placement
+                    PanicButtonSection(
+                        onPanicPressed = { viewModel.triggerPanicButton() },
+                        enabled = uiState !is MonitoringUiState.Loading,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     // Stop Monitoring Button
                     SecondaryButton(
                         text = "Stop Monitoring",
                         onClick = { viewModel.stopMonitoring() },
                         enabled = uiState !is MonitoringUiState.Loading,
                         isLoading = uiState is MonitoringUiState.Loading,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Panic Button
-                    DangerButton(
-                        text = "🚨 PANIC BUTTON",
-                        onClick = { viewModel.triggerPanicButton() },
-                        enabled = true,
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
@@ -419,7 +423,8 @@ private fun PermissionRequiredCard(
             Text(
                 text = "SafetYSec needs location and activity recognition permissions to monitor your safety.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextSecondary
+                color = TextSecondary,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -482,6 +487,86 @@ private fun SensorDataCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
+        }
+    }
+}
+
+/**
+ * Panic Button Section - Prominent Emergency Button
+ */
+@Composable
+fun PanicButtonSection(
+    onPanicPressed: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFFFEBEE)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = null,
+                tint = Color(0xFFD32F2F),
+                modifier = Modifier.size(48.dp)
+            )
+
+            Text(
+                text = "Emergency Alert",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFD32F2F)
+            )
+
+            Text(
+                text = "Press this button in case of emergency. Your monitors will be notified immediately.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextSecondary,
+                textAlign = TextAlign.Center
+            )
+
+            Button(
+                onClick = onPanicPressed,
+                enabled = enabled,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD32F2F),
+                    disabledContainerColor = Color.Gray
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = "Panic",
+                        modifier = Modifier.size(32.dp),
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "PANIC BUTTON",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
         }
     }
 }
