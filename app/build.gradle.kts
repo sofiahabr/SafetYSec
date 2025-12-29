@@ -119,4 +119,18 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // CameraX for video recording
+    implementation("androidx.camera:camera-core:1.3.0")
+    implementation("androidx.camera:camera-camera2:1.3.0")
+    implementation("androidx.camera:camera-lifecycle:1.3.0")
+    implementation("androidx.camera:camera-video:1.3.0")
+    implementation("androidx.camera:camera-view:1.3.0")
+
+// ExoPlayer for video playback
+    implementation("androidx.media3:media3-exoplayer:1.2.0")
+    implementation("androidx.media3:media3-ui:1.2.0")
+
+// Firebase Cloud Messaging
+    implementation("com.google.firebase:firebase-messaging-ktx:23.4.0")
 }

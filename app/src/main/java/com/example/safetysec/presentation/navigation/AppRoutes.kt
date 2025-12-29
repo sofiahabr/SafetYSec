@@ -17,6 +17,9 @@ object AppRoutes {
     const val ALERTS = "alerts"
     const val PROFILE = "profile"
 
+    // Alert Sub-Routes
+    const val ALERT_DETAIL = "alert_detail/{alertId}"
+
     // Rules Sub-Routes
     const val CREATE_RULE = "create_rule"
     const val EDIT_RULE = "edit_rule/{ruleId}"
@@ -36,7 +39,7 @@ object AppRoutes {
     const val MONITOR = "monitor"
     const val PROTECTED_DASHBOARD = "protected_dashboard"
 
-    // Monitoring Routes (NEW)
+    // Monitoring Routes
     const val MONITORING_CONTROL = "monitoring_control"
 
     // Utility Routes
@@ -44,6 +47,7 @@ object AppRoutes {
     const val HOME = "home"
 
     // Helper functions for parameterized routes
+    fun alertDetail(alertId: String) = "alert_detail/$alertId"
     fun editRule(ruleId: String) = "edit_rule/$ruleId"
     fun ruleDetails(ruleId: String) = "rule_details/$ruleId"
     fun editTimeWindow(windowId: String) = "edit_time_window/$windowId"

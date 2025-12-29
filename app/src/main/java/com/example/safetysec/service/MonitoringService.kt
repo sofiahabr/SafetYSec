@@ -17,10 +17,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.example.safetysec.MainActivity
-import com.example.safetysec.R
+import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.domain.model.DetectionResult
 import com.example.safetysec.domain.model.SensorData
 import com.example.safetysec.domain.repository.MonitoringRepository
+import com.example.safetysec.receiver.AlertCancellationReceiver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -42,6 +43,9 @@ class MonitoringService : Service() {
 
     @Inject
     lateinit var locationTracker: LocationTracker
+
+    @Inject
+    lateinit var alertNotificationService: AlertNotificationService
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -269,7 +273,7 @@ class MonitoringService : Service() {
     }
 
     /**
-     * Trigger an alert
+     * Trigger an alert with cancellation window and notifications
      */
     private suspend fun triggerAlert(
         detectionResult: DetectionResult,
@@ -278,11 +282,9 @@ class MonitoringService : Service() {
     ) {
         lastAlertTriggerTime = System.currentTimeMillis()
 
-        // Find the rule that triggered
         val rule = monitoringState.activeRules.find { it.id == detectionResult.ruleId }
 
         if (rule != null) {
-            // Create alert in repository
             val alertResult = monitoringRepository.createAlert(
                 detectionResult,
                 rule,
@@ -290,17 +292,89 @@ class MonitoringService : Service() {
             )
 
             alertResult.onSuccess { alertEvent ->
-                // Show alert notification
-                showAlertNotification(
-                    title = "${detectionResult.ruleType.toDisplayString()} Detected",
-                    message = detectionResult.details,
-                    alertId = alertEvent.id
-                )
+                showCancellationNotification(alertEvent)
 
-                // TODO: Start video recording (Phase 6)
-                // TODO: Send push notification to monitors (Phase 6)
+                serviceScope.launch {
+                    var cancelled = false
+
+                    repeat(10) {
+                        delay(1000)
+
+                        val alert = monitoringRepository.getAlertById(alertEvent.id)
+                        if (alert?.isCancelled == true) {
+                            cancelled = true
+                            return@launch
+                        }
+                    }
+
+                    if (!cancelled) {
+                        // Send push notifications to monitors
+                        alertNotificationService.notifyMonitors(alertEvent, this@MonitoringService)
+                    }
+                }
             }
         }
+    }
+
+    /**
+     * Show cancellation notification to protected user
+     */
+    private fun showCancellationNotification(alertEvent: AlertEvent) {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("SHOW_CANCELLATION_DIALOG", true)
+            putExtra("ALERT_ID", alertEvent.id)
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
+            .setContentTitle("⚠️ Alert Detected!")
+            .setContentText("${alertEvent.type.toDisplayString()} - Tap to cancel")
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setAutoCancel(false)
+            .setOngoing(true)
+            .setContentIntent(pendingIntent)
+            .setFullScreenIntent(pendingIntent, true)
+            .addAction(
+                android.R.drawable.ic_delete,
+                "Cancel Alert",
+                createCancelAlertPendingIntent(alertEvent.id)
+            )
+            .build()
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(alertEvent.id.hashCode(), notification)
+
+        // Remove notification after 10 seconds
+        serviceScope.launch {
+            delay(10000)
+            notificationManager.cancel(alertEvent.id.hashCode())
+        }
+    }
+
+    /**
+     * Create pending intent for cancelling alert
+     */
+    private fun createCancelAlertPendingIntent(alertId: String): PendingIntent {
+        val intent = Intent(this, AlertCancellationReceiver::class.java).apply {
+            action = "CANCEL_ALERT"
+            putExtra("ALERT_ID", alertId)
+        }
+
+        return PendingIntent.getBroadcast(
+            this,
+            alertId.hashCode(),
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     /**
@@ -313,7 +387,7 @@ class MonitoringService : Service() {
         val activeDetections = detectionResults.count { it.isTriggered }
 
         val title = if (activeDetections > 0) {
-            "âš ï¸ $activeDetections Detection(s)"
+            "⚠️ $activeDetections Detection(s)"
         } else {
             "Monitoring Active"
         }
@@ -345,7 +419,7 @@ class MonitoringService : Service() {
         val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert) // Using built-in icon
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(true)
@@ -371,7 +445,7 @@ class MonitoringService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(android.R.drawable.ic_dialog_info) // Using built-in icon
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)

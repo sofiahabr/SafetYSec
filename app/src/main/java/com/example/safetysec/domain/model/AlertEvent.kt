@@ -15,8 +15,18 @@ data class AlertEvent(
     val longitude: Double,
     val details: String? = null,
     val videoUrl: String? = null,
+    val videoRecordingPath: String? = null,
 
-    val monitorIds: List<String> = emptyList()
+    val monitorIds: List<String> = emptyList(),
+
+    // Cancellation fields
+    val isCancelled: Boolean = false,
+    val cancelledAt: LocalDateTime? = null,
+    val cancellationDeadline: LocalDateTime? = null,
+
+    // Status fields
+    val isViewed: Boolean = false,
+    val viewedAt: LocalDateTime? = null
 ) {
     /**
      * Format coordinates for display
@@ -33,4 +43,27 @@ data class AlertEvent(
      * Get human-readable alert type
      */
     fun getAlertTypeDisplay(): String = type.toDisplayString()
+
+    /**
+     * Check if alert can still be cancelled
+     */
+    fun canBeCancelled(): Boolean {
+        if (isCancelled) return false
+        val deadline = cancellationDeadline ?: return false
+        return LocalDateTime.now().isBefore(deadline)
+    }
+
+    /**
+     * Get remaining cancellation time in seconds
+     */
+    fun getRemainingCancellationSeconds(): Int {
+        if (!canBeCancelled()) return 0
+        val deadline = cancellationDeadline ?: return 0
+        val now = LocalDateTime.now()
+        return if (now.isBefore(deadline)) {
+            java.time.Duration.between(now, deadline).seconds.toInt()
+        } else {
+            0
+        }
+    }
 }

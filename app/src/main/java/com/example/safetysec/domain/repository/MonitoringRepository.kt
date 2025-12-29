@@ -68,6 +68,16 @@ interface MonitoringRepository {
     ): Result<AlertEvent>
 
     /**
+     * Cancel an alert within the cancellation window
+     */
+    suspend fun cancelAlert(alertId: String): Result<Boolean>
+
+    /**
+     * Update alert with video URL after recording
+     */
+    suspend fun updateAlertWithVideo(alertId: String, videoUrl: String): Result<Boolean>
+
+    /**
      * Get last inactivity time (for prolonged inactivity detection)
      */
     suspend fun getLastActivityTimestamp(): Long
@@ -76,4 +86,7 @@ interface MonitoringRepository {
      * Update last activity timestamp
      */
     suspend fun updateLastActivityTimestamp(timestamp: Long)
+
+    // Add to MonitoringRepository.kt interface
+    suspend fun getAlertById(alertId: String): AlertEvent?
 }

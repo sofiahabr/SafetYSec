@@ -1,5 +1,6 @@
 package com.example.safetysec
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,6 +33,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        intent?.let { handleAlertIntent(it) }
+
         // Initialize theme preferences
         val themePreferences = ThemePreferences(this)
 
@@ -56,5 +59,25 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleAlertIntent(intent)
+    }
+
+    private fun handleAlertIntent(intent: Intent) {
+        val showCancellation = intent.getBooleanExtra("SHOW_CANCELLATION_DIALOG", false)
+        val alertId = intent.getStringExtra("ALERT_ID")
+        val openAlerts = intent.getBooleanExtra("OPEN_ALERTS", false)
+
+        // Handle navigation based on intent extras
+        // TODO: Implement navigation logic when needed
+        // For example:
+        // if (showCancellation && alertId != null) {
+        //     // Show cancellation dialog
+        // } else if (openAlerts) {
+        //     // Navigate to alerts screen
+        // }
     }
 }

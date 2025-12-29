@@ -27,6 +27,8 @@ import com.example.safetysec.presentation.screens.rules.RulesScreen
 import com.example.safetysec.presentation.screens.showcase.ComponentsShowcaseScreen
 import com.example.safetysec.presentation.screens.timewindows.TimeWindowsScreen
 import com.example.safetysec.presentation.protectedUser.MonitoringControlScreen
+import com.example.safetysec.presentation.screens.alerts.AlertDetailScreen
+import com.example.safetysec.presentation.screens.alerts.AlertsScreen
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
 
@@ -117,8 +119,7 @@ fun AppNavHost(
         }
 
         composable(AppRoutes.ALERTS) {
-            // TODO: Implement AlertsScreen
-            HomeScreen(navController = navController)
+            AlertsScreen(navController = navController)
         }
 
         composable(AppRoutes.PROFILE) {
@@ -166,6 +167,24 @@ fun AppNavHost(
             val ruleId = backStackEntry.arguments?.getString("ruleId") ?: ""
             EditRuleScreen(
                 ruleId = ruleId,
+                navController = navController
+            )
+        }
+
+        // Add this to AppNavHost.kt composable navigation
+
+// Alert Detail Screen
+        composable(
+            route = AppRoutes.ALERT_DETAIL,
+            arguments = listOf(
+                navArgument("alertId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val alertId = backStackEntry.arguments?.getString("alertId") ?: ""
+            AlertDetailScreen(
+                alertId = alertId,
                 navController = navController
             )
         }
