@@ -298,17 +298,15 @@ class MonitoringService : Service() {
             alertResult.onSuccess { alertEvent ->
                 showCancellationNotification(alertEvent)
 
-                // Start video recording immediately (if camera permission available)
-                serviceScope.launch {
-                    if (videoRecordingService.hasCameraPermission(this@MonitoringService)) {
+                // Start video recording immediately
+                if (::videoRecordingService.isInitialized &&
+                    videoRecordingService.hasCameraPermission(this@MonitoringService)) {
+
+                    serviceScope.launch {
                         try {
                             Log.d(TAG, "Starting video recording for alert: ${alertEvent.id}")
 
-                            // Initialize camera if not already done
-                            // Note: This requires a LifecycleOwner - for services, we need a workaround
-                            // You may need to use MediaRecorder API instead for background recording
-
-                            // Record and upload video
+                            // Record and upload video (30 seconds)
                             val videoResult = videoRecordingService.recordAndUploadVideo(
                                 context = this@MonitoringService,
                                 alertId = alertEvent.id
@@ -324,14 +322,13 @@ class MonitoringService : Service() {
                                 )
                             }.onFailure { error ->
                                 Log.e(TAG, "Video recording/upload failed: ${error.message}", error)
-                                // Continue with alert even if video fails
                             }
                         } catch (e: Exception) {
                             Log.e(TAG, "Exception during video recording", e)
                         }
-                    } else {
-                        Log.w(TAG, "Camera permission not granted, skipping video recording")
                     }
+                } else {
+                    Log.w(TAG, "Camera permission not granted or service not initialized")
                 }
 
                 // 10-second cancellation window
@@ -350,15 +347,10 @@ class MonitoringService : Service() {
                     }
 
                     if (!cancelled) {
-                        Log.d(TAG, "Alert ${alertEvent.id} cancellation window expired, sending notifications")
-                        // Send push notifications to monitors
+                        Log.d(TAG, "Alert ${alertEvent.id} cancellation window expired")
                         alertNotificationService.notifyMonitors(alertEvent, this@MonitoringService)
-                    } else {
-                        Log.d(TAG, "Alert ${alertEvent.id} was cancelled, notifications not sent")
                     }
                 }
-            }.onFailure { error ->
-                Log.e(TAG, "Failed to create alert", error)
             }
         }
     }
@@ -367,43 +359,44 @@ class MonitoringService : Service() {
      * Show cancellation notification to protected user
      */
     private fun showCancellationNotification(alertEvent: AlertEvent) {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("SHOW_CANCELLATION_DIALOG", true)
-            putExtra("ALERT_ID", alertEvent.id)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Create cancellation intent
+        val cancelIntent = Intent(this, AlertCancellationReceiver::class.java).apply {
+            action = AlertCancellationReceiver.ACTION_CANCEL_ALERT
+            putExtra(AlertCancellationReceiver.EXTRA_ALERT_ID, alertEvent.id)
+            putExtra(AlertCancellationReceiver.EXTRA_CANCELLATION_CODE, "0000") // Default PIN
         }
 
-        val pendingIntent = PendingIntent.getActivity(
+        val cancelPendingIntent = PendingIntent.getBroadcast(
             this,
-            0,
-            intent,
+            alertEvent.id.hashCode(),
+            cancelIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        // Build notification
         val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
-            .setContentTitle("⚠️ Alert Detected!")
-            .setContentText("${alertEvent.type.toDisplayString()} - Tap to cancel")
+            .setContentTitle("🚨 ${alertEvent.type.name}")
+            .setContentText("Alert will be sent in 10 seconds. Tap to cancel.")
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(false)
             .setOngoing(true)
-            .setContentIntent(pendingIntent)
-            .setFullScreenIntent(pendingIntent, true)
             .addAction(
                 android.R.drawable.ic_delete,
                 "Cancel Alert",
-                createCancelAlertPendingIntent(alertEvent.id)
+                cancelPendingIntent
             )
             .build()
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(alertEvent.id.hashCode(), notification)
+        notificationManager.notify(CANCELLATION_NOTIFICATION_ID, notification)
 
-        // Remove notification after 10 seconds
+        // Auto-dismiss notification after 10 seconds
         serviceScope.launch {
             delay(10000)
-            notificationManager.cancel(alertEvent.id.hashCode())
+            notificationManager.cancel(CANCELLATION_NOTIFICATION_ID)
         }
     }
 
@@ -434,7 +427,7 @@ class MonitoringService : Service() {
         val activeDetections = detectionResults.count { it.isTriggered }
 
         val title = if (activeDetections > 0) {
-            "⚠️ $activeDetections Detection(s)"
+            "$activeDetections Detection(s)"
         } else {
             "Monitoring Active"
         }
@@ -537,6 +530,7 @@ class MonitoringService : Service() {
         const val ACTION_STOP_MONITORING = "com.example.safetysec.STOP_MONITORING"
 
         private const val NOTIFICATION_ID = 1001
+        private const val CANCELLATION_NOTIFICATION_ID = 1002
         private const val CHANNEL_ID = "monitoring_service"
         private const val ALERT_CHANNEL_ID = "safety_alerts"
 
