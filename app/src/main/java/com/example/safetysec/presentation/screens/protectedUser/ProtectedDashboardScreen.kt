@@ -36,6 +36,11 @@ fun ProtectedDashboardScreen(
 ) {
     val monitoringState by monitoringViewModel.monitoringState.collectAsState()
 
+    // Refresh statistics when screen is displayed
+    LaunchedEffect(Unit) {
+        monitoringViewModel.refreshStatistics()
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {

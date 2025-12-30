@@ -87,6 +87,11 @@ interface MonitoringRepository {
      */
     suspend fun updateLastActivityTimestamp(timestamp: Long)
 
+    /**
+     * Refresh statistics (rules and time windows) for current user
+     */
+    suspend fun refreshStatistics()
+
     // Add to MonitoringRepository.kt interface
     suspend fun getAlertById(alertId: String): AlertEvent?
 }

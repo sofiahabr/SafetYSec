@@ -548,7 +548,25 @@ class MonitoringRepositoryImpl @Inject constructor(
         }
     }
 
-    // Add to MonitoringRepositoryImpl.kt
+    /**
+     * Refresh statistics (rules and time windows) for current user
+     * This updates the monitoring state with the latest rules and time windows
+     */
+    override suspend fun refreshStatistics() {
+        try {
+            val activeRules = getActiveRules(currentUserId)
+            val activeTimeWindows = getActiveTimeWindows(currentUserId)
+
+            _monitoringState.value = _monitoringState.value.copy(
+                protectedUserId = currentUserId,
+                activeRules = activeRules,
+                activeTimeWindows = activeTimeWindows,
+                lastUpdateTime = Date()
+            )
+        } catch (e: Exception) {
+            // Log error but don't throw - this is a background refresh
+        }
+    }
 
     /**
      * Get alert by ID
@@ -592,4 +610,3 @@ private fun com.google.firebase.Timestamp.toLocalDateTime(): java.time.LocalDate
         java.time.ZoneId.systemDefault()
     )
 }
-

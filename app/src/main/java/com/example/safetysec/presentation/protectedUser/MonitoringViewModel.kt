@@ -121,6 +121,15 @@ class MonitoringViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Refresh statistics (rules and time windows) for current user
+     */
+    fun refreshStatistics() {
+        viewModelScope.launch {
+            monitoringRepository.refreshStatistics()
+        }
+    }
+
     // Add method to clear UI state
     fun clearUiState() {
         _uiState.value = MonitoringUiState.Idle
