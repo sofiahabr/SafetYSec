@@ -19,6 +19,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
+import android.util.Log
 
 data class AuthState(
     val isLoading: Boolean = false,
@@ -119,6 +123,11 @@ class AuthViewModel @Inject constructor(
                             isAuthenticated = true
                         )
                     }
+
+                    // Register FCM token after successful login
+                    result.data?.id?.let { userId ->
+                        registerFCMToken(userId)
+                    }
                 }
 
                 is AuthResult.Error -> {
@@ -153,6 +162,11 @@ class AuthViewModel @Inject constructor(
                             registrationSuccess = true
                         )
                     }
+
+                    // Register FCM token after successful registration
+                    result.data?.id?.let { userId ->
+                        registerFCMToken(userId)
+                    }
                 }
 
                 is AuthResult.Error -> {
@@ -170,10 +184,14 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
-
     fun logout() {
         viewModelScope.launch {
             _authState.update { it.copy(isLoading = true) }
+
+            // Clear FCM token before logout
+            _authState.value.user?.id?.let { userId ->
+                clearFCMToken(userId)
+            }
 
             val result = logoutUseCase()
 
@@ -252,5 +270,46 @@ class AuthViewModel @Inject constructor(
 
     fun clearError() {
         _authState.update { it.copy(error = null) }
+    }
+
+    /**
+     * Register FCM token for push notifications
+     */
+    private fun registerFCMToken(userId: String) {
+        viewModelScope.launch {
+            try {
+                val token = FirebaseMessaging.getInstance().token.await()
+
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userId)
+                    .update("fcmToken", token)
+                    .await()
+
+                Log.d("AuthViewModel", "FCM token registered: ${token.take(20)}...")
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Failed to register FCM token", e)
+                // Don't fail login if FCM registration fails
+            }
+        }
+    }
+
+    /**
+     * Clear FCM token on logout
+     */
+    private fun clearFCMToken(userId: String) {
+        viewModelScope.launch {
+            try {
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userId)
+                    .update("fcmToken", null)
+                    .await()
+
+                Log.d("AuthViewModel", "FCM token cleared")
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Failed to clear FCM token", e)
+            }
+        }
     }
 }

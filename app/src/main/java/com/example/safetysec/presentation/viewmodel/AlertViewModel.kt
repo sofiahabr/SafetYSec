@@ -128,6 +128,26 @@ class AlertViewModel @Inject constructor(
     fun refresh() {
         loadAlerts()
     }
+
+    /**
+     * Export alerts to CSV (placeholder for now)
+     */
+    fun exportAlerts(alerts: List<AlertEvent>) {
+        viewModelScope.launch {
+            try {
+                // TODO: Implement export functionality
+                // For now, just log
+                android.util.Log.d("AlertViewModel", "Exporting ${alerts.size} alerts")
+
+                // Future implementation:
+                // - Generate CSV string
+                // - Save to file or share
+                // - Show success message
+            } catch (e: Exception) {
+                android.util.Log.e("AlertViewModel", "Export failed", e)
+            }
+        }
+    }
 }
 
 /**

@@ -70,7 +70,7 @@ interface MonitoringRepository {
     /**
      * Cancel an alert within the cancellation window
      */
-    suspend fun cancelAlert(alertId: String): Result<Boolean>
+    suspend fun cancelAlert(alertId: String, code: String): Result<Boolean>
 
     /**
      * Update alert with video URL after recording

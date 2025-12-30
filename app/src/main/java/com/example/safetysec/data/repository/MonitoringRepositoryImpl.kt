@@ -6,7 +6,6 @@ import com.example.safetysec.domain.model.*
 import com.example.safetysec.domain.repository.MonitoringRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -501,7 +500,7 @@ class MonitoringRepositoryImpl @Inject constructor(
     /**
      * Cancel an alert within the 10-second cancellation window
      */
-    override suspend fun cancelAlert(alertId: String): Result<Boolean> {
+    override suspend fun cancelAlert(alertId: String, code: String): Result<Boolean> {
         return try {
             val alertRef = firestore.collection("alerts").document(alertId)
             val alertDoc = alertRef.get().await()

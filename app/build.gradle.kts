@@ -134,4 +134,42 @@ dependencies {
 
 // Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging-ktx:23.4.0")
+
+// ============================================
+// PHASE 6: Alert System Dependencies
+// ============================================
+
+// CameraX for video recording (30-second alert videos)
+    implementation("androidx.camera:camera-core:1.3.0")
+    implementation("androidx.camera:camera-camera2:1.3.0")
+    implementation("androidx.camera:camera-lifecycle:1.3.0")
+    implementation("androidx.camera:camera-video:1.3.0")
+    implementation("androidx.camera:camera-view:1.3.0")
+    implementation("androidx.camera:camera-extensions:1.3.0")
+
+// Firebase Cloud Messaging for push notifications
+    implementation("com.google.firebase:firebase-messaging:23.3.1")
+
+// Coroutines for async operations (may already be present)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+// Firebase Storage (should already be present)
+    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
+
+// Firebase Firestore (should already be present)
+    implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
+
+// Firebase Auth (should already be present)
+    implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
+
+// Lifecycle components (should already be present)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-process:2.6.2")
+
+// ============================================
+// IMPORTANT: Sync project after adding!
+// ============================================
 }

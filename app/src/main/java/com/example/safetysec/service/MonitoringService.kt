@@ -47,6 +47,9 @@ class MonitoringService : Service() {
     @Inject
     lateinit var alertNotificationService: AlertNotificationService
 
+    @Inject
+    lateinit var videoRecordingService: VideoRecordingService
+
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private var monitoringJob: Job? = null
@@ -109,6 +112,7 @@ class MonitoringService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         stopMonitoring()
+        videoRecordingService.release()
         sensorDataCollector.release()
         locationTracker.release()
         serviceScope.cancel()
@@ -273,7 +277,7 @@ class MonitoringService : Service() {
     }
 
     /**
-     * Trigger an alert with cancellation window and notifications
+     * Trigger an alert with cancellation window, video recording, and notifications
      */
     private suspend fun triggerAlert(
         detectionResult: DetectionResult,
@@ -294,6 +298,43 @@ class MonitoringService : Service() {
             alertResult.onSuccess { alertEvent ->
                 showCancellationNotification(alertEvent)
 
+                // Start video recording immediately (if camera permission available)
+                serviceScope.launch {
+                    if (videoRecordingService.hasCameraPermission(this@MonitoringService)) {
+                        try {
+                            Log.d(TAG, "Starting video recording for alert: ${alertEvent.id}")
+
+                            // Initialize camera if not already done
+                            // Note: This requires a LifecycleOwner - for services, we need a workaround
+                            // You may need to use MediaRecorder API instead for background recording
+
+                            // Record and upload video
+                            val videoResult = videoRecordingService.recordAndUploadVideo(
+                                context = this@MonitoringService,
+                                alertId = alertEvent.id
+                            )
+
+                            videoResult.onSuccess { downloadUrl ->
+                                Log.d(TAG, "Video uploaded successfully: $downloadUrl")
+
+                                // Update alert with video URL
+                                monitoringRepository.updateAlertWithVideo(
+                                    alertId = alertEvent.id,
+                                    videoUrl = downloadUrl
+                                )
+                            }.onFailure { error ->
+                                Log.e(TAG, "Video recording/upload failed: ${error.message}", error)
+                                // Continue with alert even if video fails
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Exception during video recording", e)
+                        }
+                    } else {
+                        Log.w(TAG, "Camera permission not granted, skipping video recording")
+                    }
+                }
+
+                // 10-second cancellation window
                 serviceScope.launch {
                     var cancelled = false
 
@@ -303,15 +344,21 @@ class MonitoringService : Service() {
                         val alert = monitoringRepository.getAlertById(alertEvent.id)
                         if (alert?.isCancelled == true) {
                             cancelled = true
+                            Log.d(TAG, "Alert ${alertEvent.id} was cancelled")
                             return@launch
                         }
                     }
 
                     if (!cancelled) {
+                        Log.d(TAG, "Alert ${alertEvent.id} cancellation window expired, sending notifications")
                         // Send push notifications to monitors
                         alertNotificationService.notifyMonitors(alertEvent, this@MonitoringService)
+                    } else {
+                        Log.d(TAG, "Alert ${alertEvent.id} was cancelled, notifications not sent")
                     }
                 }
+            }.onFailure { error ->
+                Log.e(TAG, "Failed to create alert", error)
             }
         }
     }
