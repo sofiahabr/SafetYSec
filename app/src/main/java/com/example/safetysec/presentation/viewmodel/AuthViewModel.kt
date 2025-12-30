@@ -23,6 +23,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import android.util.Log
+import com.example.safetysec.domain.repository.AuthRepository
 
 data class AuthState(
     val isLoading: Boolean = false,
@@ -40,7 +41,8 @@ class AuthViewModel @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val updateProfileUseCase: UpdateProfileUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
-    private val deleteUserProfileUseCase: DeleteUserProfileUseCase
+    private val deleteUserProfileUseCase: DeleteUserProfileUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow(AuthState())
@@ -309,6 +311,37 @@ class AuthViewModel @Inject constructor(
                 Log.d("AuthViewModel", "FCM token cleared")
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Failed to clear FCM token", e)
+            }
+        }
+    }
+
+    /**
+     * Update alert cancellation PIN
+     */
+    fun updateCancellationPin(newPin: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            _authState.value = _authState.value.copy(isLoading = true, error = null)
+
+            val result = authRepository.updateCancellationPin(newPin)
+
+            when (result) {
+                is AuthResult.Success -> {
+                    _authState.value = _authState.value.copy(
+                        user = result.data,
+                        isLoading = false
+                    )
+                    onResult(true, null)
+                }
+                is AuthResult.Error -> {
+                    _authState.value = _authState.value.copy(
+                        error = result.message,
+                        isLoading = false
+                    )
+                    onResult(false, result.message)
+                }
+                else -> {
+                    onResult(false, "Unknown error")
+                }
             }
         }
     }

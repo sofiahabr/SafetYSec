@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.domain.model.AlertType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -35,10 +34,11 @@ import kotlinx.coroutines.isActive
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertCancellationDialog(
-    alert: AlertEvent,
+    alertId: String,
+    alertType: AlertType,
+    userCancellationCode: String = "0000",
     onCancel: (code: String) -> Unit,
-    onDismiss: () -> Unit,
-    userCancellationCode: String = "0000" // User's actual PIN (passed from ViewModel)
+    onDismiss: () -> Unit
 ) {
     var secondsRemaining by remember { mutableStateOf(10) }
     var cancellationCode by remember { mutableStateOf("") }
@@ -118,7 +118,7 @@ fun AlertCancellationDialog(
 
                 // Alert Type
                 Text(
-                    text = alert.type.toDisplayString(),
+                    text = alertType.toDisplayString(),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center

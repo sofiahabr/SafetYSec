@@ -29,6 +29,7 @@ import com.example.safetysec.presentation.screens.timewindows.TimeWindowsScreen
 import com.example.safetysec.presentation.protectedUser.MonitoringControlScreen
 import com.example.safetysec.presentation.screens.alerts.AlertDetailScreen
 import com.example.safetysec.presentation.screens.alerts.AlertsScreen
+import com.example.safetysec.presentation.screens.profile.ChangeCancellationPinScreen
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
 
@@ -133,6 +134,10 @@ fun AppNavHost(
 
         composable(AppRoutes.CHANGE_PASSWORD) {
             ChangePasswordScreen(navController = navController)
+        }
+
+        composable(AppRoutes.CHANGE_CANCELLATION_PIN) {
+            ChangeCancellationPinScreen(navController = navController)
         }
 
         composable(AppRoutes.SETTINGS) {

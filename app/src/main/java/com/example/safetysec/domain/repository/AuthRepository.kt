@@ -14,7 +14,8 @@ interface AuthRepository {
         password: String,
         name: String,
         phone: String,
-        role: String
+        role: String,
+        cancellationPin: String? = null
     ): AuthResult<User>
 
     /**
@@ -33,6 +34,13 @@ interface AuthRepository {
     suspend fun changePassword(
         currentPassword: String,
         newPassword: String
+    ): AuthResult<User>
+
+    /**
+     * Update alert cancellation PIN for current user
+     */
+    suspend fun updateCancellationPin(
+        newPin: String
     ): AuthResult<User>
 
     /**

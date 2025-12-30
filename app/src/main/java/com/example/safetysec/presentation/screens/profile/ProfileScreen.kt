@@ -133,6 +133,16 @@ fun ProfileScreen(navController: NavController) {
                     )
                 }
 
+                // Change Cancellation PIN Button (only for Protected users)
+                if (isProtected) {
+                    SecondaryButton(
+                        text = "Alert Cancellation PIN",
+                        onClick = {
+                            navController.navigate(AppRoutes.CHANGE_CANCELLATION_PIN)
+                        }
+                    )
+                }
+
                 // Settings Button
                 SecondaryButton(
                     text = "Settings",

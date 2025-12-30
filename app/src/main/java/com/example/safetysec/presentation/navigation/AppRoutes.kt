@@ -24,6 +24,7 @@ object AppRoutes {
     const val CREATE_RULE = "create_rule"
     const val EDIT_RULE = "edit_rule/{ruleId}"
     const val RULE_DETAILS = "rule_details/{ruleId}"
+    const val CHANGE_CANCELLATION_PIN = "change_cancellation_pin"
 
     // Time Windows Sub-Routes
     const val TIME_WINDOWS = "time_windows"

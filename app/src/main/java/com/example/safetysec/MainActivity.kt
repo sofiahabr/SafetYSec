@@ -10,19 +10,24 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.safetysec.data.preferences.ThemeMode
 import com.example.safetysec.data.preferences.ThemePreferences
+import com.example.safetysec.domain.model.AlertType
+import com.example.safetysec.presentation.components.AlertCancellationDialog
 import com.example.safetysec.presentation.navigation.AppNavHost
 import com.example.safetysec.presentation.theme.SafetYSecTheme
+import com.example.safetysec.presentation.viewmodel.AuthViewModel
+import com.example.safetysec.receiver.AlertCancellationReceiver
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -36,10 +41,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Alert cancellation state
+    private val showCancelDialog = mutableStateOf(false)
+    private val alertToCancel = mutableStateOf<Pair<String, AlertType>?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Handle cancellation intent if present
         intent?.let { handleAlertIntent(it) }
 
         // Request all permissions on startup
@@ -61,10 +71,46 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    AppNavHost(navController = navController)
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        // Main navigation
+                        val navController = rememberNavController()
+                        AppNavHost(navController = navController)
+
+                        // Alert cancellation dialog overlay
+                        AlertCancellationOverlay()
+                    }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun AlertCancellationOverlay() {
+        val authViewModel: AuthViewModel = hiltViewModel()
+        val authState by authViewModel.authState.collectAsState()
+        val showDialog by showCancelDialog
+        val alertData by alertToCancel
+
+        // Show cancellation dialog if needed
+        if (showDialog && alertData != null) {
+            val (alertId, alertType) = alertData!!
+            val userPin = authState.user?.alertCancellationCode ?: "0000"
+
+            AlertCancellationDialog(
+                alertId = alertId,
+                alertType = alertType,
+                userCancellationCode = userPin,
+                onDismiss = {
+                    showCancelDialog.value = false
+                    alertToCancel.value = null
+                },
+                onCancel = { enteredPin ->
+                    // Handle cancellation
+                    handleAlertCancellation(alertId, enteredPin)
+                    showCancelDialog.value = false
+                    alertToCancel.value = null
+                }
+            )
         }
     }
 
@@ -98,13 +144,56 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent) // Important: Update the intent
         handleAlertIntent(intent)
     }
 
     private fun handleAlertIntent(intent: Intent) {
-        val showCancellation = intent.getBooleanExtra("SHOW_CANCELLATION_DIALOG", false)
-        val alertId = intent.getStringExtra("ALERT_ID")
+        // Check if this is a cancellation dialog request
+        val showCancellation = intent.getBooleanExtra("SHOW_CANCEL_DIALOG", false)
+
+        if (showCancellation) {
+            val alertId = intent.getStringExtra("ALERT_ID")
+            val alertTypeString = intent.getStringExtra("ALERT_TYPE")
+
+            if (alertId != null && alertTypeString != null) {
+                try {
+                    val alertType = AlertType.valueOf(alertTypeString)
+
+                    // Update state to show dialog
+                    alertToCancel.value = alertId to alertType
+                    showCancelDialog.value = true
+
+                    android.util.Log.d("MainActivity", "Showing cancellation dialog for alert: $alertId")
+                } catch (e: IllegalArgumentException) {
+                    android.util.Log.e("MainActivity", "Invalid alert type: $alertTypeString", e)
+                }
+            }
+        }
+
+        // Handle navigation to alerts screen
         val openAlerts = intent.getBooleanExtra("OPEN_ALERTS", false)
-        // TODO: Handle navigation
+        if (openAlerts) {
+            // Navigation will be handled by the NavHost when it reads the ALERT_ID
+            android.util.Log.d("MainActivity", "Navigate to alerts screen requested")
+        }
+    }
+
+    /**
+     * Send broadcast to cancel the alert with the provided PIN
+     */
+    private fun handleAlertCancellation(alertId: String, pin: String) {
+        try {
+            val cancelIntent = AlertCancellationReceiver.createCancelIntent(
+                context = this,
+                alertId = alertId,
+                code = pin
+            )
+            sendBroadcast(cancelIntent)
+
+            android.util.Log.d("MainActivity", "Alert cancellation broadcast sent for alert: $alertId")
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "Failed to send cancellation broadcast", e)
+        }
     }
 }

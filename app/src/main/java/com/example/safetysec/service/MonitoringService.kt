@@ -361,14 +361,15 @@ class MonitoringService : Service() {
     private fun showCancellationNotification(alertEvent: AlertEvent) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Create cancellation intent
-        val cancelIntent = Intent(this, AlertCancellationReceiver::class.java).apply {
-            action = AlertCancellationReceiver.ACTION_CANCEL_ALERT
-            putExtra(AlertCancellationReceiver.EXTRA_ALERT_ID, alertEvent.id)
-            putExtra(AlertCancellationReceiver.EXTRA_CANCELLATION_CODE, "0000") // Default PIN
+        // Create intent to open MainActivity for PIN entry
+        val cancelIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("SHOW_CANCEL_DIALOG", true)
+            putExtra("ALERT_ID", alertEvent.id)
+            putExtra("ALERT_TYPE", alertEvent.type.name)
         }
 
-        val cancelPendingIntent = PendingIntent.getBroadcast(
+        val cancelPendingIntent = PendingIntent.getActivity(
             this,
             alertEvent.id.hashCode(),
             cancelIntent,
