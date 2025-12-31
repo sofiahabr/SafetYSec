@@ -169,7 +169,5 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-process:2.6.2")
 
-// ============================================
-// IMPORTANT: Sync project after adding!
-// ============================================
+    implementation("androidx.lifecycle:lifecycle-process:2.6.2")
 }

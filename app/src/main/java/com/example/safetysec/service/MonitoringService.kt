@@ -26,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+import androidx.lifecycle.ProcessLifecycleOwner
 
 /**
  * Monitoring Foreground Service
@@ -64,7 +65,36 @@ class MonitoringService : Service() {
         sensorDataCollector.initialize(this)
         locationTracker.initialize(this)
 
+        initializeVideoRecording()
+
         createNotificationChannel()
+    }
+
+    /**
+     * Initialize video recording service with camera
+     */
+    private fun initializeVideoRecording() {
+        if (!videoRecordingService.hasCameraPermission(this)) {
+            Log.w(TAG, "Camera permission not granted - video recording disabled")
+            return
+        }
+
+        serviceScope.launch {
+            try {
+                val result = videoRecordingService.initializeCamera(
+                    context = this@MonitoringService,
+                    lifecycleOwner = ProcessLifecycleOwner.get()
+                )
+
+                result.onSuccess {
+                    Log.d(TAG, "Video recording initialized successfully")
+                }.onFailure { error ->
+                    Log.e(TAG, "Failed to initialize video recording", error)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception initializing video recording", e)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -376,7 +406,7 @@ class MonitoringService : Service() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        // Build notification
+        // Build notification with full screen intent for locked screens
         val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
             .setContentTitle("🚨 ${alertEvent.type.name}")
             .setContentText("Alert will be sent in 10 seconds. Tap to cancel.")
@@ -385,11 +415,9 @@ class MonitoringService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(false)
             .setOngoing(true)
-            .addAction(
-                android.R.drawable.ic_delete,
-                "Cancel Alert",
-                cancelPendingIntent
-            )
+            .setContentIntent(cancelPendingIntent)
+            .setFullScreenIntent(cancelPendingIntent, true)
+            .setVibrate(longArrayOf(0, 500, 200, 500))
             .build()
 
         notificationManager.notify(CANCELLATION_NOTIFICATION_ID, notification)
@@ -406,8 +434,8 @@ class MonitoringService : Service() {
      */
     private fun createCancelAlertPendingIntent(alertId: String): PendingIntent {
         val intent = Intent(this, AlertCancellationReceiver::class.java).apply {
-            action = "CANCEL_ALERT"
-            putExtra("ALERT_ID", alertId)
+            action = AlertCancellationReceiver.ACTION_CANCEL_ALERT  //
+            putExtra(AlertCancellationReceiver.EXTRA_ALERT_ID, alertId)
         }
 
         return PendingIntent.getBroadcast(

@@ -18,6 +18,7 @@
 
     <!-- Notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
 
 
@@ -63,7 +64,7 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="CANCEL_ALERT" />
+                <action android:name="com.example.safetysec.CANCEL_ALERT" />
             </intent-filter>
         </receiver>
 
