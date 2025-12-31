@@ -41,6 +41,7 @@ class AlertViewModel @Inject constructor(
 
             try {
                 val alerts = getRecentAlertsUseCase(limit)
+                android.util.Log.d("AlertViewModel", "Loaded ${alerts.size} alerts from Firestore")
                 _uiState.update {
                     it.copy(
                         alerts = alerts,
@@ -49,6 +50,7 @@ class AlertViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
+                android.util.Log.e("AlertViewModel", "Failed to load alerts", e)
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -66,16 +68,50 @@ class AlertViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 monitorRepository.subscribeToAlerts().collect { alert ->
+                    android.util.Log.d("AlertViewModel", "═══════════════════════════════════")
+                    android.util.Log.d("AlertViewModel", "Received alert from listener: ${alert.id}")
+                    android.util.Log.d("AlertViewModel", "Alert type: ${alert.type}")
+                    android.util.Log.d("AlertViewModel", "Has video: ${alert.videoUrl != null}")
+                    android.util.Log.d("AlertViewModel", "Is cancelled: ${alert.isCancelled}")
+
                     _alertStream.value = alert
 
-                    // Add new alert to the list
+                    // Add new alert to the list (with deduplication)
                     _uiState.update { state ->
-                        val updatedAlerts = listOf(alert) + state.alerts
-                        state.copy(alerts = updatedAlerts)
+                        android.util.Log.d("AlertViewModel", "Current alerts in list: ${state.alerts.size}")
+                        android.util.Log.d("AlertViewModel", "Alert IDs in list: ${state.alerts.map { it.id }}")
+
+                        // Check if alert already exists in the list
+                        val alertExists = state.alerts.any { it.id == alert.id }
+                        android.util.Log.d("AlertViewModel", "Alert exists in list: $alertExists")
+
+                        if (alertExists) {
+                            // Alert already in list, update it instead of adding
+                            android.util.Log.d("AlertViewModel", "→ UPDATING existing alert: ${alert.id}")
+                            val updatedAlerts = state.alerts.map { existingAlert ->
+                                if (existingAlert.id == alert.id) {
+                                    android.util.Log.d("AlertViewModel", "  ✓ Replaced alert - Video: ${alert.videoUrl != null}, Cancelled: ${alert.isCancelled}")
+                                    alert
+                                } else {
+                                    existingAlert
+                                }
+                            }
+                            android.util.Log.d("AlertViewModel", "New list size: ${updatedAlerts.size}")
+                            state.copy(alerts = updatedAlerts)
+                        } else {
+                            // New alert, add to top of list
+                            android.util.Log.d("AlertViewModel", "→ ADDING new alert: ${alert.id}")
+                            val updatedAlerts = listOf(alert) + state.alerts
+                            android.util.Log.d("AlertViewModel", "New list size: ${updatedAlerts.size}")
+                            state.copy(alerts = updatedAlerts)
+                        }
                     }
+
+                    android.util.Log.d("AlertViewModel", "═══════════════════════════════════")
                 }
             } catch (e: Exception) {
                 // Real-time updates failed, but we can still show cached data
+                android.util.Log.e("AlertViewModel", "Error in subscribeToAlerts", e)
                 e.printStackTrace()
             }
         }

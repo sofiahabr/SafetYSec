@@ -114,6 +114,8 @@ class MonitorRepositoryImpl @Inject constructor(
 
     /**
      * Subscribe to real-time alert updates
+     * Emits for all document changes (ADDED, MODIFIED, REMOVED)
+     * Deduplication handled in AlertViewModel
      */
     override fun subscribeToAlerts(): Flow<AlertEvent> {
         return firestore
@@ -122,8 +124,12 @@ class MonitorRepositoryImpl @Inject constructor(
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .snapshots()
             .map { querySnapshot ->
+                android.util.Log.d("MonitorRepository", "Snapshot received: ${querySnapshot.documentChanges.size} changes")
+
                 querySnapshot.documentChanges.mapNotNull { change ->
                     val doc = change.document
+                    android.util.Log.d("MonitorRepository", "Change type: ${change.type}, Doc ID: ${doc.id}")
+
                     try {
                         AlertEvent(
                             id = doc.id,
@@ -143,11 +149,15 @@ class MonitorRepositoryImpl @Inject constructor(
                             cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
                         )
                     } catch (e: Exception) {
+                        android.util.Log.e("MonitorRepository", "Error parsing alert", e)
                         null
                     }
                 }
             }
-            .map { it.firstOrNull() ?: throw Exception("No alerts") }
+            .map { alerts ->
+                android.util.Log.d("MonitorRepository", "Emitting ${alerts.size} alerts from this snapshot")
+                alerts.firstOrNull() ?: throw Exception("No alerts")
+            }
     }
 
     /**
