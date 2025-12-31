@@ -79,8 +79,8 @@ fun AlertsScreen(
                         selectedFilter = uiState.selectedFilter,
                         onFilterChange = { viewModel.filterAlertsByType(it) },
                         onAlertClick = { alert ->
-                            // Navigate to alert details
-                            viewModel.getAlertById(alert.id)
+                            // Navigate to alert detail screen with video playback
+                            navController.navigate("alert_detail/${alert.id}")
                         }
                     )
                 }
