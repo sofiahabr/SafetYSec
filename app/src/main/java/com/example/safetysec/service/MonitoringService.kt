@@ -111,6 +111,10 @@ class MonitoringService : Service() {
                 startMonitoring()
             }
             ACTION_STOP_MONITORING -> stopMonitoring()
+            ACTION_TRIGGER_PANIC -> {
+                Log.d(TAG, "Panic button pressed - triggering alert with video")
+                handlePanicButton()
+            }
         }
 
         return START_STICKY
@@ -134,6 +138,69 @@ class MonitoringService : Service() {
         return requiredPermissions.all { permission ->
             ContextCompat.checkSelfPermission(this, permission) ==
                     PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    /**
+     * CRITICAL: Handle panic button press
+     * This method ensures panic button goes through the same flow as automatic alerts
+     * which includes video recording, cancellation window, and FCM notifications
+     */
+    private fun handlePanicButton() {
+        serviceScope.launch {
+            try {
+                Log.d(TAG, "Processing panic button alert")
+
+                // Collect current sensor data
+                val accelerometerData = sensorDataCollector.getAccelerometerData()
+                val gyroscopeData = sensorDataCollector.getGyroscopeData()
+                val activityData = sensorDataCollector.getActivityData()
+                val locationData = locationTracker.getCurrentLocation()
+
+                val sensorData = SensorData(
+                    timestamp = System.currentTimeMillis(),
+                    accelerometerX = accelerometerData.x,
+                    accelerometerY = accelerometerData.y,
+                    accelerometerZ = accelerometerData.z,
+                    gyroscopeX = gyroscopeData.x,
+                    gyroscopeY = gyroscopeData.y,
+                    gyroscopeZ = gyroscopeData.z,
+                    latitude = locationData.latitude,
+                    longitude = locationData.longitude,
+                    speed = locationData.speed,
+                    accuracy = locationData.accuracy,
+                    activityType = activityData.type,
+                    activityConfidence = activityData.confidence
+                )
+
+                // Get current monitoring state to find panic button rule
+                val monitoringState = monitoringRepository.getMonitoringStateFlow().first()
+                val panicRule = monitoringState.activeRules.find {
+                    it.type == com.example.safetysec.domain.model.RuleType.PANIC_BUTTON
+                }
+
+                if (panicRule == null) {
+                    Log.e(TAG, "No panic button rule found - cannot trigger alert")
+                    return@launch
+                }
+
+                // Create detection result for panic button
+                val detectionResult = DetectionResult(
+                    ruleId = panicRule.id,
+                    ruleType = com.example.safetysec.domain.model.RuleType.PANIC_BUTTON,
+                    isTriggered = true,
+                    confidence = 1.0f,
+                    details = "Panic button pressed by user",
+                    sensorData = sensorData
+                )
+
+                // CRITICAL: Call triggerAlert which includes video recording!
+                Log.d(TAG, "Triggering panic alert through normal flow (includes video)")
+                triggerAlert(detectionResult, monitoringState, sensorData)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to handle panic button", e)
+            }
         }
     }
 
@@ -557,6 +624,7 @@ class MonitoringService : Service() {
         private const val TAG = "MonitoringService"
         const val ACTION_START_MONITORING = "com.example.safetysec.START_MONITORING"
         const val ACTION_STOP_MONITORING = "com.example.safetysec.STOP_MONITORING"
+        const val ACTION_TRIGGER_PANIC = "com.example.safetysec.TRIGGER_PANIC"
 
         private const val NOTIFICATION_ID = 1001
         private const val CANCELLATION_NOTIFICATION_ID = 1002
@@ -592,6 +660,28 @@ class MonitoringService : Service() {
                 action = ACTION_STOP_MONITORING
             }
             context.startService(intent)
+        }
+
+        /**
+         * CRITICAL: Trigger panic button with video recording
+         * This ensures the panic button goes through MonitoringService
+         * so video recording is triggered properly
+         */
+        fun triggerPanic(context: Context) {
+            val intent = Intent(context, MonitoringService::class.java).apply {
+                action = ACTION_TRIGGER_PANIC
+            }
+
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+                Log.d(TAG, "Panic button trigger sent to MonitoringService")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to trigger panic button", e)
+            }
         }
     }
 }

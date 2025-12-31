@@ -1,5 +1,6 @@
 package com.example.safetysec.presentation.protectedUser
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.safetysec.domain.model.MonitoringState
@@ -10,8 +11,11 @@ import com.example.safetysec.domain.usecase.StopMonitoringUseCase
 import com.example.safetysec.domain.usecase.alert.TriggerPanicButtonUseCase
 import com.example.safetysec.domain.usecase.monitoring.*
 import com.example.safetysec.service.LocationTracker
+import com.example.safetysec.service.MonitoringService
 import com.example.safetysec.service.SensorDataCollector
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +27,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MonitoringViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val startMonitoringUseCase: StartMonitoringUseCase,
     private val stopMonitoringUseCase: StopMonitoringUseCase,
     private val monitoringRepository: MonitoringRepository,
@@ -79,44 +84,25 @@ class MonitoringViewModel @Inject constructor(
 
     /**
      * Trigger panic button alert
+     * CRITICAL: Now routes through MonitoringService to ensure video recording
      */
     fun triggerPanicButton() {
         viewModelScope.launch {
             _uiState.value = MonitoringUiState.Loading
 
             try {
-                // Collect current sensor data
-                val accelerometerData = sensorDataCollector.getAccelerometerData()
-                val gyroscopeData = sensorDataCollector.getGyroscopeData()
-                val activityData = sensorDataCollector.getActivityData()
-                val locationData = locationTracker.getCurrentLocation()
+                // CRITICAL: Trigger through MonitoringService so video recording happens
+                MonitoringService.triggerPanic(context)
 
-                val sensorData = SensorData(
-                    timestamp = System.currentTimeMillis(),
-                    accelerometerX = accelerometerData.x,
-                    accelerometerY = accelerometerData.y,
-                    accelerometerZ = accelerometerData.z,
-                    gyroscopeX = gyroscopeData.x,
-                    gyroscopeY = gyroscopeData.y,
-                    gyroscopeZ = gyroscopeData.z,
-                    latitude = locationData.latitude,
-                    longitude = locationData.longitude,
-                    speed = locationData.speed,
-                    accuracy = locationData.accuracy,
-                    activityType = activityData.type,
-                    activityConfidence = activityData.confidence
-                )
+                // Give it a moment to process
+                delay(500)
 
-                // Trigger panic button alert
-                val result = triggerPanicButtonUseCase(sensorData)
+                _uiState.value = MonitoringUiState.Success("Emergency alert sent to monitors!")
 
-                result.onSuccess { alert ->
-                    _uiState.value = MonitoringUiState.Success("Emergency alert sent to monitors!")
-                }.onFailure { error ->
-                    _uiState.value = MonitoringUiState.Error(error.message ?: "Failed to send panic alert")
-                }
+                android.util.Log.d("MonitoringViewModel", "Panic button triggered through MonitoringService")
             } catch (e: Exception) {
                 _uiState.value = MonitoringUiState.Error("Error: ${e.message}")
+                android.util.Log.e("MonitoringViewModel", "Failed to trigger panic", e)
             }
         }
     }
