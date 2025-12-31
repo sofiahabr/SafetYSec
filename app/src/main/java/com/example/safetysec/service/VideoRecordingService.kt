@@ -90,8 +90,8 @@ class VideoRecordingService @Inject constructor(
 
             videoCapture = VideoCapture.withOutput(recorder)
 
-            // Bind to lifecycle
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            // Bind to lifecycle - Use FRONT camera for user-facing recording
+            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
             try {
                 cameraProvider.unbindAll()
