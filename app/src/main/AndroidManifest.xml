@@ -58,10 +58,12 @@
             </intent-filter>
         </receiver>
 
-        <!-- Register broadcast receiver -->
+        <!-- Alert Cancellation Receiver (OPTIONAL - not used in direct cancellation)
+             Kept for backwards compatibility but not required
+        -->
         <receiver
             android:name=".receiver.AlertCancellationReceiver"
-            android:enabled="true"
+            android:enabled="false"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.example.safetysec.CANCEL_ALERT" />

@@ -28,6 +28,11 @@ interface MonitorRepository {
     fun subscribeToAlerts(): Flow<AlertEvent>
 
     /**
+     * Subscribe to real-time updates for a specific alert by ID
+     */
+    fun subscribeToAlertById(alertId: String): Flow<AlertEvent?>
+
+    /**
      * Get alert by ID (for detailed view)
      */
     suspend fun getAlertById(alertId: String): AlertEvent?

@@ -99,7 +99,9 @@ class MonitorRepositoryImpl @Inject constructor(
                         longitude = doc.getDouble("longitude") ?: 0.0,
                         details = doc.getString("details"),
                         videoUrl = doc.getString("videoUrl"),
-                        monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList()
+                        monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                        isCancelled = doc.getBoolean("cancelled") ?: false,
+                        cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
                     )
                 } catch (e: Exception) {
                     null
@@ -136,7 +138,9 @@ class MonitorRepositoryImpl @Inject constructor(
                             longitude = doc.getDouble("longitude") ?: 0.0,
                             details = doc.getString("details"),
                             videoUrl = doc.getString("videoUrl"),
-                            monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList()
+                            monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                            isCancelled = doc.getBoolean("cancelled") ?: false,
+                            cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
                         )
                     } catch (e: Exception) {
                         null
@@ -170,11 +174,46 @@ class MonitorRepositoryImpl @Inject constructor(
                 longitude = doc.getDouble("longitude") ?: 0.0,
                 details = doc.getString("details"),
                 videoUrl = doc.getString("videoUrl"),
-                monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList()
+                monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                isCancelled = doc.getBoolean("cancelled") ?: false,
+                cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
             )
         } catch (e: Exception) {
             null
         }
+    }
+
+    /**
+     * Subscribe to real-time updates for a specific alert by ID
+     */
+    override fun subscribeToAlertById(alertId: String): Flow<AlertEvent?> {
+        return firestore
+            .collection("alerts")
+            .document(alertId)
+            .snapshots()
+            .map { doc ->
+                if (!doc.exists()) return@map null
+
+                try {
+                    AlertEvent(
+                        id = doc.id,
+                        type = AlertType.valueOf(doc.getString("type") ?: "PANIC_BUTTON"),
+                        protectedUserId = doc.getString("protectedUserId") ?: return@map null,
+                        protectedUserName = doc.getString("protectedUserName") ?: "Unknown User",
+                        timestamp = doc.getTimestamp("timestamp")?.toLocalDateTime()
+                            ?: LocalDateTime.now(),
+                        latitude = doc.getDouble("latitude") ?: 0.0,
+                        longitude = doc.getDouble("longitude") ?: 0.0,
+                        details = doc.getString("details"),
+                        videoUrl = doc.getString("videoUrl"),
+                        monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                        isCancelled = doc.getBoolean("cancelled") ?: false,
+                        cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
+                    )
+                } catch (e: Exception) {
+                    null
+                }
+            }
     }
 
     /**

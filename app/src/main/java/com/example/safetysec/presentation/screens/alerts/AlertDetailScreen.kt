@@ -94,6 +94,11 @@ fun AlertDetailContent(alert: AlertEvent) {
         // Alert Type Header
         AlertTypeHeader(alert)
 
+        // Prominent Cancellation Banner (if cancelled)
+        if (alert.isCancelled) {
+            CancellationBanner(alert)
+        }
+
         // Video Player (if available)
         if (alert.videoUrl != null) {
             VideoPlayerCard(videoUrl = alert.videoUrl)
@@ -145,6 +150,52 @@ fun AlertTypeHeader(alert: AlertEvent) {
                         color = Color.White.copy(alpha = 0.9f)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun CancellationBanner(alert: AlertEvent) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFFFF9C4) // Light yellow background
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                contentDescription = null,
+                tint = Color(0xFF388E3C), // Green color
+                modifier = Modifier.size(32.dp)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "✓ Alert Cancelled by User",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF388E3C)
+                )
+                if (alert.cancelledAt != null) {
+                    Text(
+                        text = "Cancelled at ${alert.cancelledAt.format(DateTimeFormatter.ofPattern("HH:mm:ss"))}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF555555)
+                    )
+                }
+                Text(
+                    text = "The protected user successfully cancelled this alert. No emergency assistance needed.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF666666)
+                )
             }
         }
     }
@@ -312,13 +363,14 @@ fun AlertTimelineCard(alert: AlertEvent) {
             if (alert.isCancelled && alert.cancelledAt != null) {
                 TimelineItem(
                     time = alert.cancelledAt.format(DateTimeFormatter.ofPattern("HH:mm:ss")),
-                    event = "Alert cancelled by user",
-                    icon = Icons.Default.Cancel,
-                    color = Color.Gray
+                    event = "✓ Alert cancelled by user",
+                    description = "User successfully cancelled the alert. No emergency response needed.",
+                    icon = Icons.Default.CheckCircle,
+                    color = Color(0xFF4CAF50) // Green for success
                 )
             }
 
-            if (alert.videoUrl != null) {
+            if (alert.videoUrl != null && !alert.isCancelled) {
                 TimelineItem(
                     time = alert.timestamp.plusSeconds(30).format(DateTimeFormatter.ofPattern("HH:mm:ss")),
                     event = "Video recording completed",
@@ -369,12 +421,13 @@ fun TimelineItem(
     time: String,
     event: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    color: Color
+    color: Color,
+    description: String? = null
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Box(
             modifier = Modifier
@@ -393,13 +446,23 @@ fun TimelineItem(
             Text(
                 text = event,
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Bold,
+                color = color
             )
             Text(
                 text = time,
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray
             )
+            if (description != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF666666),
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                )
+            }
         }
     }
 }

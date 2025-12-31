@@ -396,7 +396,7 @@ class MonitoringService : Service() {
                 showCancellationNotification(alertEvent)
 
                 // Start video recording immediately
-                if (::videoRecordingService.isInitialized &&
+                val videoJob = if (::videoRecordingService.isInitialized &&
                     videoRecordingService.hasCameraPermission(this@MonitoringService)) {
 
                     serviceScope.launch {
@@ -410,42 +410,85 @@ class MonitoringService : Service() {
                             )
 
                             videoResult.onSuccess { downloadUrl ->
-                                Log.d(TAG, "Video uploaded successfully: $downloadUrl")
-
-                                // Update alert with video URL
-                                monitoringRepository.updateAlertWithVideo(
-                                    alertId = alertEvent.id,
-                                    videoUrl = downloadUrl
-                                )
+                                // Check if alert was cancelled before updating with video
+                                val alert = monitoringRepository.getAlertById(alertEvent.id)
+                                if (alert?.isCancelled == true) {
+                                    Log.d(TAG, "Alert was cancelled - not updating with video URL")
+                                    // Optionally delete the video from storage here
+                                } else {
+                                    Log.d(TAG, "Video uploaded successfully: $downloadUrl")
+                                    // Update alert with video URL
+                                    monitoringRepository.updateAlertWithVideo(
+                                        alertId = alertEvent.id,
+                                        videoUrl = downloadUrl
+                                    )
+                                }
                             }.onFailure { error ->
                                 Log.e(TAG, "Video recording/upload failed: ${error.message}", error)
                             }
+                        } catch (e: CancellationException) {
+                            Log.d(TAG, "Video recording cancelled for alert: ${alertEvent.id}")
+                            throw e  // Re-throw to properly cancel coroutine
                         } catch (e: Exception) {
                             Log.e(TAG, "Exception during video recording", e)
                         }
                     }
                 } else {
                     Log.w(TAG, "Camera permission not granted or service not initialized")
+                    null
                 }
 
-                // 10-second cancellation window
+                // 10-second cancellation window with grace period
                 serviceScope.launch {
                     var cancelled = false
 
-                    repeat(10) {
+                    // Check every second for 10 seconds
+                    repeat(10) { second ->
                         delay(1000)
+                        Log.d(TAG, "Cancellation check ${second + 1}/10 for alert: ${alertEvent.id}")
 
                         val alert = monitoringRepository.getAlertById(alertEvent.id)
                         if (alert?.isCancelled == true) {
                             cancelled = true
-                            Log.d(TAG, "Alert ${alertEvent.id} was cancelled")
+                            Log.d(TAG, "✓ Alert ${alertEvent.id} was cancelled at ${second + 1} seconds")
+
+                            // Cancel video recording job
+                            videoJob?.cancel()
+                            Log.d(TAG, "Video recording job cancelled for alert: ${alertEvent.id}")
+
+                            // Cancel notification to protected user
+                            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                            notificationManager.cancel(CANCELLATION_NOTIFICATION_ID)
+                            return@launch
+                        }
+                    }
+
+                    // Add 2-second grace period to ensure any pending cancellations complete
+                    if (!cancelled) {
+                        Log.d(TAG, "Waiting 2 seconds grace period for alert: ${alertEvent.id}")
+                        delay(2000)
+
+                        // Final check
+                        val alert = monitoringRepository.getAlertById(alertEvent.id)
+                        if (alert?.isCancelled == true) {
+                            cancelled = true
+                            Log.d(TAG, "✓ Alert ${alertEvent.id} was cancelled during grace period")
+
+                            // Cancel video recording job
+                            videoJob?.cancel()
+                            Log.d(TAG, "Video recording job cancelled for alert: ${alertEvent.id}")
+
+                            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                            notificationManager.cancel(CANCELLATION_NOTIFICATION_ID)
                             return@launch
                         }
                     }
 
                     if (!cancelled) {
-                        Log.d(TAG, "Alert ${alertEvent.id} cancellation window expired")
+                        Log.d(TAG, "⚠ Alert ${alertEvent.id} was NOT cancelled - sending to monitors")
                         alertNotificationService.notifyMonitors(alertEvent, this@MonitoringService)
+                    } else {
+                        Log.d(TAG, "✓ Alert ${alertEvent.id} successfully cancelled - NOT notifying monitors")
                     }
                 }
             }

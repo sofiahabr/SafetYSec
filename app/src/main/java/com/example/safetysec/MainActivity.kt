@@ -180,20 +180,87 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
-     * Send broadcast to cancel the alert with the provided PIN
+     * Cancel alert directly in Firestore (no broadcast needed)
+     * SIMPLIFIED: Avoids Android 14+ broadcast permission issues
      */
     private fun handleAlertCancellation(alertId: String, pin: String) {
         try {
-            val cancelIntent = AlertCancellationReceiver.createCancelIntent(
-                context = this,
-                alertId = alertId,
-                code = pin
-            )
-            sendBroadcast(cancelIntent)
+            android.util.Log.d("MainActivity", "Cancelling alert: $alertId with PIN")
 
-            android.util.Log.d("MainActivity", "Alert cancellation broadcast sent for alert: $alertId")
+            // Get Firestore instance
+            val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+
+            // Get current user ID
+            val userId = auth.currentUser?.uid
+            if (userId == null) {
+                android.util.Log.e("MainActivity", "User not authenticated")
+                android.widget.Toast.makeText(this, "Not authenticated", android.widget.Toast.LENGTH_LONG).show()
+                return
+            }
+
+            // Get alert document
+            firestore.collection("alerts").document(alertId).get()
+                .addOnSuccessListener { alertDoc ->
+                    if (!alertDoc.exists()) {
+                        android.util.Log.e("MainActivity", "Alert not found: $alertId")
+                        android.widget.Toast.makeText(this, "Alert not found", android.widget.Toast.LENGTH_SHORT).show()
+                        return@addOnSuccessListener
+                    }
+
+                    // Check timing window (10 seconds)
+                    val timestamp = alertDoc.getTimestamp("timestamp")?.toDate()
+                    val now = java.util.Date()
+                    val timeDiff = now.time - (timestamp?.time ?: 0)
+
+                    if (timeDiff > 10000) {
+                        android.util.Log.e("MainActivity", "Cancellation window expired")
+                        android.widget.Toast.makeText(this, "Cancellation window expired", android.widget.Toast.LENGTH_SHORT).show()
+                        return@addOnSuccessListener
+                    }
+
+                    // Get user's saved PIN
+                    firestore.collection("users").document(userId).get()
+                        .addOnSuccessListener { userDoc ->
+                            val savedPin = userDoc.getString("alertCancellationCode") ?: "0000"
+
+                            // Verify PIN
+                            if (pin != savedPin) {
+                                android.util.Log.e("MainActivity", "Invalid PIN")
+                                android.widget.Toast.makeText(this, "Incorrect PIN", android.widget.Toast.LENGTH_SHORT).show()
+                                return@addOnSuccessListener
+                            }
+
+                            // PIN is correct - cancel the alert
+                            firestore.collection("alerts").document(alertId)
+                                .update(
+                                    mapOf(
+                                        "cancelled" to true,
+                                        "cancelledAt" to com.google.firebase.Timestamp.now()
+                                    )
+                                )
+                                .addOnSuccessListener {
+                                    android.util.Log.d("MainActivity", "Alert cancelled successfully")
+                                    android.widget.Toast.makeText(this, "Alert cancelled successfully", android.widget.Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    android.util.Log.e("MainActivity", "Failed to cancel alert", e)
+                                    android.widget.Toast.makeText(this, "Failed to cancel: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+                                }
+                        }
+                        .addOnFailureListener { e ->
+                            android.util.Log.e("MainActivity", "Failed to get user PIN", e)
+                            android.widget.Toast.makeText(this, "Failed to verify PIN", android.widget.Toast.LENGTH_LONG).show()
+                        }
+                }
+                .addOnFailureListener { e ->
+                    android.util.Log.e("MainActivity", "Failed to get alert", e)
+                    android.widget.Toast.makeText(this, "Failed to load alert", android.widget.Toast.LENGTH_LONG).show()
+                }
+
         } catch (e: Exception) {
-            android.util.Log.e("MainActivity", "Failed to send cancellation broadcast", e)
+            android.util.Log.e("MainActivity", "Exception during cancellation", e)
+            android.widget.Toast.makeText(this, "Error: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
         }
     }
 }

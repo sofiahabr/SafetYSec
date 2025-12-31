@@ -82,13 +82,14 @@ class AlertViewModel @Inject constructor(
     }
 
     /**
-     * Get alert by ID
+     * Get alert by ID and subscribe to real-time updates
      */
     fun getAlertById(alertId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
             try {
+                // Load initial alert data
                 val alert = monitorRepository.getAlertById(alertId)
                 _uiState.update {
                     it.copy(
@@ -96,6 +97,15 @@ class AlertViewModel @Inject constructor(
                         isLoading = false,
                         error = null
                     )
+                }
+
+                // Subscribe to real-time updates for this specific alert
+                monitorRepository.subscribeToAlertById(alertId).collect { updatedAlert ->
+                    if (updatedAlert != null) {
+                        _uiState.update {
+                            it.copy(selectedAlert = updatedAlert)
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.update {
