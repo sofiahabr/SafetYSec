@@ -1,5 +1,6 @@
 package com.example.safetysec.presentation.screens.alerts
 
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -27,6 +28,10 @@ import com.example.safetysec.presentation.components.ErrorAlert
 import com.example.safetysec.presentation.components.FullScreenLoading
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.AlertViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
 import java.time.format.DateTimeFormatter
 
 /**
@@ -179,7 +184,7 @@ fun CancellationBanner(alert: AlertEvent) {
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "✓ Alert Cancelled by User",
+                    text = "Alert Cancelled by User",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF388E3C)
@@ -311,18 +316,13 @@ fun LocationInformationCard(alert: AlertEvent) {
                     icon = Icons.Default.LocationOn
                 )
 
-                // Map preview could go here
-                Button(
-                    onClick = { /* Open in maps */ },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryPurple
-                    )
-                ) {
-                    Icon(Icons.Default.Map, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("View on Map")
-                }
+                // Interactive Map
+                AlertLocationMap(
+                    latitude = alert.latitude,
+                    longitude = alert.longitude,
+                    alertType = alert.type.name,
+                    details = alert.details
+                )
             } else {
                 Text(
                     text = "Location not available",
@@ -363,7 +363,7 @@ fun AlertTimelineCard(alert: AlertEvent) {
             if (alert.isCancelled && alert.cancelledAt != null) {
                 TimelineItem(
                     time = alert.cancelledAt.format(DateTimeFormatter.ofPattern("HH:mm:ss")),
-                    event = "✓ Alert cancelled by user",
+                    event = "Alert cancelled by user",
                     description = "User successfully cancelled the alert. No emergency response needed.",
                     icon = Icons.Default.CheckCircle,
                     color = Color(0xFF4CAF50) // Green for success
@@ -467,12 +467,122 @@ fun TimelineItem(
     }
 }
 
+@Composable
+fun AlertLocationMap(
+    latitude: Double,
+    longitude: Double,
+    alertType: String,
+    details: String?
+) {
+    val context = LocalContext.current
+    val alertLocation = LatLng(latitude, longitude)
+
+    // Camera position state
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(alertLocation, 15f)
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Google Map
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                properties = MapProperties(
+                    isMyLocationEnabled = false,
+                    mapType = MapType.NORMAL
+                ),
+                uiSettings = MapUiSettings(
+                    zoomControlsEnabled = true,
+                    myLocationButtonEnabled = false,
+                    mapToolbarEnabled = false
+                )
+            ) {
+                // Alert location marker
+                Marker(
+                    state = MarkerState(position = alertLocation),
+                    title = alertType.replace("_", " "),
+                    snippet = details ?: "Alert location",
+                    icon = getMapMarkerIcon(alertType)
+                )
+            }
+
+            // Open in Google Maps button (floating)
+            Button(
+                onClick = {
+                    val uri = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude(Alert Location)")
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    intent.setPackage("com.google.android.apps.maps")
+
+                    // Fallback to any map app if Google Maps not installed
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        context.startActivity(intent)
+                    } else {
+                        // Open in browser as fallback
+                        val browserIntent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude")
+                        )
+                        context.startActivity(browserIntent)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryPurple
+                ),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+            ) {
+                Icon(
+                    Icons.Default.Map,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("Open", style = MaterialTheme.typography.labelSmall)
+            }
+        }
+    }
+}
+
+// Get marker color based on alert type
+private fun getMapMarkerIcon(alertType: String): com.google.android.gms.maps.model.BitmapDescriptor? {
+    // Use default markers with different colors
+    return when (alertType) {
+        "FALL_DETECTED", "ACCIDENT_DETECTED", "PANIC_BUTTON" ->
+            com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker(
+                com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_RED
+            )
+        "SPEED_ALERT" ->
+            com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker(
+                com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_ORANGE
+            )
+        "GEOFENCE_BREACH", "GEOFENCING" ->
+            com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker(
+                com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_VIOLET
+            )
+        "PROLONGED_INACTIVITY" ->
+            com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker(
+                com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_BLUE
+            )
+        else ->
+            com.google.android.gms.maps.model.BitmapDescriptorFactory.defaultMarker()
+    }
+}
+
 // Helper functions (reuse from AlertsScreen)
 private fun getAlertTypeIcon(type: String): androidx.compose.ui.graphics.vector.ImageVector {
     return when (type) {
         "FALL_DETECTED" -> Icons.Default.Person
         "SPEED_ALERT" -> Icons.Default.Speed
-        "GEOFENCE_BREACH" -> Icons.Default.LocationOn
+        "GEOFENCE_BREACH", "GEOFENCING" -> Icons.Default.LocationOn
         "ACCIDENT_DETECTED" -> Icons.Default.Warning
         "PROLONGED_INACTIVITY" -> Icons.Default.Timer
         "PANIC_BUTTON" -> Icons.Default.Notifications
@@ -484,7 +594,7 @@ private fun getAlertTypeColor(type: String): Color {
     return when (type) {
         "FALL_DETECTED" -> Color(0xFFE53935)
         "SPEED_ALERT" -> Color(0xFFFB8C00)
-        "GEOFENCE_BREACH" -> Color(0xFF8E24AA)
+        "GEOFENCE_BREACH", "GEOFENCING" -> Color(0xFF8E24AA)
         "ACCIDENT_DETECTED" -> Color(0xFFD32F2F)
         "PROLONGED_INACTIVITY" -> Color(0xFF1976D2)
         "PANIC_BUTTON" -> Color(0xFFC62828)
