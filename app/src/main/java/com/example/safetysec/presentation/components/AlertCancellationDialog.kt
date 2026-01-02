@@ -320,7 +320,7 @@ private fun handleCancellation(
 fun AlertType.toDisplayString(): String = when (this) {
     AlertType.FALL_DETECTED -> "⚠️ Fall Detected"
     AlertType.SPEED_ALERT -> "🚗 Speed Alert"
-    AlertType.GEOFENCE_BREACH -> "📍 Geofence Breach"
+    AlertType.GEOFENCING -> "📍 Geofence Breach"
     AlertType.ACCIDENT_DETECTED -> "🚨 Accident Detected"
     AlertType.PROLONGED_INACTIVITY -> "💤 Inactivity Alert"
     AlertType.PANIC_BUTTON -> "🆘 Panic Button"

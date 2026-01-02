@@ -24,7 +24,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.foundation.clickable
-import androidx.compose.ui.draw.clip
 
 /**
  * Enhanced Alerts Screen with Filtering
@@ -258,7 +257,7 @@ fun AlertCard(
                             com.example.safetysec.domain.model.AlertType.FALL_DETECTED -> Icons.Default.Warning
                             com.example.safetysec.domain.model.AlertType.PANIC_BUTTON -> Icons.Default.Warning
                             com.example.safetysec.domain.model.AlertType.SPEED_ALERT -> Icons.Default.Speed
-                            com.example.safetysec.domain.model.AlertType.GEOFENCE_BREACH -> Icons.Default.LocationOn
+                            com.example.safetysec.domain.model.AlertType.GEOFENCING -> Icons.Default.LocationOn
                             com.example.safetysec.domain.model.AlertType.ACCIDENT_DETECTED -> Icons.Default.Warning
                             com.example.safetysec.domain.model.AlertType.PROLONGED_INACTIVITY -> Icons.Default.AccessTime
                         },
@@ -601,7 +600,7 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
 fun AlertType.toDisplayString(): String = when (this) {
     AlertType.FALL_DETECTED -> "Fall Detected"
     AlertType.SPEED_ALERT -> "Speed Alert"
-    AlertType.GEOFENCE_BREACH -> "Geofence Breach"
+    AlertType.GEOFENCING -> "Geofence Breach"
     AlertType.ACCIDENT_DETECTED -> "Accident Detected"
     AlertType.PROLONGED_INACTIVITY -> "Prolonged Inactivity"
     AlertType.PANIC_BUTTON -> "Panic Button"
