@@ -32,6 +32,7 @@ import com.example.safetysec.presentation.screens.alerts.AlertsScreen
 import com.example.safetysec.presentation.screens.profile.ChangeCancellationPinScreen
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
+import com.example.safetysec.presentation.screens.administration.AdministrationScreen
 
 @Composable
 fun AppNavHost(
@@ -175,6 +176,8 @@ fun AppNavHost(
                 navController = navController
             )
         }
+
+        composable(AppRoutes.ADMINISTRATION) { AdministrationScreen(navController) }
 
         // Add this to AppNavHost.kt composable navigation
 

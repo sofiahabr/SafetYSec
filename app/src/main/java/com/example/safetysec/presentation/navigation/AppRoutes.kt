@@ -47,6 +47,8 @@ object AppRoutes {
     const val SHOWCASE = "showcase"
     const val HOME = "home"
 
+    const val ADMINISTRATION = "administration"
+
     // Helper functions for parameterized routes
     fun alertDetail(alertId: String) = "alert_detail/$alertId"
     fun editRule(ruleId: String) = "edit_rule/$ruleId"
