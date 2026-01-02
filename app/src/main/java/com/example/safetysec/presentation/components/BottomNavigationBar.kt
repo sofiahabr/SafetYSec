@@ -24,8 +24,11 @@ import com.example.safetysec.presentation.viewmodel.AuthViewModel
  * Bottom Navigation Bar Component
  *
  * Automatically role-aware - fetches user role from AuthViewModel and filters navigation items.
- * For Dual users: Shows Administration tab instead of separate Alerts and Time Windows
- * For other roles: Shows role-specific navigation items
+ *
+ * Navigation visibility:
+ * - Protected users: Dashboard, Association, Rules, Time Windows, Profile
+ * - Monitor users: Dashboard, Association, Rules, Alerts, Profile
+ * - Dual users: Dashboard, Association, Rules, Administration, Profile
  */
 
 /**
@@ -71,21 +74,21 @@ fun getBottomNavItems(): List<BottomNavItem> {
             label = "Alerts",
             selectedIcon = Icons.Filled.Notifications,
             unselectedIcon = Icons.Outlined.Notifications,
-            visibleForRoles = listOf(UserRole.MONITOR)
+            visibleForRoles = listOf(UserRole.MONITOR)  // Monitor only
         ),
         BottomNavItem(
             route = AppRoutes.TIME_WINDOWS,
             label = "Time Windows",
             selectedIcon = Icons.Filled.Schedule,
             unselectedIcon = Icons.Outlined.Schedule,
-            visibleForRoles = listOf(UserRole.PROTECTED)
+            visibleForRoles = listOf(UserRole.PROTECTED)  // Protected only
         ),
         BottomNavItem(
             route = AppRoutes.ADMINISTRATION,
             label = "Administration",
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
-            visibleForRoles = listOf(UserRole.DUAL)
+            visibleForRoles = listOf(UserRole.DUAL)  // Dual only
         ),
         BottomNavItem(
             route = AppRoutes.PROFILE,
@@ -101,7 +104,7 @@ fun getBottomNavItems(): List<BottomNavItem> {
  * Main Bottom Navigation Bar
  *
  * Automatically fetches user role from AuthViewModel and filters navigation items accordingly.
- * No need to pass userRole - it's handled internally.
+ * Only shows navbar when user role is loaded to prevent glitching.
  */
 @Composable
 fun BottomNavigationBar(
@@ -116,13 +119,12 @@ fun BottomNavigationBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    // Filter items based on user role if available
-    val visibleItems = if (userRole != null) {
-        items.filter { item ->
-            item.visibleForRoles.contains(userRole)
-        }
-    } else {
-        items
+    if (userRole == null) {
+        return
+    }
+
+    val visibleItems = items.filter { item ->
+        item.visibleForRoles.contains(userRole)
     }
 
     NavigationBar(
