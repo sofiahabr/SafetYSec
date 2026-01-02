@@ -186,6 +186,7 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
     fun logout() {
         viewModelScope.launch {
             _authState.update { it.copy(isLoading = true) }
@@ -344,5 +345,153 @@ class AuthViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    /**
+     * Send Password Reset Email
+     *
+     * Sends a password reset link to the user's email address.
+     * Firebase handles the reset link generation and email delivery.
+     */
+    fun sendPasswordResetEmail(email: String) {
+        viewModelScope.launch {
+            _authState.update { it.copy(isLoading = true, error = null) }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                _authState.update { it.copy(
+                    isLoading = false,
+                    error = "Please enter a valid email address"
+                ) }
+                return@launch
+            }
+
+            try {
+                Log.d("AuthViewModel", "Sending password reset email to: $email")
+
+                com.google.firebase.auth.FirebaseAuth.getInstance()
+                    .sendPasswordResetEmail(email)
+                    .await()
+
+                Log.d("AuthViewModel", "Password reset email sent successfully!")
+                _authState.update { it.copy(
+                    isLoading = false,
+                    error = null
+                ) }
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Failed to send password reset email", e)
+
+                val errorMessage = when {
+                    e.message?.contains("There is no user record") == true -> {
+                        "No account found with this email address"
+                    }
+                    e.message?.contains("too many attempts") == true -> {
+                        "Too many attempts. Please try again later."
+                    }
+                    e.message?.contains("badly formatted") == true -> {
+                        "Please enter a valid email address"
+                    }
+                    else -> {
+                        e.message ?: "Failed to send reset email"
+                    }
+                }
+
+                _authState.update { it.copy(
+                    isLoading = false,
+                    error = errorMessage
+                ) }
+            }
+        }
+    }
+
+    /**
+     * Reset Password with Token
+     *
+     * Note: Firebase handles password reset via email link.
+     * This method is called after user clicks the email link and enters new password.
+     */
+    fun resetPasswordWithToken(code: String, newPassword: String) {
+        viewModelScope.launch {
+            _authState.update { it.copy(isLoading = true, error = null) }
+
+            // Validate password strength
+            if (newPassword.length < 6) {
+                _authState.update { it.copy(
+                    isLoading = false,
+                    error = "Password must be at least 6 characters long"
+                ) }
+                return@launch
+            }
+
+            try {
+                com.google.firebase.auth.FirebaseAuth.getInstance()
+                    .confirmPasswordReset(code, newPassword)
+                    .await()
+
+                // Password reset successful
+                _authState.update { it.copy(
+                    isLoading = false,
+                    error = null
+                ) }
+            } catch (e: Exception) {
+                // Handle errors
+                val errorMessage = when {
+                    e.message?.contains("password is invalid") == true -> {
+                        "Password must be at least 6 characters"
+                    }
+                    e.message?.contains("code is invalid") == true -> {
+                        "Reset link has expired. Please request a new one."
+                    }
+                    else -> {
+                        e.message ?: "Failed to reset password"
+                    }
+                }
+
+                _authState.update { it.copy(
+                    isLoading = false,
+                    error = errorMessage
+                ) }
+            }
+        }
+    }
+
+    /**
+     * Verify Password Reset Code
+     *
+     * Verifies that the reset code is valid before allowing password change.
+     */
+    fun verifyPasswordResetCode(
+        code: String,
+        onSuccess: (String?) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val email = com.google.firebase.auth.FirebaseAuth.getInstance()
+                    .verifyPasswordResetCode(code)
+                    .await()
+
+                onSuccess(email)
+            } catch (e: Exception) {
+                // Code is invalid or expired
+                val errorMessage = when {
+                    e.message?.contains("code is invalid") == true -> {
+                        "Reset link has expired or is invalid"
+                    }
+                    else -> {
+                        e.message ?: "Invalid reset code"
+                    }
+                }
+                onError(errorMessage)
+            }
+        }
+    }
+
+    /**
+     * Clear Password Recovery Error
+     *
+     * Clear any error messages from password recovery attempts
+     */
+    fun clearPasswordRecoveryError() {
+        _authState.update { it.copy(error = null) }
     }
 }

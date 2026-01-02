@@ -28,6 +28,8 @@ fun LogInScreen(
     viewModel: AuthViewModel,
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
+
+    onNavigateToForgotPassword: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var email = remember { mutableStateOf("") }
@@ -85,6 +87,11 @@ fun LogInScreen(
             text = "Don't have an account? Register here",
             onClick = onNavigateToRegister,
             isLoading = authState.value.isLoading
+        )
+
+        SecondaryButton(
+            text = "Forgot Password?",
+            onClick = onNavigateToForgotPassword,
         )
 
         if (!authState.value.error.isNullOrEmpty()) {
