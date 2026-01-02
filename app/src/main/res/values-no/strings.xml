@@ -1,0 +1,212 @@
+<resources>
+    <!-- App Name -->
+    <string name="app_name">SafetYSec</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Avbryt</string>
+    <string name="save">Lagre</string>
+    <string name="delete">Slett</string>
+    <string name="edit">Rediger</string>
+    <string name="back">Tilbake</string>
+    <string name="next">Neste</string>
+    <string name="done">Ferdig</string>
+    <string name="loading">Laster…</string>
+    <string name="error">Feil</string>
+    <string name="success">Suksess</string>
+    <string name="confirm">Bekreft</string>
+    <string name="retry">Prøv igjen</string>
+    <string name="close">Lukk</string>
+
+    <!-- Authentication -->
+    <string name="login">Logg inn</string>
+    <string name="register">Registrer</string>
+    <string name="logout">Logg ut</string>
+    <string name="email">E-post</string>
+    <string name="password">Passord</string>
+    <string name="confirm_password">Bekreft passord</string>
+    <string name="forgot_password">Glemt passord?</string>
+    <string name="full_name">Fullt navn</string>
+    <string name="phone_number">Telefonnummer</string>
+    <string name="create_account">Opprett konto</string>
+    <string name="already_have_account">Har du allerede en konto?</string>
+    <string name="dont_have_account">Har du ikke en konto?</string>
+
+    <!-- User Profiles -->
+    <string name="monitor">Overvåker</string>
+    <string name="protected_user">Beskyttet bruker</string>
+    <string name="profile">Profil</string>
+    <string name="settings">Innstillinger</string>
+    <string name="account">Konto</string>
+    <string name="personal_info">Personlig informasjon</string>
+    <string name="change_password">Endre passord</string>
+    <string name="delete_account">Slett konto</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard">Dashboard</string>
+    <string name="home">Hjem</string>
+    <string name="my_safety">Min sikkerhet</string>
+    <string name="active_monitors">Aktive overvåkere</string>
+    <string name="active_rules">Aktive regler</string>
+    <string name="current_status">Nåværende status</string>
+    <string name="all_safe">Alt trygt</string>
+    <string name="monitoring_active">Overvåking aktiv</string>
+    <string name="monitoring_inactive">Overvåking inaktiv</string>
+    <string name="start_monitoring">Start overvåking</string>
+    <string name="stop_monitoring">Stopp overvåking</string>
+
+    <!-- Rules -->
+    <string name="rules">Regler</string>
+    <string name="safety_rules">Sikkerhetsregler</string>
+    <string name="create_rule">Opprett regel</string>
+    <string name="edit_rule">Rediger regel</string>
+    <string name="delete_rule">Slett regel</string>
+    <string name="rule_authorized">Autorisert</string>
+    <string name="rule_pending">Venter på autorisasjon</string>
+    <string name="rule_name">Regelnavn</string>
+    <string name="rule_description">Beskrivelse</string>
+    <string name="rule_parameters">Parametere</string>
+    <string name="authorize_rule">Autoriser regel</string>
+    <string name="no_rules">Ingen regler konfigurert</string>
+
+    <!-- Rule Types -->
+    <string name="fall_detection">Falldeteksjon</string>
+    <string name="accident_detection">Ulykkesdeteksjon</string>
+    <string name="geofencing">Geografisk innhegning</string>
+    <string name="speed_control">Fartskontroll</string>
+    <string name="prolonged_inactivity">Langvarig inaktivitet</string>
+    <string name="panic_button">Panikknapp</string>
+
+    <!-- Alerts -->
+    <string name="alerts">Varsler</string>
+    <string name="alert_history">Varselhistorikk</string>
+    <string name="recent_alerts">Nylige varsler</string>
+    <string name="alert_details">Varseldetaljer</string>
+    <string name="no_alerts">Ingen varsler for øyeblikket</string>
+    <string name="view_all">Se alle</string>
+    <string name="alert_location">Plassering</string>
+    <string name="alert_time">Tidspunkt</string>
+    <string name="alert_type">Type</string>
+    <string name="alert_video">Videoopptak</string>
+    <string name="cancel_alert">Avbryt varsel</string>
+    <string name="alert_cancelled">Varsel avbrutt</string>
+
+    <!-- Association -->
+    <string name="association">Tilknytning</string>
+    <string name="associations">Tilknytninger</string>
+    <string name="add_monitor">Legg til overvåker</string>
+    <string name="add_protected">Legg til beskyttet bruker</string>
+    <string name="otp_code">Engangskode</string>
+    <string name="generate_code">Generer kode</string>
+    <string name="enter_code">Skriv inn kode</string>
+    <string name="connect">Koble til</string>
+    <string name="remove_association">Fjern tilknytning</string>
+    <string name="no_associations">Ingen tilknytninger ennå</string>
+
+    <!-- Time Windows -->
+    <string name="time_windows">Tidsvinduer</string>
+    <string name="add_time_window">Legg til tidsvindu</string>
+    <string name="edit_time_window">Rediger tidsvindu</string>
+    <string name="delete_time_window">Slett tidsvindu</string>
+    <string name="start_time">Starttid</string>
+    <string name="end_time">Sluttid</string>
+    <string name="days_of_week">Ukedager</string>
+    <string name="monday">Mandag</string>
+    <string name="tuesday">Tirsdag</string>
+    <string name="wednesday">Onsdag</string>
+    <string name="thursday">Torsdag</string>
+    <string name="friday">Fredag</string>
+    <string name="saturday">Lørdag</string>
+    <string name="sunday">Søndag</string>
+    <string name="no_time_windows">Ingen tidsvinduer konfigurert</string>
+
+    <!-- Notifications -->
+    <string name="notification_title_monitoring">Sikkerhetsovervåking aktiv</string>
+    <string name="notification_text_monitoring">Din sikkerhet blir overvåket</string>
+    <string name="notification_channel_monitoring">Sikkerhetsovervåking</string>
+    <string name="notification_channel_alerts">Sikkerhetsvarsler</string>
+    <string name="notification_alert_title">Sikkerhetsvarsel!</string>
+    <string name="notification_alert_text">%s varsel oppdaget</string>
+
+    <!-- Permissions -->
+    <string name="permission_location_rationale">Posisjonstillatelse kreves for geografisk innhegning og fartskontroll.</string>
+    <string name="permission_camera_rationale">Kameratillatelse kreves for å ta opp video under varsler.</string>
+    <string name="permission_activity_rationale">Aktivitetsgjenkjenning kreves for å oppdage langvarig inaktivitet.</string>
+    <string name="permission_notification_rationale">Varseltillatelse kreves for å sende sikkerhetsvarsler.</string>
+    <string name="permission_required">Tillatelse påkrevd</string>
+    <string name="grant_permission">Gi tillatelse</string>
+
+    <!-- Errors -->
+    <string name="error_generic">En feil oppstod. Vennligst prøv igjen.</string>
+    <string name="error_network">Nettverksfeil. Sjekk tilkoblingen din.</string>
+    <string name="error_auth">Autentisering mislyktes.</string>
+    <string name="error_invalid_email">Ugyldig e-postadresse.</string>
+    <string name="error_invalid_password">Passordet må være minst 6 tegn.</string>
+    <string name="error_passwords_dont_match">Passordene stemmer ikke overens.</string>
+    <string name="error_required_field">Dette feltet er påkrevd.</string>
+    <string name="error_invalid_otp">Ugyldig eller utløpt kode.</string>
+    <string name="error_permission_denied">Tillatelse nektet.</string>
+    <string name="error_location_unavailable">Posisjon utilgjengelig.</string>
+    <string name="error_video_recording_failed">Videoopptak mislyktes.</string>
+
+    <!-- Success Messages -->
+    <string name="success_rule_created">Regel opprettet.</string>
+    <string name="success_rule_updated">Regel oppdatert.</string>
+    <string name="success_rule_deleted">Regel slettet.</string>
+    <string name="success_association_created">Tilknytning opprettet.</string>
+    <string name="success_association_removed">Tilknytning fjernet.</string>
+    <string name="success_profile_updated">Profil oppdatert.</string>
+    <string name="success_password_changed">Passord endret.</string>
+
+    <!-- Confirmation Messages -->
+    <string name="confirm_delete_rule">Er du sikker på at du vil slette denne regelen?</string>
+    <string name="confirm_remove_association">Er du sikker på at du vil fjerne denne tilknytningen?</string>
+    <string name="confirm_delete_account">Er du sikker på at du vil slette kontoen din? Denne handlingen kan ikke angres.</string>
+    <string name="confirm_cancel_alert">Er du sikker på at du vil avbryte dette varselet?</string>
+    <string name="confirm_logout">Er du sikker på at du vil logge ut?</string>
+
+    <!-- Accessibility -->
+    <string name="accessibility_back_button">Naviger tilbake</string>
+    <string name="accessibility_menu">Meny</string>
+    <string name="accessibility_profile_picture">Profilbilde</string>
+    <string name="accessibility_expand">Utvid</string>
+    <string name="accessibility_collapse">Skjul</string>
+    <string name="accessibility_play_video">Spill av video</string>
+    <string name="accessibility_pause_video">Pause video</string>
+    <string name="accessibility_location_map">Posisjonskart</string>
+    <string name="accessibility_panic_button">Nødpanikknapp - Trykk for å utløse varsel</string>
+    <string name="accessibility_monitoring_switch">Slå overvåking på/av</string>
+
+    <!-- Theme -->
+    <string name="theme">Tema</string>
+    <string name="theme_light">Lyst</string>
+    <string name="theme_dark">Mørkt</string>
+    <string name="theme_system">Systemstandard</string>
+    <string name="appearance">Utseende</string>
+
+    <!-- Language -->
+    <string name="language">Språk</string>
+    <string name="language_english">Engelsk</string>
+    <string name="language_norwegian">Norsk</string>
+    <string name="language_portuguese">Portugisisk</string>
+
+    <!-- About -->
+    <string name="about">Om</string>
+    <string name="version">Versjon</string>
+    <string name="privacy_policy">Personvernregler</string>
+    <string name="terms_of_service">Vilkår for bruk</string>
+    <string name="help">Hjelp</string>
+    <string name="contact_support">Kontakt support</string>
+
+    <!-- Empty States -->
+    <string name="empty_state_no_monitors">Du har ikke lagt til noen overvåkere ennå.</string>
+    <string name="empty_state_no_protected">Du har ikke lagt til noen beskyttede brukere ennå.</string>
+    <string name="empty_state_no_alerts">Ingen varsler å vise.</string>
+    <string name="empty_state_no_rules">Ingen regler konfigurert ennå.</string>
+
+    <!-- Video Recording -->
+    <string name="recording_video">Tar opp video…</string>
+    <string name="video_recorded">Video tatt opp</string>
+    <string name="uploading_video">Laster opp video…</string>
+    <string name="video_uploaded">Video lastet opp</string>
+</resources>

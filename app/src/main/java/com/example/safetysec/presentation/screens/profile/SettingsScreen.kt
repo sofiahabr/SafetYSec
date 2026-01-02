@@ -1,5 +1,6 @@
 package com.example.safetysec.presentation.screens.profile
 
+import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +18,9 @@ import androidx.navigation.NavController
 import com.example.safetysec.presentation.components.CustomTopAppBar
 import com.example.safetysec.data.preferences.ThemeMode
 import com.example.safetysec.data.preferences.ThemePreferences
+import com.example.safetysec.data.preferences.AppLanguage
+import com.example.safetysec.data.preferences.LanguagePreferences
+import com.example.safetysec.util.LanguageManager
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -39,17 +43,23 @@ fun SettingsScreen(navController: NavController) {
     val user = authState.user
 
     val context = LocalContext.current
+    val activity = context as? Activity
     val scope = rememberCoroutineScope()
+
+    // Theme preferences
     val themePreferences = remember { ThemePreferences(context) }
+    val selectedTheme by themePreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
+
+    // Language preferences
+    val languagePreferences = remember { LanguagePreferences(context) }
+    val selectedLanguage by languagePreferences.currentLanguage.collectAsState(initial = AppLanguage.ENGLISH)
 
     var notificationsEnabled by remember { mutableStateOf(true) }
     var alertSoundEnabled by remember { mutableStateOf(true) }
     var vibrationEnabled by remember { mutableStateOf(true) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
-    var selectedLanguage by remember { mutableStateOf("English") }
 
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
-    val selectedTheme by themePreferences.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
 
     Scaffold(
         topBar = {
@@ -103,7 +113,7 @@ fun SettingsScreen(navController: NavController) {
                 SettingsItem(
                     icon = Icons.Default.Language,
                     title = "Language",
-                    subtitle = selectedLanguage,
+                    subtitle = selectedLanguage.displayName,
                     onClick = { showLanguageDialog = true }
                 )
 
@@ -185,9 +195,18 @@ fun SettingsScreen(navController: NavController) {
         LanguageSelectionDialog(
             currentLanguage = selectedLanguage,
             onLanguageSelected = { language ->
-                selectedLanguage = language
+                scope.launch {
+                    // Save language preference
+                    languagePreferences.setLanguage(language)
+
+                    // Apply language change
+                    LanguageManager.setAppLanguage(
+                        context = context,
+                        language = language,
+                        activity = activity
+                    )
+                }
                 showLanguageDialog = false
-                // TODO: Implement language change
             },
             onDismiss = {
                 showLanguageDialog = false
@@ -334,16 +353,14 @@ private fun SettingsSwitchItem(
 }
 
 /**
- * Language Selection Dialog
+ * Language Selection Dialog - with AppLanguage enum
  */
 @Composable
 private fun LanguageSelectionDialog(
-    currentLanguage: String,
-    onLanguageSelected: (String) -> Unit,
+    currentLanguage: AppLanguage,
+    onLanguageSelected: (AppLanguage) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val languages = listOf("English", "Portuguese", "Spanish", "French")
-
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = {
@@ -354,7 +371,7 @@ private fun LanguageSelectionDialog(
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                languages.forEach { language ->
+                AppLanguage.values().forEach { language ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = { onLanguageSelected(language) },
@@ -373,10 +390,17 @@ private fun LanguageSelectionDialog(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = language,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Column {
+                                Text(
+                                    text = language.displayName,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Text(
+                                    text = language.code,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
 
                             if (language == currentLanguage) {
                                 Icon(

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -8,19 +10,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- Camera permission for video recording -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <!-- Storage for video files -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- Notifications -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-
-
 
     <application
         android:name=".SafetYSecApplication"
@@ -31,29 +25,36 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SafetYSec">
+        android:theme="@style/Theme.SafetYSec"
+        android:largeHeap="true"
+        android:hardwareAccelerated="true">
 
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBg5EymCeHqPBGtYb36igQEVUE4Q19ur0Q" />
 
+        <!-- Main Activity with Landscape Support -->
         <activity
             android:name="com.example.safetysec.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:screenOrientation="fullSensor"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Monitoring Service -->
         <service
             android:name="com.example.safetysec.service.MonitoringService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
 
-        <!-- Boot Receiver (to restart monitoring after device reboot) -->
+        <!-- Boot Receiver -->
         <receiver
             android:name="com.example.safetysec.receiver.BootReceiver"
             android:enabled="true"
@@ -63,9 +64,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- Alert Cancellation Receiver (OPTIONAL - not used in direct cancellation)
-             Kept for backwards compatibility but not required
-        -->
+        <!-- Alert Cancellation Receiver -->
         <receiver
             android:name=".receiver.AlertCancellationReceiver"
             android:enabled="false"
@@ -75,6 +74,7 @@
             </intent-filter>
         </receiver>
 
+        <!-- Firebase Messaging Service -->
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">

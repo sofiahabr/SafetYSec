@@ -175,4 +175,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:2.6.2")
 
     implementation("androidx.lifecycle:lifecycle-process:2.6.2")
+
+    // DataStore for preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // AppCompat for locale support
+    implementation("androidx.appcompat:appcompat:1.6.1")
 }

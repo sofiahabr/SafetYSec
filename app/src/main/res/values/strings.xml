@@ -14,6 +14,9 @@
     <string name="loading">Loading…</string>
     <string name="error">Error</string>
     <string name="success">Success</string>
+    <string name="confirm">Confirm</string>
+    <string name="retry">Retry</string>
+    <string name="close">Close</string>
 
     <!-- Authentication -->
     <string name="login">Login</string>
@@ -25,29 +28,48 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="full_name">Full Name</string>
     <string name="phone_number">Phone Number</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
 
     <!-- User Profiles -->
     <string name="monitor">Monitor</string>
     <string name="protected_user">Protected User</string>
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
+    <string name="account">Account</string>
+    <string name="personal_info">Personal Information</string>
+    <string name="change_password">Change Password</string>
+    <string name="delete_account">Delete Account</string>
 
     <!-- Dashboard -->
     <string name="dashboard">Dashboard</string>
+    <string name="home">Home</string>
     <string name="my_safety">My Safety</string>
     <string name="active_monitors">Active Monitors</string>
     <string name="active_rules">Active Rules</string>
     <string name="current_status">Current Status</string>
     <string name="all_safe">All Safe</string>
-    <string name="monitoring_active">Monitoring active</string>
+    <string name="monitoring_active">Monitoring Active</string>
+    <string name="monitoring_inactive">Monitoring Inactive</string>
+    <string name="start_monitoring">Start Monitoring</string>
+    <string name="stop_monitoring">Stop Monitoring</string>
 
     <!-- Rules -->
     <string name="rules">Rules</string>
     <string name="safety_rules">Safety Rules</string>
     <string name="create_rule">Create Rule</string>
     <string name="edit_rule">Edit Rule</string>
+    <string name="delete_rule">Delete Rule</string>
     <string name="rule_authorized">Authorized</string>
     <string name="rule_pending">Pending Authorization</string>
+    <string name="rule_name">Rule Name</string>
+    <string name="rule_description">Description</string>
+    <string name="rule_parameters">Parameters</string>
+    <string name="authorize_rule">Authorize Rule</string>
+    <string name="no_rules">No rules configured</string>
+
+    <!-- Rule Types -->
     <string name="fall_detection">Fall Detection</string>
     <string name="accident_detection">Accident Detection</string>
     <string name="geofencing">Geofencing</string>
@@ -62,39 +84,129 @@
     <string name="alert_details">Alert Details</string>
     <string name="no_alerts">No alerts at this time</string>
     <string name="view_all">View All</string>
+    <string name="alert_location">Location</string>
+    <string name="alert_time">Time</string>
+    <string name="alert_type">Type</string>
+    <string name="alert_video">Video Recording</string>
+    <string name="cancel_alert">Cancel Alert</string>
+    <string name="alert_cancelled">Alert Cancelled</string>
 
     <!-- Association -->
     <string name="association">Association</string>
+    <string name="associations">Associations</string>
     <string name="add_monitor">Add Monitor</string>
     <string name="add_protected">Add Protected User</string>
-    <string name="otp_code">One-Time Password</string>
+    <string name="otp_code">One-Time Code</string>
     <string name="generate_code">Generate Code</string>
     <string name="enter_code">Enter Code</string>
     <string name="connect">Connect</string>
+    <string name="remove_association">Remove Association</string>
+    <string name="no_associations">No associations yet</string>
 
     <!-- Time Windows -->
     <string name="time_windows">Time Windows</string>
     <string name="add_time_window">Add Time Window</string>
     <string name="edit_time_window">Edit Time Window</string>
+    <string name="delete_time_window">Delete Time Window</string>
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="days_of_week">Days of Week</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="no_time_windows">No time windows configured</string>
 
     <!-- Notifications -->
     <string name="notification_title_monitoring">Safety Monitoring Active</string>
     <string name="notification_text_monitoring">Your safety is being monitored</string>
     <string name="notification_channel_monitoring">Safety Monitoring</string>
+    <string name="notification_channel_alerts">Safety Alerts</string>
+    <string name="notification_alert_title">Safety Alert!</string>
+    <string name="notification_alert_text">%s alert detected</string>
 
     <!-- Permissions -->
     <string name="permission_location_rationale">Location permission is required for geofencing and speed monitoring.</string>
     <string name="permission_camera_rationale">Camera permission is required to record video during alerts.</string>
     <string name="permission_activity_rationale">Activity recognition is required to detect prolonged inactivity.</string>
+    <string name="permission_notification_rationale">Notification permission is required to send safety alerts.</string>
+    <string name="permission_required">Permission Required</string>
+    <string name="grant_permission">Grant Permission</string>
 
     <!-- Errors -->
     <string name="error_generic">An error occurred. Please try again.</string>
-    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_network">Network error. Check your connection.</string>
     <string name="error_auth">Authentication failed.</string>
     <string name="error_invalid_email">Invalid email address.</string>
     <string name="error_invalid_password">Password must be at least 6 characters.</string>
-    <string name="error_passwords_dont_match">Passwords don\'t match.</string>
+    <string name="error_passwords_dont_match">Passwords do not match.</string>
+    <string name="error_required_field">This field is required.</string>
+    <string name="error_invalid_otp">Invalid or expired code.</string>
+    <string name="error_permission_denied">Permission denied.</string>
+    <string name="error_location_unavailable">Location unavailable.</string>
+    <string name="error_video_recording_failed">Video recording failed.</string>
+
+    <!-- Success Messages -->
+    <string name="success_rule_created">Rule created successfully.</string>
+    <string name="success_rule_updated">Rule updated successfully.</string>
+    <string name="success_rule_deleted">Rule deleted successfully.</string>
+    <string name="success_association_created">Association created successfully.</string>
+    <string name="success_association_removed">Association removed successfully.</string>
+    <string name="success_profile_updated">Profile updated successfully.</string>
+    <string name="success_password_changed">Password changed successfully.</string>
+
+    <!-- Confirmation Messages -->
+    <string name="confirm_delete_rule">Are you sure you want to delete this rule?</string>
+    <string name="confirm_remove_association">Are you sure you want to remove this association?</string>
+    <string name="confirm_delete_account">Are you sure you want to delete your account? This action cannot be undone.</string>
+    <string name="confirm_cancel_alert">Are you sure you want to cancel this alert?</string>
+    <string name="confirm_logout">Are you sure you want to logout?</string>
+
+    <!-- Accessibility -->
+    <string name="accessibility_back_button">Navigate back</string>
+    <string name="accessibility_menu">Menu</string>
+    <string name="accessibility_profile_picture">Profile picture</string>
+    <string name="accessibility_expand">Expand</string>
+    <string name="accessibility_collapse">Collapse</string>
+    <string name="accessibility_play_video">Play video</string>
+    <string name="accessibility_pause_video">Pause video</string>
+    <string name="accessibility_location_map">Location map</string>
+    <string name="accessibility_panic_button">Emergency panic button - Press to trigger alert</string>
+    <string name="accessibility_monitoring_switch">Toggle monitoring on/off</string>
+
+    <!-- Theme -->
+    <string name="theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System Default</string>
+    <string name="appearance">Appearance</string>
+
+    <!-- Language -->
+    <string name="language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_norwegian">Norwegian</string>
+    <string name="language_portuguese">Portuguese</string>
+
+    <!-- About -->
+    <string name="about">About</string>
+    <string name="version">Version</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="help">Help</string>
+    <string name="contact_support">Contact Support</string>
+
+    <!-- Empty States -->
+    <string name="empty_state_no_monitors">You haven\'t added any monitors yet.</string>
+    <string name="empty_state_no_protected">You haven\'t added any protected users yet.</string>
+    <string name="empty_state_no_alerts">No alerts to display.</string>
+    <string name="empty_state_no_rules">No rules configured yet.</string>
+
+    <!-- Video Recording -->
+    <string name="recording_video">Recording video…</string>
+    <string name="video_recorded">Video recorded</string>
+    <string name="uploading_video">Uploading video…</string>
+    <string name="video_uploaded">Video uploaded</string>
 </resources>

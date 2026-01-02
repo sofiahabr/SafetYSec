@@ -14,6 +14,9 @@
     <string name="loading">A carregar…</string>
     <string name="error">Erro</string>
     <string name="success">Sucesso</string>
+    <string name="confirm">Confirmar</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="close">Fechar</string>
 
     <!-- Authentication -->
     <string name="login">Entrar</string>
@@ -25,29 +28,48 @@
     <string name="forgot_password">Esqueceu a palavra-passe?</string>
     <string name="full_name">Nome Completo</string>
     <string name="phone_number">Número de Telefone</string>
+    <string name="create_account">Criar Conta</string>
+    <string name="already_have_account">Já tem uma conta?</string>
+    <string name="dont_have_account">Não tem uma conta?</string>
 
     <!-- User Profiles -->
     <string name="monitor">Monitor</string>
     <string name="protected_user">Utilizador Protegido</string>
     <string name="profile">Perfil</string>
     <string name="settings">Definições</string>
+    <string name="account">Conta</string>
+    <string name="personal_info">Informação Pessoal</string>
+    <string name="change_password">Alterar Palavra-passe</string>
+    <string name="delete_account">Eliminar Conta</string>
 
     <!-- Dashboard -->
     <string name="dashboard">Painel</string>
+    <string name="home">Início</string>
     <string name="my_safety">A Minha Segurança</string>
     <string name="active_monitors">Monitores Ativos</string>
     <string name="active_rules">Regras Ativas</string>
     <string name="current_status">Estado Atual</string>
     <string name="all_safe">Tudo Seguro</string>
     <string name="monitoring_active">Monitorização ativa</string>
+    <string name="monitoring_inactive">Monitorização inativa</string>
+    <string name="start_monitoring">Iniciar Monitorização</string>
+    <string name="stop_monitoring">Parar Monitorização</string>
 
     <!-- Rules -->
     <string name="rules">Regras</string>
     <string name="safety_rules">Regras de Segurança</string>
     <string name="create_rule">Criar Regra</string>
     <string name="edit_rule">Editar Regra</string>
+    <string name="delete_rule">Eliminar Regra</string>
     <string name="rule_authorized">Autorizada</string>
     <string name="rule_pending">Pendente de Autorização</string>
+    <string name="rule_name">Nome da Regra</string>
+    <string name="rule_description">Descrição</string>
+    <string name="rule_parameters">Parâmetros</string>
+    <string name="authorize_rule">Autorizar Regra</string>
+    <string name="no_rules">Sem regras configuradas</string>
+
+    <!-- Rule Types -->
     <string name="fall_detection">Deteção de Queda</string>
     <string name="accident_detection">Deteção de Acidente</string>
     <string name="geofencing">Geolocalização</string>
@@ -62,33 +84,57 @@
     <string name="alert_details">Detalhes do Alerta</string>
     <string name="no_alerts">Sem alertas neste momento</string>
     <string name="view_all">Ver Todos</string>
+    <string name="alert_location">Localização</string>
+    <string name="alert_time">Hora</string>
+    <string name="alert_type">Tipo</string>
+    <string name="alert_video">Gravação de Vídeo</string>
+    <string name="cancel_alert">Cancelar Alerta</string>
+    <string name="alert_cancelled">Alerta Cancelado</string>
 
     <!-- Association -->
     <string name="association">Associação</string>
+    <string name="associations">Associações</string>
     <string name="add_monitor">Adicionar Monitor</string>
     <string name="add_protected">Adicionar Utilizador Protegido</string>
     <string name="otp_code">Código de Uso Único</string>
     <string name="generate_code">Gerar Código</string>
     <string name="enter_code">Inserir Código</string>
     <string name="connect">Conectar</string>
+    <string name="remove_association">Remover Associação</string>
+    <string name="no_associations">Sem associações ainda</string>
 
     <!-- Time Windows -->
     <string name="time_windows">Janelas Temporais</string>
     <string name="add_time_window">Adicionar Janela Temporal</string>
     <string name="edit_time_window">Editar Janela Temporal</string>
+    <string name="delete_time_window">Eliminar Janela Temporal</string>
     <string name="start_time">Hora de Início</string>
     <string name="end_time">Hora de Fim</string>
     <string name="days_of_week">Dias da Semana</string>
+    <string name="monday">Segunda-feira</string>
+    <string name="tuesday">Terça-feira</string>
+    <string name="wednesday">Quarta-feira</string>
+    <string name="thursday">Quinta-feira</string>
+    <string name="friday">Sexta-feira</string>
+    <string name="saturday">Sábado</string>
+    <string name="sunday">Domingo</string>
+    <string name="no_time_windows">Sem janelas temporais configuradas</string>
 
     <!-- Notifications -->
     <string name="notification_title_monitoring">Monitorização de Segurança Ativa</string>
     <string name="notification_text_monitoring">A sua segurança está a ser monitorizada</string>
     <string name="notification_channel_monitoring">Monitorização de Segurança</string>
+    <string name="notification_channel_alerts">Alertas de Segurança</string>
+    <string name="notification_alert_title">Alerta de Segurança!</string>
+    <string name="notification_alert_text">Alerta %s detetado</string>
 
     <!-- Permissions -->
     <string name="permission_location_rationale">A permissão de localização é necessária para geolocalização e monitorização de velocidade.</string>
     <string name="permission_camera_rationale">A permissão de câmara é necessária para gravar vídeo durante alertas.</string>
     <string name="permission_activity_rationale">O reconhecimento de atividade é necessário para detetar inatividade prolongada.</string>
+    <string name="permission_notification_rationale">A permissão de notificação é necessária para enviar alertas de segurança.</string>
+    <string name="permission_required">Permissão Necessária</string>
+    <string name="grant_permission">Conceder Permissão</string>
 
     <!-- Errors -->
     <string name="error_generic">Ocorreu um erro. Por favor, tente novamente.</string>
@@ -97,4 +143,70 @@
     <string name="error_invalid_email">Endereço de email inválido.</string>
     <string name="error_invalid_password">A palavra-passe deve ter pelo menos 6 caracteres.</string>
     <string name="error_passwords_dont_match">As palavras-passe não coincidem.</string>
+    <string name="error_required_field">Este campo é obrigatório.</string>
+    <string name="error_invalid_otp">Código inválido ou expirado.</string>
+    <string name="error_permission_denied">Permissão negada.</string>
+    <string name="error_location_unavailable">Localização indisponível.</string>
+    <string name="error_video_recording_failed">Falha na gravação de vídeo.</string>
+
+    <!-- Success Messages -->
+    <string name="success_rule_created">Regra criada com sucesso.</string>
+    <string name="success_rule_updated">Regra atualizada com sucesso.</string>
+    <string name="success_rule_deleted">Regra eliminada com sucesso.</string>
+    <string name="success_association_created">Associação criada com sucesso.</string>
+    <string name="success_association_removed">Associação removida com sucesso.</string>
+    <string name="success_profile_updated">Perfil atualizado com sucesso.</string>
+    <string name="success_password_changed">Palavra-passe alterada com sucesso.</string>
+
+    <!-- Confirmation Messages -->
+    <string name="confirm_delete_rule">Tem a certeza de que deseja eliminar esta regra?</string>
+    <string name="confirm_remove_association">Tem a certeza de que deseja remover esta associação?</string>
+    <string name="confirm_delete_account">Tem a certeza de que deseja eliminar a sua conta? Esta ação não pode ser revertida.</string>
+    <string name="confirm_cancel_alert">Tem a certeza de que deseja cancelar este alerta?</string>
+    <string name="confirm_logout">Tem a certeza de que deseja sair?</string>
+
+    <!-- Accessibility -->
+    <string name="accessibility_back_button">Navegar para trás</string>
+    <string name="accessibility_menu">Menu</string>
+    <string name="accessibility_profile_picture">Foto de perfil</string>
+    <string name="accessibility_expand">Expandir</string>
+    <string name="accessibility_collapse">Recolher</string>
+    <string name="accessibility_play_video">Reproduzir vídeo</string>
+    <string name="accessibility_pause_video">Pausar vídeo</string>
+    <string name="accessibility_location_map">Mapa de localização</string>
+    <string name="accessibility_panic_button">Botão de pânico de emergência - Pressione para disparar alerta</string>
+    <string name="accessibility_monitoring_switch">Ativar/desativar monitorização</string>
+
+    <!-- Theme -->
+    <string name="theme">Tema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="theme_system">Predefinição do Sistema</string>
+    <string name="appearance">Aparência</string>
+
+    <!-- Language -->
+    <string name="language">Idioma</string>
+    <string name="language_english">Inglês</string>
+    <string name="language_norwegian">Norueguês</string>
+    <string name="language_portuguese">Português</string>
+
+    <!-- About -->
+    <string name="about">Sobre</string>
+    <string name="version">Versão</string>
+    <string name="privacy_policy">Política de Privacidade</string>
+    <string name="terms_of_service">Termos de Serviço</string>
+    <string name="help">Ajuda</string>
+    <string name="contact_support">Contactar Suporte</string>
+
+    <!-- Empty States -->
+    <string name="empty_state_no_monitors">Ainda não adicionou nenhum monitor.</string>
+    <string name="empty_state_no_protected">Ainda não adicionou nenhum utilizador protegido.</string>
+    <string name="empty_state_no_alerts">Sem alertas para mostrar.</string>
+    <string name="empty_state_no_rules">Sem regras configuradas ainda.</string>
+
+    <!-- Video Recording -->
+    <string name="recording_video">A gravar vídeo…</string>
+    <string name="video_recorded">Vídeo gravado</string>
+    <string name="uploading_video">A carregar vídeo…</string>
+    <string name="video_uploaded">Vídeo carregado</string>
 </resources>
