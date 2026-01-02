@@ -56,6 +56,7 @@ dependencies {
     // Hilt Dependency Injection
     implementation("com.google.dagger:hilt-android:2.48.1")
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.play.services.maps)
     ksp("com.google.dagger:hilt-compiler:2.48.1")
 
     // Jetpack Compose - Use BOM for version alignment
@@ -104,6 +105,10 @@ dependencies {
 
     // Google Play Services (required for location services)
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // Google Maps for Compose
+    implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     // Kotlin Coroutines for async operations
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")

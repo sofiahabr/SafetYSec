@@ -33,6 +33,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SafetYSec">
 
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBg5EymCeHqPBGtYb36igQEVUE4Q19ur0Q" />
+
         <activity
             android:name="com.example.safetysec.MainActivity"
             android:exported="true">
