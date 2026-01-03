@@ -472,6 +472,74 @@
     <string name="error_pins_dont_match">Ny PIN og bekreftelse matcher ikke</string>
     <string name="error_pin_weak">Vurder å bruke en sikrere PIN</string>
 
-    <string name="processing">Behandler</string>
+    <string name="processing">Behandler...</string>
     <string name="error_unknown">Ukjent feil oppstod</string>
+
+    <!-- Component Strings -->
+    <string name="warning">Advarsel</string>
+    <string name="info">Info</string>
+    <string name="dismiss">Lukk</string>
+    <string name="action">Handling</string>
+    <string name="navigate_back">Gå tilbake</string>
+    <string name="search">Søk</string>
+    <string name="search_placeholder">Søk...</string>
+    <string name="more_options">Flere alternativer</string>
+
+    <!-- Text Field Components -->
+    <string name="email_placeholder">eksempel@epost.no</string>
+    <string name="email_icon">E-postikon</string>
+    <string name="password_icon">Passordikon</string>
+    <string name="enter_password">Skriv inn passord</string>
+    <string name="hide_password">Skjul passord</string>
+    <string name="show_password">Vis passord</string>
+    <string name="search_icon">Søkeikon</string>
+    <string name="clear_search">Tøm søk</string>
+    <string name="phone_icon">Telefonikon</string>
+    <string name="phone_placeholder">+47 123 45 678</string>
+
+    <!-- Alert Cancellation Dialog -->
+    <string name="alert">Varsel</string>
+    <string name="alert_will_be_sent_message">Et varsel er oppdaget og vil bli sendt til dine overvåkere dersom det ikke avbrytes.</string>
+    <string name="time_remaining">Gjenværende tid</string>
+    <string name="seconds">sekunder</string>
+    <string name="enter_your_cancellation_pin">Skriv inn din avbrytelses-PIN</string>
+    <string name="four_digit_pin">4-sifret PIN</string>
+    <string name="let_alert_send">La varselet sendes</string>
+    <string name="enter_4_digit_pin_helper">Skriv inn din 4-sifrede PIN for å avbryte dette varselet</string>
+    <string name="error_please_enter_4_digit">Vennligst skriv inn en 4-sifret PIN</string>
+    <string name="error_incorrect_pin_try_again">Feil PIN. Prøv igjen.</string>
+
+    <!-- Alert Types Display Names -->
+    <string name="alert_type_fall_detected">Fall oppdaget</string>
+    <string name="alert_type_speed_alert">Hastighetsvarsel</string>
+    <string name="alert_type_geofence_breach">Brudd på geofence</string>
+    <string name="alert_type_accident_detected">Ulykke oppdaget</string>
+    <string name="alert_type_inactivity">Inaktivitetsvarsel</string>
+    <string name="alert_type_panic_button">Panikknapp</string>
+
+    <!-- Empty State Components -->
+    <string name="no_items_found">Ingen elementer funnet</string>
+    <string name="no_items_to_display">Det er ingen elementer å vise ennå.</string>
+    <string name="add_item">Legg til element</string>
+    <string name="no_results_found">Ingen resultater funnet</string>
+    <string name="no_results_for_query">Ingen resultater funnet for \"%s\"</string>
+    <string name="try_adjusting_search">Prøv å justere søkekriteriene</string>
+    <string name="no_alerts_message">Du har ingen varsler ennå. Når varsler utløses, vil de vises her.</string>
+    <string name="no_monitors">Ingen overvåkere</string>
+    <string name="no_monitors_message">Du har ikke lagt til noen overvåkere ennå. Legg til en overvåker for å aktivere sikkerhetsfunksjoner.</string>
+    <string name="add_monitor">Legg til overvåker</string>
+    <string name="no_protected_users_message">Du overvåker ingen ennå. Legg til en beskyttet bruker for å starte overvåkning.</string>
+    <string name="no_rules_message">Du har ikke opprettet noen sikkerhetsregler ennå. Opprett regler for å overvåke beskyttede brukere.</string>
+    <string name="no_connection">Ingen tilkobling</string>
+    <string name="no_connection_message">Kunne ikke koble til nettverket. Sjekk internettforbindelsen din og prøv igjen.</string>
+    <string name="something_went_wrong">Noe gikk galt</string>
+    <string name="error_occurred_try_later">Det oppstod en feil. Vennligst prøv igjen senere.</string>
+    <string name="try_again">Prøv igjen</string>
+
+    <!-- Monitoring Dashboard Card -->
+    <string name="active_rules_count_status">Aktiv – %d regel(er)</string>
+    <string name="outside_time_window_warning">Utenfor tidsvindu</string>
+    <string name="stopped">Stoppet</string>
+    <string name="navigate">Naviger</string>
+    <string name="monitoring">Overvåking</string>
 </resources>

@@ -68,9 +68,6 @@ class SensorDataCollector @Inject constructor() : SensorEventListener {
             )
         }
 
-        // TODO: Request activity recognition updates
-        // This requires a PendingIntent to receive updates
-
         isCollecting = true
     }
 
@@ -81,8 +78,6 @@ class SensorDataCollector @Inject constructor() : SensorEventListener {
         if (!isCollecting) return
 
         sensorManager?.unregisterListener(this)
-
-        // TODO: Remove activity recognition updates
 
         isCollecting = false
     }

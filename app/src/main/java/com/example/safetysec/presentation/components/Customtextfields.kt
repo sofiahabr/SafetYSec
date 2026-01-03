@@ -10,11 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.safetysec.R
 import com.example.safetysec.presentation.theme.PrimaryPurple
 
 /**
@@ -103,7 +105,7 @@ fun EmailTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Email",
+    label: String = stringResource(R.string.email),
     isError: Boolean = false,
     errorMessage: String? = null,
     imeAction: ImeAction = ImeAction.Next,
@@ -114,11 +116,11 @@ fun EmailTextField(
         onValueChange = onValueChange,
         label = label,
         modifier = modifier,
-        placeholder = "example@email.com",
+        placeholder = stringResource(R.string.email_placeholder),
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Email,
-                contentDescription = "Email icon"
+                contentDescription = stringResource(R.string.email_icon)
             )
         },
         isError = isError,
@@ -137,7 +139,7 @@ fun PasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Password",
+    label: String = stringResource(R.string.password),
     isError: Boolean = false,
     errorMessage: String? = null,
     imeAction: ImeAction = ImeAction.Done,
@@ -150,18 +152,21 @@ fun PasswordTextField(
         onValueChange = onValueChange,
         label = label,
         modifier = modifier,
-        placeholder = "Enter password",
+        placeholder = stringResource(R.string.enter_password),
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Lock,
-                contentDescription = "Password icon"
+                contentDescription = stringResource(R.string.password_icon)
             )
         },
         trailingIcon = {
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                 Icon(
                     imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                    contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                    contentDescription = if (passwordVisible)
+                        stringResource(R.string.hide_password)
+                    else
+                        stringResource(R.string.show_password)
                 )
             }
         },
@@ -182,7 +187,7 @@ fun SearchTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = "Search...",
+    placeholder: String = stringResource(R.string.search_placeholder),
     onSearch: () -> Unit = {},
     onClear: () -> Unit = {}
 ) {
@@ -193,7 +198,7 @@ fun SearchTextField(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search icon"
+                contentDescription = stringResource(R.string.search_icon)
             )
         },
         trailingIcon = {
@@ -201,7 +206,7 @@ fun SearchTextField(
                 IconButton(onClick = onClear) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Clear search"
+                        contentDescription = stringResource(R.string.clear_search)
                     )
                 }
             }
@@ -231,7 +236,7 @@ fun PhoneTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Phone Number",
+    label: String = stringResource(R.string.phone_number),
     isError: Boolean = false,
     errorMessage: String? = null,
     imeAction: ImeAction = ImeAction.Next,
@@ -242,11 +247,11 @@ fun PhoneTextField(
         onValueChange = onValueChange,
         label = label,
         modifier = modifier,
-        placeholder = "+1 234 567 8900",
+        placeholder = stringResource(R.string.phone_placeholder),
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Phone,
-                contentDescription = "Phone icon"
+                contentDescription = stringResource(R.string.phone_icon)
             )
         },
         isError = isError,

@@ -472,6 +472,74 @@
 
     <string name="password_requirements_list">• Mínimo de 8 caracteres\n• Inclui letras maiúsculas e minúsculas\n• Inclui pelo menos um algarismo\n• Inclui um caractere especial</string>
     <string name="permissions_required_desc">O SafetYSec requer permissões de localização e de reconhecimento de atividade para monitorizar a sua segurança.</string>
-    <string name="processing">A processar</string>
+    <string name="processing">A processar...</string>
     <string name="error_unknown">Ocorreu um erro desconhecido</string>
+
+    <!-- Component Strings -->
+    <string name="warning">Aviso</string>
+    <string name="info">Informação</string>
+    <string name="dismiss">Fechar</string>
+    <string name="action">Ação</string>
+    <string name="navigate_back">Voltar</string>
+    <string name="search">Pesquisar</string>
+    <string name="search_placeholder">Pesquisar...</string>
+    <string name="more_options">Mais opções</string>
+
+    <!-- Text Field Components -->
+    <string name="email_placeholder">exemplo@email.com</string>
+    <string name="email_icon">Ícone de e-mail</string>
+    <string name="password_icon">Ícone de senha</string>
+    <string name="enter_password">Digite a senha</string>
+    <string name="hide_password">Ocultar senha</string>
+    <string name="show_password">Mostrar senha</string>
+    <string name="search_icon">Ícone de pesquisa</string>
+    <string name="clear_search">Limpar pesquisa</string>
+    <string name="phone_icon">Ícone de telefone</string>
+    <string name="phone_placeholder">+55 11 91234 5678</string>
+
+    <!-- Alert Cancellation Dialog -->
+    <string name="alert">Alerta</string>
+    <string name="alert_will_be_sent_message">Um alerta foi detectado e será enviado aos seus monitores, a menos que seja cancelado.</string>
+    <string name="time_remaining">Tempo restante</string>
+    <string name="seconds">segundos</string>
+    <string name="enter_your_cancellation_pin">Digite seu PIN de cancelamento</string>
+    <string name="four_digit_pin">PIN de 4 dígitos</string>
+    <string name="let_alert_send">Permitir envio do alerta</string>
+    <string name="enter_4_digit_pin_helper">Digite seu PIN de 4 dígitos para cancelar este alerta</string>
+    <string name="error_please_enter_4_digit">Por favor, insira um PIN de 4 dígitos</string>
+    <string name="error_incorrect_pin_try_again">PIN incorreto. Tente novamente.</string>
+
+    <!-- Alert Types Display Names -->
+    <string name="alert_type_fall_detected">Queda detectada</string>
+    <string name="alert_type_speed_alert">Alerta de velocidade</string>
+    <string name="alert_type_geofence_breach">Violação de cerca virtual</string>
+    <string name="alert_type_accident_detected">Acidente detectado</string>
+    <string name="alert_type_inactivity">Alerta de inatividade</string>
+    <string name="alert_type_panic_button">Botão de pânico</string>
+
+    <!-- Empty State Components -->
+    <string name="no_items_found">Nenhum item encontrado</string>
+    <string name="no_items_to_display">Ainda não há itens para exibir.</string>
+    <string name="add_item">Adicionar item</string>
+    <string name="no_results_found">Nenhum resultado encontrado</string>
+    <string name="no_results_for_query">Nenhum resultado encontrado para \"%s\"</string>
+    <string name="try_adjusting_search">Tente ajustar os critérios de pesquisa</string>
+    <string name="no_alerts_message">Você ainda não tem nenhum alerta. Quando os alertas forem acionados, eles aparecerão aqui.</string>
+    <string name="no_monitors">Nenhum monitor</string>
+    <string name="no_monitors_message">Você ainda não adicionou nenhum monitor. Adicione um monitor para ativar os recursos de segurança.</string>
+    <string name="add_monitor">Adicionar monitor</string>
+    <string name="no_protected_users_message">Você ainda não está monitorando ninguém. Adicione um usuário protegido para começar.</string>
+    <string name="no_rules_message">Você ainda não criou nenhuma regra de segurança. Crie regras para monitorar usuários protegidos.</string>
+    <string name="no_connection">Sem conexão</string>
+    <string name="no_connection_message">Não foi possível conectar à rede. Verifique sua conexão com a internet e tente novamente.</string>
+    <string name="something_went_wrong">Algo deu errado</string>
+    <string name="error_occurred_try_later">Ocorreu um erro. Tente novamente mais tarde.</string>
+    <string name="try_again">Tentar novamente</string>
+
+    <!-- Monitoring Dashboard Card -->
+    <string name="active_rules_count_status">Ativo - %d regra(s)</string>
+    <string name="outside_time_window_warning">Fora do período permitido</string>
+    <string name="stopped">Parado</string>
+    <string name="navigate">Navegar</string>
+    <string name="monitoring">Monitoramento</string>
 </resources>

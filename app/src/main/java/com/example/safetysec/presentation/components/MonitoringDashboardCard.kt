@@ -10,8 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.MonitoringState
 import com.example.safetysec.presentation.theme.*
 
@@ -56,7 +58,7 @@ fun MonitoringDashboardCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Shield,
-                        contentDescription = "Monitoring",
+                        contentDescription = stringResource(R.string.monitoring),
                         tint = Color.White,
                         modifier = Modifier.size(32.dp)
                     )
@@ -68,7 +70,7 @@ fun MonitoringDashboardCard(
             // Content
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Monitoring",
+                    text = stringResource(R.string.monitoring),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
@@ -87,9 +89,12 @@ fun MonitoringDashboardCard(
 
                     Text(
                         text = if (monitoringState.isRunning) {
-                            "Active - ${monitoringState.getActiveRuleCount()} rule(s)"
+                            stringResource(
+                                R.string.active_rules_count_status,
+                                monitoringState.getActiveRuleCount()
+                            )
                         } else {
-                            "Inactive"
+                            stringResource(R.string.monitoring_inactive)
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextSecondary
@@ -99,7 +104,7 @@ fun MonitoringDashboardCard(
                 if (monitoringState.isRunning && !monitoringState.isInActiveTimeWindow) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "⚠️ Outside time window",
+                        text = stringResource(R.string.outside_time_window_warning),
                         style = MaterialTheme.typography.bodySmall,
                         color = WarningOrange
                     )
@@ -109,7 +114,7 @@ fun MonitoringDashboardCard(
             // Chevron
             Icon(
                 imageVector = androidx.compose.material.icons.Icons.Default.ChevronRight,
-                contentDescription = "Navigate",
+                contentDescription = stringResource(R.string.navigate),
                 tint = TextSecondary
             )
         }
@@ -144,7 +149,10 @@ fun MonitoringStatusBadge(
             Spacer(modifier = Modifier.width(6.dp))
 
             Text(
-                text = if (isMonitoring) "Monitoring" else "Stopped",
+                text = if (isMonitoring)
+                    stringResource(R.string.monitoring)
+                else
+                    stringResource(R.string.stopped),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Medium,
                 color = if (isMonitoring) SuccessGreen else DangerRed

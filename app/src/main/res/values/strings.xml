@@ -472,6 +472,73 @@
     <string name="error_pin_only_numbers">PIN must contain only numbers</string>
     <string name="error_pins_dont_match">New PIN and confirmation do not match</string>
     <string name="error_pin_weak">Consider using a more secure PIN</string>
+    <string name="processing">Processing...</string>
 
-    <string name="processing">Proessing</string>
+    <!-- Component Strings -->
+    <string name="warning">Warning</string>
+    <string name="info">Info</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="action">Action</string>
+    <string name="navigate_back">Navigate back</string>
+    <string name="search">Search</string>
+    <string name="search_placeholder">Search...</string>
+    <string name="more_options">More options</string>
+
+    <!-- Text Field Components -->
+    <string name="email_placeholder">example@email.com</string>
+    <string name="email_icon">Email icon</string>
+    <string name="password_icon">Password icon</string>
+    <string name="enter_password">Enter password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="search_icon">Search icon</string>
+    <string name="clear_search">Clear search</string>
+    <string name="phone_icon">Phone icon</string>
+    <string name="phone_placeholder">+1 234 567 8900</string>
+
+    <!-- Alert Cancellation Dialog -->
+    <string name="alert">Alert</string>
+    <string name="alert_will_be_sent_message">An alert has been detected and will be sent to your monitors unless cancelled.</string>
+    <string name="time_remaining">Time Remaining</string>
+    <string name="seconds">seconds</string>
+    <string name="enter_your_cancellation_pin">Enter Your Cancellation PIN</string>
+    <string name="four_digit_pin">4-Digit PIN</string>
+    <string name="let_alert_send">Let Alert Send</string>
+    <string name="enter_4_digit_pin_helper">Enter your 4-digit PIN to cancel this alert</string>
+    <string name="error_please_enter_4_digit">Please enter a 4-digit PIN</string>
+    <string name="error_incorrect_pin_try_again">Incorrect PIN. Please try again.</string>
+
+    <!-- Alert Types Display Names -->
+    <string name="alert_type_fall_detected">⚠Fall Detected</string>
+    <string name="alert_type_speed_alert">Speed Alert</string>
+    <string name="alert_type_geofence_breach">Geofence Breach</string>
+    <string name="alert_type_accident_detected">Accident Detected</string>
+    <string name="alert_type_inactivity">Inactivity Alert</string>
+    <string name="alert_type_panic_button">Panic Button</string>
+
+    <!-- Empty State Components -->
+    <string name="no_items_found">No Items Found</string>
+    <string name="no_items_to_display">There are no items to display yet.</string>
+    <string name="add_item">Add Item</string>
+    <string name="no_results_found">No Results Found</string>
+    <string name="no_results_for_query">No results found for \"%s\"</string>
+    <string name="try_adjusting_search">Try adjusting your search criteria</string>
+    <string name="no_alerts_message">You don\'t have any alerts yet. When alerts are triggered, they\'ll appear here.</string>
+    <string name="no_monitors">No Monitors</string>
+    <string name="no_monitors_message">You haven\'t added any monitors yet. Add a monitor to enable safety features.</string>
+    <string name="add_monitor">Add Monitor</string>
+    <string name="no_protected_users_message">You aren\'t monitoring anyone yet. Add a protected user to start monitoring.</string>
+    <string name="no_rules_message">You haven\'t created any safety rules yet. Create rules to monitor protected users.</string>
+    <string name="no_connection">No Connection</string>
+    <string name="no_connection_message">Unable to connect to the network. Please check your internet connection and try again.</string>
+    <string name="something_went_wrong">Something Went Wrong</string>
+    <string name="error_occurred_try_later">An error occurred. Please try again later.</string>
+    <string name="try_again">Try Again</string>
+
+    <!-- Monitoring Dashboard Card -->
+    <string name="active_rules_count_status">Active - %d rule(s)</string>
+    <string name="outside_time_window_warning">Outside time window</string>
+    <string name="stopped">Stopped</string>
+    <string name="navigate">Navigate</string>
+    <string name="monitoring">Monitoring</string>
 </resources>
