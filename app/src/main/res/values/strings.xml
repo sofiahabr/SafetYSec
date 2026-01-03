@@ -400,6 +400,7 @@
     <string name="error_loading_data">Failed to load data</string>
     <string name="error_network">Network error occurred</string>
     <string name="error_unknown_role">Unknown user role</string>
+    <string name="error_unknown">Unknown error occurred</string>
     <string name="name_required">Name is required</string>
     <string name="email_required">Valid email is required</string>
     <string name="phone_required">Phone number is required</string>
@@ -471,4 +472,6 @@
     <string name="error_pin_only_numbers">PIN must contain only numbers</string>
     <string name="error_pins_dont_match">New PIN and confirmation do not match</string>
     <string name="error_pin_weak">Consider using a more secure PIN</string>
+
+    <string name="processing">Proessing</string>
 </resources>

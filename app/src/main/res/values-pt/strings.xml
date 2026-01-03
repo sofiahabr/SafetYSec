@@ -472,4 +472,6 @@
 
     <string name="password_requirements_list">• Mínimo de 8 caracteres\n• Inclui letras maiúsculas e minúsculas\n• Inclui pelo menos um algarismo\n• Inclui um caractere especial</string>
     <string name="permissions_required_desc">O SafetYSec requer permissões de localização e de reconhecimento de atividade para monitorizar a sua segurança.</string>
+    <string name="processing">A processar</string>
+    <string name="error_unknown">Ocorreu um erro desconhecido</string>
 </resources>

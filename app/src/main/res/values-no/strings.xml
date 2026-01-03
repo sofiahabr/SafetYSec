@@ -471,4 +471,7 @@
     <string name="error_pin_only_numbers">PIN må inneholde kun tall</string>
     <string name="error_pins_dont_match">Ny PIN og bekreftelse matcher ikke</string>
     <string name="error_pin_weak">Vurder å bruke en sikrere PIN</string>
+
+    <string name="processing">Behandler</string>
+    <string name="error_unknown">Ukjent feil oppstod</string>
 </resources>

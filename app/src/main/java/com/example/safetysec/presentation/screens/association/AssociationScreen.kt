@@ -683,7 +683,7 @@ private fun AssociationCard(
                 // Protected
                 DetailRow(
                     icon = Icons.Default.Person,
-                    label = stringResource(R.string.protected),
+                    label = stringResource(R.string.protected_user),
                     value = association.protectedName.ifEmpty {
                         association.protectedEmail.ifEmpty {
                             association.protectedId.take(10) + "..."

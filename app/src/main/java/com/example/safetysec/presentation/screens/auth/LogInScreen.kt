@@ -92,7 +92,7 @@ fun LogInScreen(
         if (!authState.value.error.isNullOrEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                authState.value.error ?: stringResource(R.string.unknown_error_message),
+                authState.value.error ?: stringResource(R.string.error_unknown),
                 color = MaterialTheme.colorScheme.error
             )
         }
