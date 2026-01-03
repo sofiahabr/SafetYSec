@@ -14,7 +14,6 @@ import com.example.safetysec.presentation.screens.association.AssociationScreen
 import com.example.safetysec.presentation.screens.auth.LogInScreen
 import com.example.safetysec.presentation.screens.auth.RegistrationScreen
 import com.example.safetysec.presentation.screens.dashboard.DashboardScreen
-import com.example.safetysec.presentation.screens.home.HomeScreen
 import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
 import com.example.safetysec.presentation.screens.profile.ChangePasswordScreen
 import com.example.safetysec.presentation.screens.profile.EditProfileScreen
@@ -26,7 +25,7 @@ import com.example.safetysec.presentation.screens.rules.EditRuleScreen
 import com.example.safetysec.presentation.screens.rules.RulesScreen
 import com.example.safetysec.presentation.screens.showcase.ComponentsShowcaseScreen
 import com.example.safetysec.presentation.screens.timewindows.TimeWindowsScreen
-import com.example.safetysec.presentation.protectedUser.MonitoringControlScreen
+import com.example.safetysec.presentation.screens.protectedUser.MonitoringControlScreen
 import com.example.safetysec.presentation.screens.alerts.AlertDetailScreen
 import com.example.safetysec.presentation.screens.alerts.AlertsScreen
 import com.example.safetysec.presentation.screens.profile.ChangeCancellationPinScreen
@@ -152,11 +151,6 @@ fun AppNavHost(
         // Time windows screen
         composable(AppRoutes.TIME_WINDOWS) {
             TimeWindowsScreen(navController = navController)
-        }
-
-        // Other screens
-        composable(AppRoutes.HOME) {
-            HomeScreen(navController = navController)
         }
 
         composable(AppRoutes.SHOWCASE) {

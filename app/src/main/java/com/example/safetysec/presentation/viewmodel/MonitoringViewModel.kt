@@ -1,15 +1,14 @@
-package com.example.safetysec.presentation.protectedUser
+package com.example.safetysec.presentation.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.safetysec.domain.model.MonitoringState
-import com.example.safetysec.domain.model.SensorData
 import com.example.safetysec.domain.repository.MonitoringRepository
 import com.example.safetysec.domain.usecase.StartMonitoringUseCase
 import com.example.safetysec.domain.usecase.StopMonitoringUseCase
 import com.example.safetysec.domain.usecase.alert.TriggerPanicButtonUseCase
-import com.example.safetysec.domain.usecase.monitoring.*
 import com.example.safetysec.service.LocationTracker
 import com.example.safetysec.service.MonitoringService
 import com.example.safetysec.service.SensorDataCollector
@@ -99,10 +98,10 @@ class MonitoringViewModel @Inject constructor(
 
                 _uiState.value = MonitoringUiState.Success("Emergency alert sent to monitors!")
 
-                android.util.Log.d("MonitoringViewModel", "Panic button triggered through MonitoringService")
+                Log.d("MonitoringViewModel", "Panic button triggered through MonitoringService")
             } catch (e: Exception) {
                 _uiState.value = MonitoringUiState.Error("Error: ${e.message}")
-                android.util.Log.e("MonitoringViewModel", "Failed to trigger panic", e)
+                Log.e("MonitoringViewModel", "Failed to trigger panic", e)
             }
         }
     }
