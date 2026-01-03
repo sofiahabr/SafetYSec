@@ -469,4 +469,7 @@
     <string name="error_pin_only_numbers">O PIN deve conter apenas números</string>
     <string name="error_pins_dont_match">O novo PIN e a confirmação não coincidem</string>
     <string name="error_pin_weak">Considere utilizar um PIN mais seguro</string>
+
+    <string name="password_requirements_list">• Mínimo de 8 caracteres\n• Inclui letras maiúsculas e minúsculas\n• Inclui pelo menos um algarismo\n• Inclui um caractere especial</string>
+    <string name="permissions_required_desc">O SafetYSec requer permissões de localização e de reconhecimento de atividade para monitorizar a sua segurança.</string>
 </resources>
