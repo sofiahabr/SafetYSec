@@ -17,14 +17,16 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.example.safetysec.MainActivity
-import com.example.safetysec.R
+import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.domain.model.DetectionResult
 import com.example.safetysec.domain.model.SensorData
 import com.example.safetysec.domain.repository.MonitoringRepository
+import com.example.safetysec.receiver.AlertCancellationReceiver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+import androidx.lifecycle.ProcessLifecycleOwner
 
 /**
  * Monitoring Foreground Service
@@ -43,6 +45,12 @@ class MonitoringService : Service() {
     @Inject
     lateinit var locationTracker: LocationTracker
 
+    @Inject
+    lateinit var alertNotificationService: AlertNotificationService
+
+    @Inject
+    lateinit var videoRecordingService: VideoRecordingService
+
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private var monitoringJob: Job? = null
@@ -57,7 +65,36 @@ class MonitoringService : Service() {
         sensorDataCollector.initialize(this)
         locationTracker.initialize(this)
 
+        initializeVideoRecording()
+
         createNotificationChannel()
+    }
+
+    /**
+     * Initialize video recording service with camera
+     */
+    private fun initializeVideoRecording() {
+        if (!videoRecordingService.hasCameraPermission(this)) {
+            Log.w(TAG, "Camera permission not granted - video recording disabled")
+            return
+        }
+
+        serviceScope.launch {
+            try {
+                val result = videoRecordingService.initializeCamera(
+                    context = this@MonitoringService,
+                    lifecycleOwner = ProcessLifecycleOwner.get()
+                )
+
+                result.onSuccess {
+                    Log.d(TAG, "Video recording initialized successfully")
+                }.onFailure { error ->
+                    Log.e(TAG, "Failed to initialize video recording", error)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception initializing video recording", e)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -74,6 +111,10 @@ class MonitoringService : Service() {
                 startMonitoring()
             }
             ACTION_STOP_MONITORING -> stopMonitoring()
+            ACTION_TRIGGER_PANIC -> {
+                Log.d(TAG, "Panic button pressed - triggering alert with video")
+                handlePanicButton()
+            }
         }
 
         return START_STICKY
@@ -100,11 +141,75 @@ class MonitoringService : Service() {
         }
     }
 
+    /**
+     * CRITICAL: Handle panic button press
+     * This method ensures panic button goes through the same flow as automatic alerts
+     * which includes video recording, cancellation window, and FCM notifications
+     */
+    private fun handlePanicButton() {
+        serviceScope.launch {
+            try {
+                Log.d(TAG, "Processing panic button alert")
+
+                // Collect current sensor data
+                val accelerometerData = sensorDataCollector.getAccelerometerData()
+                val gyroscopeData = sensorDataCollector.getGyroscopeData()
+                val activityData = sensorDataCollector.getActivityData()
+                val locationData = locationTracker.getCurrentLocation()
+
+                val sensorData = SensorData(
+                    timestamp = System.currentTimeMillis(),
+                    accelerometerX = accelerometerData.x,
+                    accelerometerY = accelerometerData.y,
+                    accelerometerZ = accelerometerData.z,
+                    gyroscopeX = gyroscopeData.x,
+                    gyroscopeY = gyroscopeData.y,
+                    gyroscopeZ = gyroscopeData.z,
+                    latitude = locationData.latitude,
+                    longitude = locationData.longitude,
+                    speed = locationData.speed,
+                    accuracy = locationData.accuracy,
+                    activityType = activityData.type,
+                    activityConfidence = activityData.confidence
+                )
+
+                // Get current monitoring state to find panic button rule
+                val monitoringState = monitoringRepository.getMonitoringStateFlow().first()
+                val panicRule = monitoringState.activeRules.find {
+                    it.type == com.example.safetysec.domain.model.RuleType.PANIC_BUTTON
+                }
+
+                if (panicRule == null) {
+                    Log.e(TAG, "No panic button rule found - cannot trigger alert")
+                    return@launch
+                }
+
+                // Create detection result for panic button
+                val detectionResult = DetectionResult(
+                    ruleId = panicRule.id,
+                    ruleType = com.example.safetysec.domain.model.RuleType.PANIC_BUTTON,
+                    isTriggered = true,
+                    confidence = 1.0f,
+                    details = "Panic button pressed by user",
+                    sensorData = sensorData
+                )
+
+                // CRITICAL: Call triggerAlert which includes video recording!
+                Log.d(TAG, "Triggering panic alert through normal flow (includes video)")
+                triggerAlert(detectionResult, monitoringState, sensorData)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to handle panic button", e)
+            }
+        }
+    }
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
         super.onDestroy()
         stopMonitoring()
+        videoRecordingService.release()
         sensorDataCollector.release()
         locationTracker.release()
         serviceScope.cancel()
@@ -269,7 +374,7 @@ class MonitoringService : Service() {
     }
 
     /**
-     * Trigger an alert
+     * Trigger an alert with cancellation window, video recording, and notifications
      */
     private suspend fun triggerAlert(
         detectionResult: DetectionResult,
@@ -278,11 +383,9 @@ class MonitoringService : Service() {
     ) {
         lastAlertTriggerTime = System.currentTimeMillis()
 
-        // Find the rule that triggered
         val rule = monitoringState.activeRules.find { it.id == detectionResult.ruleId }
 
         if (rule != null) {
-            // Create alert in repository
             val alertResult = monitoringRepository.createAlert(
                 detectionResult,
                 rule,
@@ -290,17 +393,167 @@ class MonitoringService : Service() {
             )
 
             alertResult.onSuccess { alertEvent ->
-                // Show alert notification
-                showAlertNotification(
-                    title = "${detectionResult.ruleType.toDisplayString()} Detected",
-                    message = detectionResult.details,
-                    alertId = alertEvent.id
-                )
+                showCancellationNotification(alertEvent)
 
-                // TODO: Start video recording (Phase 6)
-                // TODO: Send push notification to monitors (Phase 6)
+                // Start video recording immediately
+                val videoJob = if (::videoRecordingService.isInitialized &&
+                    videoRecordingService.hasCameraPermission(this@MonitoringService)) {
+
+                    serviceScope.launch {
+                        try {
+                            Log.d(TAG, "Starting video recording for alert: ${alertEvent.id}")
+
+                            // Record and upload video (30 seconds)
+                            val videoResult = videoRecordingService.recordAndUploadVideo(
+                                context = this@MonitoringService,
+                                alertId = alertEvent.id
+                            )
+
+                            videoResult.onSuccess { downloadUrl ->
+                                // Check if alert was cancelled before updating with video
+                                val alert = monitoringRepository.getAlertById(alertEvent.id)
+                                if (alert?.isCancelled == true) {
+                                    Log.d(TAG, "Alert was cancelled - not updating with video URL")
+                                    // Optionally delete the video from storage here
+                                } else {
+                                    Log.d(TAG, "Video uploaded successfully: $downloadUrl")
+                                    // Update alert with video URL
+                                    monitoringRepository.updateAlertWithVideo(
+                                        alertId = alertEvent.id,
+                                        videoUrl = downloadUrl
+                                    )
+                                }
+                            }.onFailure { error ->
+                                Log.e(TAG, "Video recording/upload failed: ${error.message}", error)
+                            }
+                        } catch (e: CancellationException) {
+                            Log.d(TAG, "Video recording cancelled for alert: ${alertEvent.id}")
+                            throw e  // Re-throw to properly cancel coroutine
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Exception during video recording", e)
+                        }
+                    }
+                } else {
+                    Log.w(TAG, "Camera permission not granted or service not initialized")
+                    null
+                }
+
+                // 10-second cancellation window with grace period
+                serviceScope.launch {
+                    var cancelled = false
+
+                    // Check every second for 10 seconds
+                    repeat(10) { second ->
+                        delay(1000)
+                        Log.d(TAG, "Cancellation check ${second + 1}/10 for alert: ${alertEvent.id}")
+
+                        val alert = monitoringRepository.getAlertById(alertEvent.id)
+                        if (alert?.isCancelled == true) {
+                            cancelled = true
+                            Log.d(TAG, "✓ Alert ${alertEvent.id} was cancelled at ${second + 1} seconds")
+
+                            // Cancel video recording job
+                            videoJob?.cancel()
+                            Log.d(TAG, "Video recording job cancelled for alert: ${alertEvent.id}")
+
+                            // Cancel notification to protected user
+                            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                            notificationManager.cancel(CANCELLATION_NOTIFICATION_ID)
+                            return@launch
+                        }
+                    }
+
+                    // Add 2-second grace period to ensure any pending cancellations complete
+                    if (!cancelled) {
+                        Log.d(TAG, "Waiting 2 seconds grace period for alert: ${alertEvent.id}")
+                        delay(2000)
+
+                        // Final check
+                        val alert = monitoringRepository.getAlertById(alertEvent.id)
+                        if (alert?.isCancelled == true) {
+                            cancelled = true
+                            Log.d(TAG, "✓ Alert ${alertEvent.id} was cancelled during grace period")
+
+                            // Cancel video recording job
+                            videoJob?.cancel()
+                            Log.d(TAG, "Video recording job cancelled for alert: ${alertEvent.id}")
+
+                            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                            notificationManager.cancel(CANCELLATION_NOTIFICATION_ID)
+                            return@launch
+                        }
+                    }
+
+                    if (!cancelled) {
+                        Log.d(TAG, "⚠ Alert ${alertEvent.id} was NOT cancelled - sending to monitors")
+                        alertNotificationService.notifyMonitors(alertEvent, this@MonitoringService)
+                    } else {
+                        Log.d(TAG, "✓ Alert ${alertEvent.id} successfully cancelled - NOT notifying monitors")
+                    }
+                }
             }
         }
+    }
+
+    /**
+     * Show cancellation notification to protected user
+     */
+    private fun showCancellationNotification(alertEvent: AlertEvent) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Create intent to open MainActivity for PIN entry
+        val cancelIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("SHOW_CANCEL_DIALOG", true)
+            putExtra("ALERT_ID", alertEvent.id)
+            putExtra("ALERT_TYPE", alertEvent.type.name)
+        }
+
+        val cancelPendingIntent = PendingIntent.getActivity(
+            this,
+            alertEvent.id.hashCode(),
+            cancelIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        // Build notification with full screen intent for locked screens
+        val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
+            .setContentTitle("🚨 ${alertEvent.type.name}")
+            .setContentText("Alert will be sent in 10 seconds. Tap to cancel.")
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setAutoCancel(false)
+            .setOngoing(true)
+            .setContentIntent(cancelPendingIntent)
+            .setFullScreenIntent(cancelPendingIntent, true)
+            .setVibrate(longArrayOf(0, 500, 200, 500))
+            .build()
+
+        notificationManager.notify(CANCELLATION_NOTIFICATION_ID, notification)
+
+        // Auto-dismiss notification after 10 seconds
+        serviceScope.launch {
+            delay(10000)
+            notificationManager.cancel(CANCELLATION_NOTIFICATION_ID)
+        }
+    }
+
+    /**
+     * Create pending intent for cancelling alert
+     */
+    private fun createCancelAlertPendingIntent(alertId: String): PendingIntent {
+        val intent = Intent(this, AlertCancellationReceiver::class.java).apply {
+            action = AlertCancellationReceiver.ACTION_CANCEL_ALERT  //
+            putExtra(AlertCancellationReceiver.EXTRA_ALERT_ID, alertId)
+        }
+
+        return PendingIntent.getBroadcast(
+            this,
+            alertId.hashCode(),
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     /**
@@ -313,7 +566,7 @@ class MonitoringService : Service() {
         val activeDetections = detectionResults.count { it.isTriggered }
 
         val title = if (activeDetections > 0) {
-            "âš ï¸ $activeDetections Detection(s)"
+            "$activeDetections Detection(s)"
         } else {
             "Monitoring Active"
         }
@@ -345,7 +598,7 @@ class MonitoringService : Service() {
         val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert) // Using built-in icon
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(true)
@@ -371,7 +624,7 @@ class MonitoringService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(android.R.drawable.ic_dialog_info) // Using built-in icon
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -414,8 +667,10 @@ class MonitoringService : Service() {
         private const val TAG = "MonitoringService"
         const val ACTION_START_MONITORING = "com.example.safetysec.START_MONITORING"
         const val ACTION_STOP_MONITORING = "com.example.safetysec.STOP_MONITORING"
+        const val ACTION_TRIGGER_PANIC = "com.example.safetysec.TRIGGER_PANIC"
 
         private const val NOTIFICATION_ID = 1001
+        private const val CANCELLATION_NOTIFICATION_ID = 1002
         private const val CHANNEL_ID = "monitoring_service"
         private const val ALERT_CHANNEL_ID = "safety_alerts"
 
@@ -448,6 +703,28 @@ class MonitoringService : Service() {
                 action = ACTION_STOP_MONITORING
             }
             context.startService(intent)
+        }
+
+        /**
+         * CRITICAL: Trigger panic button with video recording
+         * This ensures the panic button goes through MonitoringService
+         * so video recording is triggered properly
+         */
+        fun triggerPanic(context: Context) {
+            val intent = Intent(context, MonitoringService::class.java).apply {
+                action = ACTION_TRIGGER_PANIC
+            }
+
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+                Log.d(TAG, "Panic button trigger sent to MonitoringService")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to trigger panic button", e)
+            }
         }
     }
 }

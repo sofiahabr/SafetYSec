@@ -9,10 +9,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.domain.model.ProtectedUserSummary
 import com.example.safetysec.presentation.components.*
@@ -44,7 +46,7 @@ fun MonitorDashScreen(
         topBar = {
             if (showTopBar) {
                 MainTopAppBar(
-                    title = "Monitor Dashboard"
+                    title = stringResource(R.string.monitor_dashboard)
                 )
             }
         },
@@ -56,7 +58,7 @@ fun MonitorDashScreen(
     ) { innerPadding ->
         when {
             state.isLoading -> {
-                FullScreenLoading(message = "Loading dashboard data...")
+                FullScreenLoading(message = stringResource(R.string.loading_dashboard))
             }
 
             state.error != null -> {
@@ -99,7 +101,7 @@ fun MonitorDashboardContent(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             StatInfoBox(
-                label = "Protected Users",
+                label = stringResource(R.string.protected_users),
                 value = activeProtectedCount.toString(),
                 borderColor = SuccessGreen,
                 textColor = SuccessGreen,
@@ -107,7 +109,7 @@ fun MonitorDashboardContent(
             )
 
             StatInfoBox(
-                label = "Recent Alerts",
+                label = stringResource(R.string.recent_alerts),
                 value = recentAlerts.size.toString(),
                 borderColor = DangerRed,
                 textColor = DangerRed,
@@ -117,7 +119,7 @@ fun MonitorDashboardContent(
 
         // Quick Actions Section
         Text(
-            text = "Quick Actions",
+            text = stringResource(R.string.quick_actions),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(top = 8.dp)
@@ -130,14 +132,14 @@ fun MonitorDashboardContent(
         ) {
             MonitorQuickActionCard(
                 icon = Icons.Default.Add,
-                label = "Add Protected",
+                label = stringResource(R.string.add_protected_user),
                 onClick = { navController.navigate(AppRoutes.ASSOCIATIONS) },
                 modifier = Modifier.weight(1f)
             )
 
             MonitorQuickActionCard(
                 icon = Icons.Default.Rule,
-                label = "Create Rule",
+                label = stringResource(R.string.create_rule),
                 onClick = { navController.navigate(AppRoutes.CREATE_RULE) },
                 modifier = Modifier.weight(1f)
             )
@@ -149,14 +151,14 @@ fun MonitorDashboardContent(
         ) {
             MonitorQuickActionCard(
                 icon = Icons.Default.Notifications,
-                label = "View Alerts",
+                label = stringResource(R.string.view_alerts),
                 onClick = { navController.navigate(AppRoutes.ALERTS) },
                 modifier = Modifier.weight(1f)
             )
 
             MonitorQuickActionCard(
                 icon = Icons.Default.People,
-                label = "Manage Users",
+                label = stringResource(R.string.manage_users),
                 onClick = { navController.navigate(AppRoutes.ASSOCIATIONS) },
                 modifier = Modifier.weight(1f)
             )
@@ -172,13 +174,13 @@ fun MonitorDashboardContent(
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Protected Individuals",
+                    text = stringResource(R.string.protected_individuals),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
                 TextButton(onClick = { navController.navigate(AppRoutes.ASSOCIATIONS) }) {
-                    Text("View All")
+                    Text(stringResource(R.string.view_all))
                 }
             }
 
@@ -205,7 +207,7 @@ fun MonitorDashboardContent(
                         contentAlignment = androidx.compose.ui.Alignment.Center
                     ) {
                         Text(
-                            text = "+${activeProtected.size - 3} more protected users",
+                            text = stringResource(R.string.all_protected_users, activeProtected.size - 3),
                             style = MaterialTheme.typography.bodyMedium,
                             color = PrimaryPurple,
                             fontWeight = FontWeight.Medium
@@ -231,20 +233,20 @@ fun MonitorDashboardContent(
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Recent Alerts",
+                    text = stringResource(R.string.recent_alerts),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
                 TextButton(onClick = { navController.navigate(AppRoutes.ALERTS) }) {
-                    Text("View All")
+                    Text(stringResource(R.string.view_all))
                 }
             }
 
             recentAlerts.take(3).forEach { alert ->
                 AlertEventCard(
                     title = alert.type.toDisplayString(),
-                    subtitle = "${alert.protectedUserName} â€¢ ${getTimeAgo(alert.timestamp)}",
+                    subtitle = "${alert.protectedUserName}  ${getTimeAgo(alert.timestamp)}",
                     details = alert.details,
                     location = alert.getFormattedLocation(),
                     onActionClick = { /* Handle action */ },
@@ -366,7 +368,10 @@ fun ProtectedUserCard(
                         Spacer(modifier = Modifier.width(6.dp))
 
                         Text(
-                            text = if (protectedUser.isActive) "Monitoring Active" else "Inactive",
+                            text = stringResource(
+                                if (protectedUser.isActive) R.string.monitoring_active
+                                else R.string.monitoring_inactive
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary
                         )
@@ -376,7 +381,7 @@ fun ProtectedUserCard(
 
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "View details",
+                contentDescription = stringResource(R.string.view_details),
                 tint = TextSecondary
             )
         }
@@ -414,7 +419,7 @@ fun EmptyProtectedUsersCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "No Protected Users Yet",
+                text = stringResource(R.string.no_protected_users),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -423,7 +428,7 @@ fun EmptyProtectedUsersCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Add protected users to start monitoring their safety",
+                text = stringResource(R.string.no_protected_users_desc),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary
             )
@@ -431,7 +436,7 @@ fun EmptyProtectedUsersCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             PrimaryButton(
-                text = "Add Protected User",
+                text = stringResource(R.string.add_protected_user),
                 onClick = onAddClick,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -450,8 +455,8 @@ private fun getTimeAgo(timestamp: java.time.LocalDateTime): String {
 
     return when {
         minutes < 1 -> "now"
-        minutes < 60 -> "$minutes mins ago"
-        hours < 24 -> "$hours hours ago"
-        else -> "$days days ago"
+        minutes < 60 -> "${minutes}m ago"
+        hours < 24 -> "${hours}h ago"
+        else -> "${days}d ago"
     }
 }

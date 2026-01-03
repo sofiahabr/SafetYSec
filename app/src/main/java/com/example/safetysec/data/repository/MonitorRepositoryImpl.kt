@@ -99,7 +99,9 @@ class MonitorRepositoryImpl @Inject constructor(
                         longitude = doc.getDouble("longitude") ?: 0.0,
                         details = doc.getString("details"),
                         videoUrl = doc.getString("videoUrl"),
-                        monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList()
+                        monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                        isCancelled = doc.getBoolean("cancelled") ?: false,
+                        cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
                     )
                 } catch (e: Exception) {
                     null
@@ -112,6 +114,8 @@ class MonitorRepositoryImpl @Inject constructor(
 
     /**
      * Subscribe to real-time alert updates
+     * Emits for all document changes (ADDED, MODIFIED, REMOVED)
+     * Deduplication handled in AlertViewModel
      */
     override fun subscribeToAlerts(): Flow<AlertEvent> {
         return firestore
@@ -120,8 +124,12 @@ class MonitorRepositoryImpl @Inject constructor(
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .snapshots()
             .map { querySnapshot ->
+                android.util.Log.d("MonitorRepository", "Snapshot received: ${querySnapshot.documentChanges.size} changes")
+
                 querySnapshot.documentChanges.mapNotNull { change ->
                     val doc = change.document
+                    android.util.Log.d("MonitorRepository", "Change type: ${change.type}, Doc ID: ${doc.id}")
+
                     try {
                         AlertEvent(
                             id = doc.id,
@@ -136,14 +144,20 @@ class MonitorRepositoryImpl @Inject constructor(
                             longitude = doc.getDouble("longitude") ?: 0.0,
                             details = doc.getString("details"),
                             videoUrl = doc.getString("videoUrl"),
-                            monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList()
+                            monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                            isCancelled = doc.getBoolean("cancelled") ?: false,
+                            cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
                         )
                     } catch (e: Exception) {
+                        android.util.Log.e("MonitorRepository", "Error parsing alert", e)
                         null
                     }
                 }
             }
-            .map { it.firstOrNull() ?: throw Exception("No alerts") }
+            .map { alerts ->
+                android.util.Log.d("MonitorRepository", "Emitting ${alerts.size} alerts from this snapshot")
+                alerts.firstOrNull() ?: throw Exception("No alerts")
+            }
     }
 
     /**
@@ -170,11 +184,46 @@ class MonitorRepositoryImpl @Inject constructor(
                 longitude = doc.getDouble("longitude") ?: 0.0,
                 details = doc.getString("details"),
                 videoUrl = doc.getString("videoUrl"),
-                monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList()
+                monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                isCancelled = doc.getBoolean("cancelled") ?: false,
+                cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
             )
         } catch (e: Exception) {
             null
         }
+    }
+
+    /**
+     * Subscribe to real-time updates for a specific alert by ID
+     */
+    override fun subscribeToAlertById(alertId: String): Flow<AlertEvent?> {
+        return firestore
+            .collection("alerts")
+            .document(alertId)
+            .snapshots()
+            .map { doc ->
+                if (!doc.exists()) return@map null
+
+                try {
+                    AlertEvent(
+                        id = doc.id,
+                        type = AlertType.valueOf(doc.getString("type") ?: "PANIC_BUTTON"),
+                        protectedUserId = doc.getString("protectedUserId") ?: return@map null,
+                        protectedUserName = doc.getString("protectedUserName") ?: "Unknown User",
+                        timestamp = doc.getTimestamp("timestamp")?.toLocalDateTime()
+                            ?: LocalDateTime.now(),
+                        latitude = doc.getDouble("latitude") ?: 0.0,
+                        longitude = doc.getDouble("longitude") ?: 0.0,
+                        details = doc.getString("details"),
+                        videoUrl = doc.getString("videoUrl"),
+                        monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                        isCancelled = doc.getBoolean("cancelled") ?: false,
+                        cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
+                    )
+                } catch (e: Exception) {
+                    null
+                }
+            }
     }
 
     /**

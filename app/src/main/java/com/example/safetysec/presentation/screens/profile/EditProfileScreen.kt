@@ -8,10 +8,12 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.MockUserData
 import com.example.safetysec.domain.model.UserRole
 import com.example.safetysec.presentation.components.*
@@ -37,7 +39,7 @@ fun EditProfileScreen(navController: NavController) {
 
     // Show loading state if user is not loaded
     if (user == null) {
-        FullScreenLoading(message = "Loading your profile...")
+        FullScreenLoading(message = stringResource(R.string.loading_profile))
         return
     }
 
@@ -46,6 +48,11 @@ fun EditProfileScreen(navController: NavController) {
     var email by remember { mutableStateOf(user.email) }
     var phone by remember { mutableStateOf(user.phone) }
     var selectedRole by remember { mutableStateOf(user.role) }
+
+    // Get validation error strings
+    val errorNameRequired = stringResource(R.string.error_name_required)
+    val errorValidEmailRequired = stringResource(R.string.error_valid_email_required)
+    val errorPhoneRequired = stringResource(R.string.error_phone_required)
 
     // Validation state
     var nameError by remember { mutableStateOf<String?>(null) }
@@ -60,7 +67,7 @@ fun EditProfileScreen(navController: NavController) {
     // Show error alert if there's an error
     if (authState.error != null) {
         ErrorAlert(
-            message = authState.error ?: "An error occurred",
+            message = authState.error ?: stringResource(R.string.error_unknown),
             onDismiss = {
                 authViewModel.clearError()
             }
@@ -71,7 +78,7 @@ fun EditProfileScreen(navController: NavController) {
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = "Edit Profile",
+                title = stringResource(R.string.edit_profile),
                 onNavigationClick = {
                     navController.navigateUp()
                 }
@@ -89,7 +96,7 @@ fun EditProfileScreen(navController: NavController) {
             // Success Alert
             if (showSuccessAlert) {
                 SuccessAlert(
-                    message = "Profile updated successfully!",
+                    message = stringResource(R.string.profile_updated),
                     onDismiss = {
                         showSuccessAlert = false
                     }
@@ -103,8 +110,8 @@ fun EditProfileScreen(navController: NavController) {
                     name = it
                     nameError = null
                 },
-                label = "Full Name",
-                placeholder = "Enter your full name",
+                label = stringResource(R.string.full_name),
+                placeholder = stringResource(R.string.enter_full_name),
                 leadingIcon = {
                     Icon(Icons.Default.Person, contentDescription = null)
                 },
@@ -150,7 +157,7 @@ fun EditProfileScreen(navController: NavController) {
                 ) {
                     Column {
                         Text(
-                            text = "Role",
+                            text = stringResource(R.string.role),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -163,7 +170,7 @@ fun EditProfileScreen(navController: NavController) {
 
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Select role"
+                        contentDescription = stringResource(R.string.select_role)
                     )
                 }
             }
@@ -172,23 +179,23 @@ fun EditProfileScreen(navController: NavController) {
 
             // Save Button
             PrimaryButton(
-                text = "Save Changes",
+                text = stringResource(R.string.save_changes),
                 onClick = {
                     // Validate
                     var isValid = true
 
                     if (name.isBlank()) {
-                        nameError = "Name is required"
+                        nameError = errorNameRequired
                         isValid = false
                     }
 
                     if (email.isBlank() || !isValidEmail(email)) {
-                        emailError = "Valid email is required"
+                        emailError = errorValidEmailRequired
                         isValid = false
                     }
 
                     if (phone.isBlank()) {
-                        phoneError = "Phone number is required"
+                        phoneError = errorPhoneRequired
                         isValid = false
                     }
 
@@ -240,7 +247,7 @@ private fun RoleSelectionDialog(
             Icon(Icons.Default.Shield, contentDescription = null)
         },
         title = {
-            Text("Select Your Role")
+            Text(stringResource(R.string.select_your_role))
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -277,7 +284,7 @@ private fun RoleSelectionDialog(
                             if (role == currentRole) {
                                 Icon(
                                     imageVector = Icons.Default.CheckCircle,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(R.string.selected),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -288,7 +295,7 @@ private fun RoleSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         }
     )

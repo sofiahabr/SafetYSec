@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Felles / Generelt -->
+    <string name="app_name">SafetYSec</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Avbryt</string>
+    <string name="save">Lagre</string>
+    <string name="delete">Slett</string>
+    <string name="edit">Rediger</string>
+    <string name="close">Lukk</string>
+    <string name="loading">Laster…</string>
+    <string name="error">Feil</string>
+    <string name="success">Vellykket</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nei</string>
+    <string name="back">Tilbake</string>
+    <string name="next">Neste</string>
+    <string name="done">Ferdig</string>
+    <string name="retry">Prøv igjen</string>
+    <string name="refresh">Oppdater</string>
+    <string name="select">Velg</string>
+    <string name="selected">Valgt</string>
+    <string name="add">Legg til</string>
+    <string name="remove">Fjern</string>
+    <string name="confirm">Bekreft</string>
+
+    <!-- Autentisering -->
+    <string name="login">Logg inn</string>
+    <string name="register">Registrer</string>
+    <string name="logout">Logg ut</string>
+    <string name="email">E-post</string>
+    <string name="password">Passord</string>
+    <string name="confirm_password">Bekreft passord</string>
+    <string name="current_password">Nåværende passord</string>
+    <string name="new_password">Nytt passord</string>
+    <string name="full_name">Fullt navn</string>
+    <string name="phone_number">Telefonnummer</string>
+    <string name="phone">Telefon</string>
+    <string name="no_account_register">Har du ikke konto? Registrer her</string>
+    <string name="create_account">Opprett konto</string>
+    <string name="confirm_logout">Er du sikker på at du vil logge ut?</string>
+    <string name="select_role">Velg rolle</string>
+
+    <!-- Brukerroller -->
+    <string name="role">Rolle</string>
+    <string name="monitor">Overvåker</string>
+    <string name="protected_user">Beskyttet</string>
+    <string name="dual">Begge</string>
+    <string name="role_monitor_desc">Jeg vil overvåke andre</string>
+    <string name="role_protected_desc">Jeg vil bli overvåket</string>
+    <string name="role_dual_desc">Jeg vil ha begge rollene</string>
+
+    <!-- Profil -->
+    <string name="profile">Profil</string>
+    <string name="edit_profile">Rediger profil</string>
+    <string name="change_password">Endre passord</string>
+    <string name="loading_profile">Laster profilen din...</string>
+    <string name="verified">Verifisert</string>
+    <string name="account_information">Kontoinformasjon</string>
+    <string name="name">Navn</string>
+    <string name="account">Konto</string>
+    <string name="monitoring_time_windows">Overvåknings tidsvinduer</string>
+    <string name="alert_cancellation_pin">PIN for å avbryte alarm</string>
+    <string name="save_changes">Lagre endringer</string>
+    <string name="profile_updated">Profil oppdatert!</string>
+    <string name="select_your_role">Velg din rolle</string>
+    <string name="monitor_protect_others">Overvåke og beskytte andre</string>
+    <string name="receive_protection">Motta beskyttelse fra overvåkere</string>
+    <string name="both_roles">Både overvåke andre og motta beskyttelse</string>
+
+    <!-- Passordkrav -->
+    <string name="password_requirements">Passordkrav</string>
+    <string name="password_requirements_desc">• Minst 8 tegn\n• Inneholder store og små bokstaver\n• Inneholder minst ett tall\n• Inneholder spesialtegn</string>
+    <string name="password_strength">Passordstyrke</string>
+    <string name="password_strength_weak">Svakt</string>
+    <string name="password_strength_medium">Middels</string>
+    <string name="password_strength_strong">Sterkt</string>
+    <string name="password_changed">Passord endret!</string>
+    <string name="password_error_length">Passordet må være minst 8 tegn</string>
+    <string name="password_error_uppercase">Passordet må inneholde en stor bokstav</string>
+    <string name="password_error_lowercase">Passordet må inneholde en liten bokstav</string>
+    <string name="password_error_number">Passordet må inneholde et tall</string>
+    <string name="password_error_special">Passordet må inneholde et spesialtegn</string>
+    <string name="password_error_mismatch">Passordene matcher ikke</string>
+    <string name="password_error_same">Nytt passord må være forskjellig fra nåværende passord</string>
+    <string name="password_error_weak">Passordet er for svakt</string>
+    <string name="current_password_required">Nåværende passord kreves</string>
+    <string name="current_password_incorrect">Nåværende PIN er feil</string>
+
+    <!-- Innstillinger -->
+    <string name="settings">Innstillinger</string>
+    <string name="notifications">Varsler</string>
+    <string name="push_notifications">Push-varsler</string>
+    <string name="receive_alert_notifications">Motta alarmvarsler</string>
+    <string name="alert_sound">Alarmsignal</string>
+    <string name="play_sound_for_alerts">Spill lyd ved alarmer</string>
+    <string name="vibration">Vibrasjon</string>
+    <string name="vibrate_on_alerts">Vibrer ved alarmer</string>
+    <string name="preferences">Preferanser</string>
+    <string name="language">Språk</string>
+    <string name="select_language">Velg språk</string>
+    <string name="theme">Tema</string>
+    <string name="select_theme">Velg tema</string>
+    <string name="theme_light">Lyst</string>
+    <string name="theme_dark">Mørkt</string>
+    <string name="theme_system">Systemstandard</string>
+    <string name="theme_light_desc">Alltid bruk lyst tema</string>
+    <string name="theme_dark_desc">Alltid bruk mørkt tema</string>
+    <string name="theme_system_desc">Følg systeminnstillingene</string>
+    <string name="privacy_security">Personvern &amp; Sikkerhet</string>
+    <string name="privacy_settings">Personverninnstillinger</string>
+    <string name="manage_privacy">Administrer ditt personvern</string>
+    <string name="security">Sikkerhet</string>
+    <string name="two_factor_auth">Totrinnsbekreftelse m.m.</string>
+    <string name="help_support">Hjelp &amp; Støtte</string>
+    <string name="help_center">Hjelpesenter</string>
+    <string name="get_help_support">Få hjelp og støtte</string>
+    <string name="about_safetysec">Om SafetYSec</string>
+    <string name="version">Versjon 1.0.0</string>
+    <string name="terms_privacy">Vilkår &amp; Personvernerklæring</string>
+    <string name="legal_information">Juridisk informasjon</string>
+    <string name="delete_account">Slett konto</string>
+    <string name="delete_account_desc">Slett kontoen din permanent</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard">Oversikt</string>
+    <string name="home">Hjem</string>
+    <string name="my_safety">Min sikkerhet</string>
+    <string name="protected_dashboard">Beskyttet oversikt</string>
+    <string name="monitor_dashboard">Overvåker-oversikt</string>
+    <string name="loading_dashboard">Laster oversiktsdata...</string>
+    <string name="quick_actions">Hurtighandlinger</string>
+    <string name="active_monitors">Aktive overvåkere</string>
+    <string name="active_rules">Aktive regler</string>
+    <string name="protected_users">Beskyttede brukere</string>
+    <string name="recent_alerts">Nylige alarmer</string>
+    <string name="all_safe">Alle trygge</string>
+    <string name="monitoring_active">Overvåking aktiv</string>
+    <string name="monitoring_stopped">Overvåking stoppet</string>
+    <string name="view_all">Vis alle</string>
+    <string name="view_alerts">Vis alarmer</string>
+
+    <!-- Overvåkningskontroll -->
+    <string name="monitoring_control">Overvåkningskontroll</string>
+    <string name="start_monitoring">Start overvåking</string>
+    <string name="stop_monitoring">Stopp overvåking</string>
+    <string name="panic_button">PANIKKNAPP</string>
+    <string name="emergency_alert">Nødalarm</string>
+    <string name="emergency_alert_desc">Trykk denne knappen i nødstilfeller. Dine overvåkere varsles umiddelbart.</string>
+    <string name="permissions_required">Tillatelser kreves</string>
+    <string name="grant_permissions">Gi tillatelser</string>
+    <string name="permissions_desc">SafetYSec trenger posisjon- og aktivitetsgjenkjenningstillatelser for å overvåke sikkerheten din.</string>
+    <string name="currently_active_time_window">Er i aktivt tidsvindu</string>
+    <string name="outside_active_windows">Utenfor aktive tidsvinduer</string>
+    <string name="sensor_data">Sensordata</string>
+    <string name="acceleration">Akselerasjon</string>
+    <string name="speed">Hastighet</string>
+    <string name="activity">Aktivitet</string>
+
+    <!-- Regler -->
+    <string name="safety_rules">Sikkerhetsregler</string>
+    <string name="rules">Regler</string>
+    <string name="my_rules">Mine regler</string>
+    <string name="create_rule">Opprett regel</string>
+    <string name="edit_rule">Rediger regel</string>
+    <string name="delete_rule">Slett regel</string>
+    <string name="delete_rule_confirm">Er du sikker på at du vil slette denne regelen? Denne handlingen kan ikke angres.</string>
+    <string name="no_rules">Ingen regler</string>
+    <string name="no_rules_monitor">Du har ikke opprettet noen regler ennå. Trykk + for å lage din første regel.</string>
+    <string name="no_rules_monitor_desc">Du har ikke opprettet noen regler ennå. Trykk + for å lage din første regel.</string>
+    <string name="no_rules_protected">Du har ingen regler fra overvåkere ennå.</string>
+    <string name="no_rules_protected_desc">Du har ingen regler fra overvåkere ennå.</string>
+    <string name="loading_rules">Laster regler...</string>
+    <string name="select_protected_user">Velg beskyttet bruker</string>
+    <string name="select_rule_type">Velg regeltype</string>
+    <string name="rule_created">Regel opprettet!</string>
+    <string name="rule_updated">Regel oppdatert!</string>
+    <string name="parameters">Parametere</string>
+    <string name="no_parameters">Ingen parametere</string>
+    <string name="no_parameters_desc">Denne regeltypen har ingen konfigurerbare parametere.</string>
+    <string name="loading_rule">Laster regel...</string>
+    <string name="rule_not_found">Regel ikke funnet</string>
+    <string name="rule_not_found_desc">Regelen du prøver å redigere ble ikke funnet.</string>
+
+    <!-- Regeltyper -->
+    <string name="fall_detection">Falldeteksjon</string>
+    <string name="accident_detection">Ulykkesdeteksjon</string>
+    <string name="geofencing">Geofence</string>
+    <string name="speed_control">Hastighetskontroll</string>
+    <string name="prolonged_inactivity">Langvarig inaktivitet</string>
+    <string name="panic_button_rule">Panikknapp</string>
+
+    <!-- Regelstatus -->
+    <string name="authorized">Godkjent</string>
+    <string name="pending">Venter</string>
+    <string name="cancelled">Avbrutt</string>
+    <string name="rejected">Avvist</string>
+    <string name="revoked">Tilbaketrukket</string>
+    <string name="revoke">Trekk tilbake</string>
+    <string name="authorize">Godkjenn</string>
+    <string name="authorize_rule">Godkjenn regel</string>
+    <string name="authorize_rule_confirm">Vil du godkjenne denne overvåkningsregelen?</string>
+    <string name="reject">Avvis</string>
+    <string name="reject_rule">Avvis regel</string>
+    <string name="reject_rule_confirm">Er du sikker på at du vil avvise denne regelen?</string>
+    <string name="revoke_authorization">Trekk tilbake godkjenning</string>
+    <string name="revoke_authorization_confirm">Er du sikker på at du vil trekke tilbake godkjenningen for denne regelen?</string>
+    <string name="creating_rule">Oppretter regel...</string>
+    <string name="updating_rule">Oppdaterer regel...</string>
+
+    <!-- Regelparametere -->
+    <string name="maximum_speed">Maksimal hastighet (km/t)</string>
+    <string name="max_speed">Maks hastighet</string>
+    <string name="max_speed_label">Maks hastighet:</string>
+    <string name="max_speed_kmh">Maksimal hastighet (km/t)</string>
+    <string name="duration_minutes">Varighet (minutter)</string>
+    <string name="duration">Varighet</string>
+    <string name="duration_label">Varighet:</string>
+    <string name="minutes">minutter</string>
+    <string name="kmh">km/t</string>
+    <string name="geofence_areas">Geofence-områder</string>
+    <string name="geofence_areas_label">Geofence-områder:</string>
+    <string name="geofence_areas_count">Geofence-områder (%d)</string>
+    <string name="meter_radius">m</string>
+    <string name="meter_radius_value">%dm radius</string>
+    <string name="rule_type_label">Regeltype:</string>
+    <string name="add_area">Legg til område</string>
+    <string name="add_geofence_area">Legg til geofence-område</string>
+    <string name="area_name">Områdenavn</string>
+    <string name="area_name_placeholder">f.eks. Hjem, Skole</string>
+    <string name="latitude">Breddegrad</string>
+    <string name="latitude_placeholder">f.eks. 59.9139</string>
+    <string name="latitude_range">Område: -90 til 90</string>
+    <string name="longitude">Lengdegrad</string>
+    <string name="longitude_placeholder">f.eks. 10.7522</string>
+    <string name="longitude_range">Område: -180 til 180</string>
+    <string name="radius_meters">Radius (meter)</string>
+    <string name="radius_placeholder">100</string>
+    <string name="radius_range">Område: 1 til 100 000 m</string>
+    <string name="area_name_required">Områdenavn er påkrevd</string>
+    <string name="latitude_required">Breddegrad er påkrevd</string>
+    <string name="latitude_invalid">Breddegrad må være mellom -90 og 90</string>
+    <string name="longitude_required">Lengdegrad er påkrevd</string>
+    <string name="longitude_invalid">Lengdegrad må være mellom -180 og 180</string>
+    <string name="radius_required">Radius er påkrevd</string>
+    <string name="radius_invalid">Radius må være mellom 1 og 100 000 meter</string>
+    <string name="max_speed_required">Vennligst skriv inn en gyldig maksimal hastighet</string>
+    <string name="duration_required">Vennligst skriv inn en gyldig varighet</string>
+    <string name="geofence_required">Legg til minst ett geofence-område</string>
+
+    <!-- Tidsvinduer -->
+    <string name="time_windows">Tidsvinduer</string>
+    <string name="monitoring_windows">Overvåkningsvinduer</string>
+    <string name="add_time_window">Legg til tidsvindu</string>
+    <string name="create_time_window">Opprett tidsvindu</string>
+    <string name="edit_time_window">Rediger tidsvindu</string>
+    <string name="delete_time_window">Slett tidsvindu</string>
+    <string name="delete_time_window_confirm">Er du sikker på at du vil slette dette overvåkningsvinduet?</string>
+    <string name="no_time_windows">Ingen tidsvinduer</string>
+    <string name="no_time_windows_desc">Du har ikke opprettet noen overvåknings tidsvinduer ennå. Trykk + for å lage et.</string>
+    <string name="about_time_windows">Om tidsvinduer</string>
+    <string name="about_time_windows_desc">Tidsvinduer bestemmer når overvåkere kan spore sikkerheten din. Regler er kun aktive i disse tidsperiodene.</string>
+    <string name="loading_time_windows">Laster tidsvinduer...</string>
+    <string name="select_days">Velg dager</string>
+    <string name="time_range">Tidsrom</string>
+    <string name="start_time">Starttid (TT:mm)</string>
+    <string name="start_time_hhmm">Starttid (TT:mm)</string>
+    <string name="end_time">Sluttid (TT:mm)</string>
+    <string name="end_time_hhmm">Sluttid (TT:mm)</string>
+    <string name="start_time_placeholder">09:00</string>
+    <string name="end_time_placeholder">17:00</string>
+    <string name="currently_active">Aktiv nå</string>
+    <string name="create">Opprett</string>
+
+    <!-- Ukedager -->
+    <string name="monday">Mandag</string>
+    <string name="tuesday">Tirsdag</string>
+    <string name="wednesday">Onsdag</string>
+    <string name="thursday">Torsdag</string>
+    <string name="friday">Fredag</string>
+    <string name="saturday">Lørdag</string>
+    <string name="sunday">Søndag</string>
+
+    <!-- Alarmer -->
+    <string name="alerts">Alarmer</string>
+    <string name="alert_history">Alarmhistorikk</string>
+    <string name="alert_details">Alarmdetaljer</string>
+    <string name="alert_statistics">Alarmstatistikk</string>
+    <string name="alert_count">%d alarm(er)</string>
+    <string name="filter_by_type">Filtrer etter type</string>
+    <string name="all">Alle</string>
+    <string name="all_alerts">Alle alarmer</string>
+    <string name="filtered_alerts">Filtrerte alarmer</string>
+    <string name="no_alerts">Ingen alarmer</string>
+    <string name="no_alerts_desc">Ingen alarmer å vise</string>
+    <string name="loading_alerts">Laster alarmer...</string>
+    <string name="loading_alert_details">Laster alarmdetaljer...</string>
+    <string name="alert_not_found">Alarm ikke funnet</string>
+    <string name="cancel_alert">Avbryt alarm</string>
+    <string name="alert_cancelled">Avbrutt</string>
+    <string name="alert_cancelled_by_user">Alarm avbrutt av bruker</string>
+    <string name="alert_cancelled_by_user_timeline">Alarm avbrutt av bruker</string>
+    <string name="alert_cancelled_timeline_desc">Brukeren avbrøt alarmen. Ingen nødhjelp nødvendig.</string>
+    <string name="cancelled_at_time">Avbrutt kl. %s</string>
+    <string name="alert_cancelled_desc">Den beskyttede brukeren avbrøt denne alarmen. Ingen nødhjelp nødvendig.</string>
+    <string name="alert_information">Alarminformasjon</string>
+    <string name="alert_location">Alarmposisjon</string>
+    <string name="date_time">Dato &amp; tid</string>
+    <string name="details">Detaljer</string>
+    <string name="status">Status</string>
+    <string name="active">Aktiv</string>
+    <string name="location">Posisjon</string>
+    <string name="coordinates">Koordinater</string>
+    <string name="location_not_available">Posisjon ikke tilgjengelig</string>
+    <string name="timeline">Tidslinje</string>
+    <string name="alert_triggered">Alarm utløst</string>
+    <string name="video_recording_completed">Videoopptak fullført</string>
+    <string name="has_video">Har video</string>
+    <string name="open_map">Åpne</string>
+    <string name="no_statistics">Ingen statistikk tilgjengelig</string>
+
+    <!-- Assosiasjoner -->
+    <string name="associations">Tilknytninger</string>
+    <string name="generate_otp">Generer OTP</string>
+    <string name="generate_otp_for_protected">Generer OTP for beskyttet bruker</string>
+    <string name="enter_otp">Skriv inn OTP</string>
+    <string name="accept_monitor">Godta overvåker-tilknytning</string>
+    <string name="protected_user_email">Beskyttet brukers e-post</string>
+    <string name="monitor_email">Overvåkers e-post</string>
+    <string name="otp_6_digit">6-sifret OTP</string>
+    <string name="otp_placeholder">000000</string>
+    <string name="validate_create_association">Valider &amp; opprett tilknytning</string>
+    <string name="generated_otp">Generert OTP</string>
+    <string name="share_code">Del denne koden med den beskyttede brukeren</string>
+    <string name="otp_valid">Gyldig i 10 minutter</string>
+    <string name="otp_info">Skriv inn e-posten til brukeren du vil overvåke, og generer deretter en OTP å dele med dem.</string>
+    <string name="otp_accept_info">Skriv inn overvåkerens e-post og OTP-koden de delte med deg for å etablere tilknytningen.</string>
+    <string name="no_associations">Ingen tilknytninger</string>
+    <string name="no_associations_desc">Ingen tilknytninger som matcher det valgte filteret.</string>
+    <string name="association">Tilknytning</string>
+    <string name="remove_association">Fjern tilknytning</string>
+    <string name="remove_association_confirm">Er du sikker på at du vil fjerne denne tilknytningen? Denne handlingen kan ikke angres.</string>
+    <string name="association_cancelled_btn">Tilknytning avbrutt</string>
+    <string name="created">Opprettet</string>
+    <string name="add_protected_user">Legg til beskyttet bruker</string>
+    <string name="no_protected_users">Ingen beskyttede brukere ennå</string>
+    <string name="no_protected_users_desc">Legg til beskyttede brukere for å begynne å overvåke deres sikkerhet</string>
+    <string name="no_active_associations">Du har ingen aktive beskyttede brukere. Vennligst etabler en tilknytning først.</string>
+
+    <!-- Avbrudd-PIN -->
+    <string name="change_cancellation_pin">Endre avbrudds-PIN</string>
+    <string name="set_cancellation_pin">Sett avbrudds-PIN</string>
+    <string name="about_cancellation_pin">Om avbrudds-PIN</string>
+    <string name="about_cancellation_pin_desc">Din 4-sifrede PIN brukes til å avbryte alarmer innen 10-sekundersvinduet. Hold den sikker og lett å huske!</string>
+    <string name="first_time_setup">Første gangs oppsett</string>
+    <string name="first_time_setup_desc">Du har ikke satt en avbrudds-PIN ennå. Velg en 4-sifret PIN du lett husker i nødsituasjoner.</string>
+    <string name="update_pin">Oppdater PIN</string>
+    <string name="update_pin_desc">Du har en gammel %d-sifret PIN fra en tidligere versjon. Oppdater til en ny 4-sifret PIN for bedre sikkerhet.</string>
+    <string name="current_pin">Nåværende PIN</string>
+    <string name="new_pin">Ny PIN</string>
+    <string name="create_pin">Opprett PIN</string>
+    <string name="confirm_pin">Bekreft PIN</string>
+    <string name="enter_current_pin">Skriv inn din nåværende %d-sifrede PIN</string>
+    <string name="choose_4_digit_pin">Velg en 4-sifret PIN (0000-9999)</string>
+    <string name="reenter_pin">Skriv inn ny 4-sifret PIN på nytt</string>
+    <string name="update_pin_btn">Oppdater PIN</string>
+    <string name="create_pin_btn">Opprett PIN</string>
+    <string name="show_pin">Vis PIN</string>
+    <string name="hide_pin">Skjul PIN</string>
+    <string name="pin_requirements">PIN-krav:</string>
+    <string name="pin_requirement_4_digits">Må være nøyaktig 4 sifre</string>
+    <string name="pin_requirement_numbers">Kun tall (0-9)</string>
+    <string name="pin_requirement_match">Ny PIN og bekreftelse må være lik</string>
+    <string name="pin_requirement_current">Nåværende PIN må skrives inn</string>
+    <string name="pin_created_success">PIN opprettet!</string>
+    <string name="pin_updated_success">PIN oppdatert!</string>
+    <string name="pin_error_incorrect">Nåværende PIN er feil</string>
+    <string name="pin_error_length">Ny PIN må være nøyaktig 4 sifre</string>
+    <string name="pin_error_numbers">PIN må inneholde kun tall</string>
+    <string name="pin_error_mismatch">Ny PIN og bekreftelse matcher ikke</string>
+    <string name="pin_error_weak">Vurder å bruke en sikrere PIN</string>
+
+    <!-- Overvåkere & Beskyttede -->
+    <string name="monitors">Overvåkere</string>
+    <string name="monitor_by">Av</string>
+    <string name="for_user">For</string>
+    <string name="protected_individuals">Beskyttede personer</string>
+    <string name="manage_users">Administrer brukere</string>
+    <string name="view_details">Vis detaljer</string>
+    <string name="monitoring_inactive">Inaktiv</string>
+    <string name="all_protected_users">%d flere beskyttede brukere</string>
+
+    <!-- Tomme tilstander -->
+    <string name="empty_state_generic">Ingen elementer å vise</string>
+
+    <!-- Laste-tilstander -->
+    <string name="processing_request">Behandler...</string>
+
+    <!-- Feilmeldinger -->
+    <string name="error_loading_data">Kunne ikke laste data</string>
+    <string name="error_network">Nettverksfeil oppstod</string>
+    <string name="error_unknown_role">Ukjent brukerrolle</string>
+    <string name="name_required">Navn er påkrevd</string>
+    <string name="email_required">Gyldig e-post er påkrevd</string>
+    <string name="phone_required">Telefonnummer er påkrevd</string>
+
+    <!-- Suksessmeldinger -->
+    <string name="changes_saved">Endringer lagret</string>
+
+    <!-- Validering -->
+    <string name="field_required">Dette feltet er påkrevd</string>
+    <string name="invalid_email">Ugyldig e-postadresse</string>
+
+    <!-- Tid siden -->
+    <string name="just_now">Akkurat nå</string>
+    <string name="mins_ago">%dm siden</string>
+    <string name="hours_ago">%dt siden</string>
+    <string name="days_ago">%dd siden</string>
+    <string name="now">nå</string>
+
+    <!-- Tilgjengelighet -->
+    <string name="go_to">Gå til %s</string>
+    <string name="content_description_generic">%s</string>
+
+    <!-- Informasjonsmeldinger -->
+    <string name="info_create_first_rule">Trykk + knappen for å opprette din første overvåkningsregel</string>
+
+    <!-- Overvåkningskontroll (gjentakelser) -->
+    <string name="active_rules_count">Aktive regler (%d)</string>
+    <string name="in_active_time_window">Er i aktivt tidsvindu</string>
+    <string name="outside_time_windows">Utenfor aktive tidsvinduer</string>
+    <string name="permissions_required_desc">SafetYSec trenger posisjon- og aktivitetsgjenkjenningstillatelser for å overvåke sikkerheten din.</string>
+    <string name="acceleration_value">Akselerasjon: %s m/s²</string>
+    <string name="speed_value">Hastighet: %s km/t</string>
+    <string name="activity_value">Aktivitet: %s (%d%%)</string>
+
+    <!-- Innstillinger (gjentakelser) -->
+    <string name="push_notifications_desc">Motta alarmvarsler</string>
+    <string name="alert_sound_desc">Spill lyd ved alarmer</string>
+    <string name="vibration_desc">Vibrer ved alarmer</string>
+    <string name="privacy_settings_desc">Administrer ditt personvern</string>
+    <string name="security_desc">Totrinnsbekreftelse m.m.</string>
+    <string name="help_center_desc">Få hjelp og støtte</string>
+    <string name="terms_privacy_desc">Juridisk informasjon</string>
+
+    <!-- Rediger profil -->
+    <string name="enter_full_name">Skriv inn fullt navn</string>
+    <string name="error_name_required">Navn er påkrevd</string>
+    <string name="error_valid_email_required">Gyldig e-post er påkrevd</string>
+    <string name="error_phone_required">Telefonnummer er påkrevd</string>
+
+    <!-- Endre passord -->
+    <string name="password_changed_success">Passord endret!</string>
+    <string name="password_requirements_list">• Minst 8 tegn\n• Inneholder store og små bokstaver\n• Inneholder minst ett tall\n• Inneholder spesialtegn</string>
+    <string name="confirm_new_password">Bekreft nytt passord</string>
+    <string name="error_current_password_required">Nåværende passord kreves</string>
+    <string name="error_passwords_dont_match">Passordene matcher ikke</string>
+    <string name="error_password_must_differ">Nytt passord må være forskjellig fra nåværende passord</string>
+
+    <!-- Endre avbrudds-PIN (gjentakelser) -->
+    <string name="toggle_debug">Vis/skjul debug-info</string>
+    <string name="update_your_pin">Oppdater din PIN</string>
+    <string name="reenter_new_pin">Skriv inn ny 4-sifret PIN på nytt</string>
+    <string name="saving">Lagrer...</string>
+    <string name="pin_must_be_4_digits">Må være nøyaktig 4 sifre</string>
+    <string name="pin_only_numbers">Kun tall (0-9)</string>
+    <string name="pin_must_match">Ny PIN og bekreftelse må være lik</string>
+    <string name="current_pin_required">Nåværende PIN må skrives inn</string>
+    <string name="error_current_pin_incorrect">Nåværende PIN er feil</string>
+    <string name="error_pin_must_be_4_digits">Ny PIN må være nøyaktig 4 sifre</string>
+    <string name="error_pin_only_numbers">PIN må inneholde kun tall</string>
+    <string name="error_pins_dont_match">Ny PIN og bekreftelse matcher ikke</string>
+    <string name="error_pin_weak">Vurder å bruke en sikrere PIN</string>
+
+    <string name="processing">Behandler...</string>
+    <string name="error_unknown">Ukjent feil oppstod</string>
+
+    <!-- Component Strings -->
+    <string name="warning">Advarsel</string>
+    <string name="info">Info</string>
+    <string name="dismiss">Lukk</string>
+    <string name="action">Handling</string>
+    <string name="navigate_back">Gå tilbake</string>
+    <string name="search">Søk</string>
+    <string name="search_placeholder">Søk...</string>
+    <string name="more_options">Flere alternativer</string>
+
+    <!-- Text Field Components -->
+    <string name="email_placeholder">eksempel@epost.no</string>
+    <string name="email_icon">E-postikon</string>
+    <string name="password_icon">Passordikon</string>
+    <string name="enter_password">Skriv inn passord</string>
+    <string name="hide_password">Skjul passord</string>
+    <string name="show_password">Vis passord</string>
+    <string name="search_icon">Søkeikon</string>
+    <string name="clear_search">Tøm søk</string>
+    <string name="phone_icon">Telefonikon</string>
+    <string name="phone_placeholder">+47 123 45 678</string>
+
+    <!-- Alert Cancellation Dialog -->
+    <string name="alert">Varsel</string>
+    <string name="alert_will_be_sent_message">Et varsel er oppdaget og vil bli sendt til dine overvåkere dersom det ikke avbrytes.</string>
+    <string name="time_remaining">Gjenværende tid</string>
+    <string name="seconds">sekunder</string>
+    <string name="enter_your_cancellation_pin">Skriv inn din avbrytelses-PIN</string>
+    <string name="four_digit_pin">4-sifret PIN</string>
+    <string name="let_alert_send">La varselet sendes</string>
+    <string name="enter_4_digit_pin_helper">Skriv inn din 4-sifrede PIN for å avbryte dette varselet</string>
+    <string name="error_please_enter_4_digit">Vennligst skriv inn en 4-sifret PIN</string>
+    <string name="error_incorrect_pin_try_again">Feil PIN. Prøv igjen.</string>
+
+    <!-- Alert Types Display Names -->
+    <string name="alert_type_fall_detected">Fall oppdaget</string>
+    <string name="alert_type_speed_alert">Hastighetsvarsel</string>
+    <string name="alert_type_geofence_breach">Brudd på geofence</string>
+    <string name="alert_type_accident_detected">Ulykke oppdaget</string>
+    <string name="alert_type_inactivity">Inaktivitetsvarsel</string>
+    <string name="alert_type_panic_button">Panikknapp</string>
+
+    <!-- Empty State Components -->
+    <string name="no_items_found">Ingen elementer funnet</string>
+    <string name="no_items_to_display">Det er ingen elementer å vise ennå.</string>
+    <string name="add_item">Legg til element</string>
+    <string name="no_results_found">Ingen resultater funnet</string>
+    <string name="no_results_for_query">Ingen resultater funnet for \"%s\"</string>
+    <string name="try_adjusting_search">Prøv å justere søkekriteriene</string>
+    <string name="no_alerts_message">Du har ingen varsler ennå. Når varsler utløses, vil de vises her.</string>
+    <string name="no_monitors">Ingen overvåkere</string>
+    <string name="no_monitors_message">Du har ikke lagt til noen overvåkere ennå. Legg til en overvåker for å aktivere sikkerhetsfunksjoner.</string>
+    <string name="add_monitor">Legg til overvåker</string>
+    <string name="no_protected_users_message">Du overvåker ingen ennå. Legg til en beskyttet bruker for å starte overvåkning.</string>
+    <string name="no_rules_message">Du har ikke opprettet noen sikkerhetsregler ennå. Opprett regler for å overvåke beskyttede brukere.</string>
+    <string name="no_connection">Ingen tilkobling</string>
+    <string name="no_connection_message">Kunne ikke koble til nettverket. Sjekk internettforbindelsen din og prøv igjen.</string>
+    <string name="something_went_wrong">Noe gikk galt</string>
+    <string name="error_occurred_try_later">Det oppstod en feil. Vennligst prøv igjen senere.</string>
+    <string name="try_again">Prøv igjen</string>
+
+    <!-- Monitoring Dashboard Card -->
+    <string name="active_rules_count_status">Aktiv – %d regel(er)</string>
+    <string name="outside_time_window_warning">Utenfor tidsvindu</string>
+    <string name="stopped">Stoppet</string>
+    <string name="navigate">Naviger</string>
+    <string name="monitoring">Overvåking</string>
+</resources>

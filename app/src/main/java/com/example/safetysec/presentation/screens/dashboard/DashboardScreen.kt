@@ -8,10 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.UserRole
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
@@ -83,7 +85,7 @@ fun DashboardScreen(
                         .padding(it),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Unknown user role")
+                    Text(stringResource(R.string.error_unknown_role))
                 }
             }
         }
@@ -115,7 +117,7 @@ fun DualDashboardScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Dashboard",
+                            text = stringResource(R.string.dashboard),
                             color = Color.White,
                             style = MaterialTheme.typography.titleLarge
                         )
@@ -144,7 +146,7 @@ fun DualDashboardScreen(
                         onClick = { selectedTab = 0 },
                         text = {
                             Text(
-                                text = "Protected",
+                                text = stringResource(R.string.protected_user),
                                 color = Color.White,
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Normal
@@ -156,7 +158,7 @@ fun DualDashboardScreen(
                         onClick = { selectedTab = 1 },
                         text = {
                             Text(
-                                text = "Monitor",
+                                text = stringResource(R.string.monitor),
                                 color = Color.White,
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Normal

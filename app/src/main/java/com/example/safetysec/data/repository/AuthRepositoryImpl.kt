@@ -23,7 +23,8 @@ class AuthRepositoryImpl @Inject constructor(
         password: String,
         name: String,
         phone: String,
-        role: String
+        role: String,
+        cancellationPin: String?
     ): AuthResult<User> = try {
         val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
         val userId = authResult.user?.uid ?: throw Exception("Failed to create user")
@@ -35,7 +36,7 @@ class AuthRepositoryImpl @Inject constructor(
             name = name,
             phone = phone,
             role = userRole,
-            alertCancellationCode = generateRandomCode()
+            alertCancellationCode = null  // Users must set their own PIN
         )
 
         firestore.collection("users").document(userId).set(user.toMap()).await()
@@ -216,6 +217,37 @@ class AuthRepositoryImpl @Inject constructor(
         AuthResult.Error("New password is too weak. Use at least 6 characters")
     } catch (e: Exception) {
         AuthResult.Error(e.message ?: "Failed to change password")
+    }
+
+    override suspend fun updateCancellationPin(
+        newPin: String
+    ): AuthResult<User> {
+        return try {
+            val currentUser = firebaseAuth.currentUser
+                ?: return AuthResult.Error("No user currently logged in")
+
+            val userId = currentUser.uid
+
+            // Validate PIN format
+            if (newPin.length != 4 || !newPin.all { it.isDigit() }) {
+                return AuthResult.Error("PIN must be exactly 4 digits")
+            }
+
+            // Update PIN in Firestore
+            firestore.collection("users")
+                .document(userId)
+                .update("alertCancellationCode", newPin)
+                .await()
+
+            // Fetch updated user from Firestore
+            val userDoc = firestore.collection("users").document(userId).get().await()
+            val user = userDoc.toObject(User::class.java)
+                ?: throw Exception("User not found")
+
+            AuthResult.Success(user)
+        } catch (e: Exception) {
+            AuthResult.Error(e.message ?: "Failed to update cancellation PIN")
+        }
     }
 
     private fun generateRandomCode(): String {

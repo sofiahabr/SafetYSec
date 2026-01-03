@@ -9,9 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.safetysec.R
 import com.example.safetysec.presentation.theme.PrimaryPurple
 
 /**
@@ -81,8 +83,8 @@ fun EmptyState(
  */
 @Composable
 fun EmptyListState(
-    title: String = "No Items Found",
-    message: String = "There are no items to display yet.",
+    title: String = stringResource(R.string.no_items_found),
+    message: String = stringResource(R.string.no_items_to_display),
     modifier: Modifier = Modifier,
     onAddClick: (() -> Unit)? = null
 ) {
@@ -94,7 +96,7 @@ fun EmptyListState(
         actionButton = if (onAddClick != null) {
             {
                 PrimaryButton(
-                    text = "Add Item",
+                    text = stringResource(R.string.add_item),
                     onClick = onAddClick,
                     modifier = Modifier.fillMaxWidth(0.6f)
                 )
@@ -114,17 +116,17 @@ fun NoSearchResultsState(
 ) {
     EmptyState(
         icon = Icons.Default.SearchOff,
-        title = "No Results Found",
+        title = stringResource(R.string.no_results_found),
         message = if (searchQuery.isNotEmpty()) {
-            "No results found for \"$searchQuery\""
+            stringResource(R.string.no_results_for_query, searchQuery)
         } else {
-            "Try adjusting your search criteria"
+            stringResource(R.string.try_adjusting_search)
         },
         modifier = modifier,
         actionButton = if (onClearSearch != null) {
             {
                 CustomTextButton(
-                    text = "Clear Search",
+                    text = stringResource(R.string.clear_search),
                     onClick = onClearSearch
                 )
             }
@@ -141,8 +143,8 @@ fun NoAlertsState(
 ) {
     EmptyState(
         icon = Icons.Default.Notifications,
-        title = "No Alerts",
-        message = "You don't have any alerts yet. When alerts are triggered, they'll appear here.",
+        title = stringResource(R.string.no_alerts),
+        message = stringResource(R.string.no_alerts_message),
         modifier = modifier
     )
 }
@@ -157,12 +159,12 @@ fun NoMonitorsState(
 ) {
     EmptyState(
         icon = Icons.Default.Person,
-        title = "No Monitors",
-        message = "You haven't added any monitors yet. Add a monitor to enable safety features.",
+        title = stringResource(R.string.no_monitors),
+        message = stringResource(R.string.no_monitors_message),
         modifier = modifier,
         actionButton = {
             PrimaryButton(
-                text = "Add Monitor",
+                text = stringResource(R.string.add_monitor),
                 onClick = onAddMonitor,
                 modifier = Modifier.fillMaxWidth(0.6f)
             )
@@ -180,12 +182,12 @@ fun NoProtectedUsersState(
 ) {
     EmptyState(
         icon = Icons.Default.Person,
-        title = "No Protected Users",
-        message = "You aren't monitoring anyone yet. Add a protected user to start monitoring.",
+        title = stringResource(R.string.no_protected_users),
+        message = stringResource(R.string.no_protected_users_message),
         modifier = modifier,
         actionButton = {
             PrimaryButton(
-                text = "Add Protected User",
+                text = stringResource(R.string.add_protected_user),
                 onClick = onAddProtected,
                 modifier = Modifier.fillMaxWidth(0.6f)
             )
@@ -203,12 +205,12 @@ fun NoRulesState(
 ) {
     EmptyState(
         icon = Icons.Default.Rule,
-        title = "No Rules",
-        message = "You haven't created any safety rules yet. Create rules to monitor protected users.",
+        title = stringResource(R.string.no_rules),
+        message = stringResource(R.string.no_rules_message),
         modifier = modifier,
         actionButton = {
             PrimaryButton(
-                text = "Create Rule",
+                text = stringResource(R.string.create_rule),
                 onClick = onCreateRule,
                 modifier = Modifier.fillMaxWidth(0.6f)
             )
@@ -226,12 +228,12 @@ fun NetworkErrorState(
 ) {
     EmptyState(
         icon = Icons.Default.WifiOff,
-        title = "No Connection",
-        message = "Unable to connect to the network. Please check your internet connection and try again.",
+        title = stringResource(R.string.no_connection),
+        message = stringResource(R.string.no_connection_message),
         modifier = modifier,
         actionButton = {
             PrimaryButton(
-                text = "Retry",
+                text = stringResource(R.string.retry),
                 onClick = onRetry,
                 modifier = Modifier.fillMaxWidth(0.6f)
             )
@@ -244,8 +246,8 @@ fun NetworkErrorState(
  */
 @Composable
 fun ErrorState(
-    title: String = "Something Went Wrong",
-    message: String = "An error occurred. Please try again later.",
+    title: String = stringResource(R.string.something_went_wrong),
+    message: String = stringResource(R.string.error_occurred_try_later),
     modifier: Modifier = Modifier,
     onRetry: (() -> Unit)? = null
 ) {
@@ -257,7 +259,7 @@ fun ErrorState(
         actionButton = if (onRetry != null) {
             {
                 PrimaryButton(
-                    text = "Try Again",
+                    text = stringResource(R.string.try_again),
                     onClick = onRetry,
                     modifier = Modifier.fillMaxWidth(0.6f)
                 )

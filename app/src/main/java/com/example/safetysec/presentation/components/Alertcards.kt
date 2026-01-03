@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.safetysec.R
 
 /**
  * Alert Card Components
@@ -126,7 +128,7 @@ fun AlertCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Dismiss",
+                        contentDescription = stringResource(R.string.dismiss),
                         tint = iconColor,
                         modifier = Modifier.size(20.dp)
                     )
@@ -143,14 +145,16 @@ fun AlertCard(
 fun SuccessAlert(
     message: String,
     modifier: Modifier = Modifier,
-    title: String? = "Success",
+    title: String? = null,
     onDismiss: (() -> Unit)? = null
 ) {
+    val defaultTitle = title ?: stringResource(R.string.success)
+
     AlertCard(
         message = message,
         type = AlertType.SUCCESS,
         modifier = modifier,
-        title = title,
+        title = defaultTitle,
         onDismiss = onDismiss
     )
 }
@@ -162,14 +166,16 @@ fun SuccessAlert(
 fun ErrorAlert(
     message: String,
     modifier: Modifier = Modifier,
-    title: String? = "Error",
+    title: String? = null,
     onDismiss: (() -> Unit)? = null
 ) {
+    val defaultTitle = title ?: stringResource(R.string.error)
+
     AlertCard(
         message = message,
         type = AlertType.ERROR,
         modifier = modifier,
-        title = title,
+        title = defaultTitle,
         onDismiss = onDismiss
     )
 }
@@ -181,14 +187,16 @@ fun ErrorAlert(
 fun WarningAlert(
     message: String,
     modifier: Modifier = Modifier,
-    title: String? = "Warning",
+    title: String? = null,
     onDismiss: (() -> Unit)? = null
 ) {
+    val defaultTitle = title ?: stringResource(R.string.warning)
+
     AlertCard(
         message = message,
         type = AlertType.WARNING,
         modifier = modifier,
-        title = title,
+        title = defaultTitle,
         onDismiss = onDismiss
     )
 }
@@ -200,14 +208,16 @@ fun WarningAlert(
 fun InfoAlert(
     message: String,
     modifier: Modifier = Modifier,
-    title: String? = "Info",
+    title: String? = null,
     onDismiss: (() -> Unit)? = null
 ) {
+    val defaultTitle = title ?: stringResource(R.string.info)
+
     AlertCard(
         message = message,
         type = AlertType.INFO,
         modifier = modifier,
-        title = title,
+        title = defaultTitle,
         onDismiss = onDismiss
     )
 }
@@ -288,7 +298,7 @@ fun AlertEventCard(
                 ) {
                     Icon(
                         imageVector = actionIcon,
-                        contentDescription = "Action",
+                        contentDescription = stringResource(R.string.action),
                         tint = Color(0xFFEF5350),
                         modifier = Modifier.padding(0.dp)
                     )
@@ -311,7 +321,7 @@ fun AlertEventCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.LocationOn,
-                    contentDescription = "Location",
+                    contentDescription = stringResource(R.string.location),
                     tint = Color.Gray,
                     modifier = Modifier.padding(0.dp)
                 )
@@ -367,7 +377,7 @@ fun ProtectedInfoCard(
 
             if (isActive) {
                 Text(
-                    text = "ACTIVE",
+                    text = stringResource(R.string.active).uppercase(),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color(0xFF4CAF50),
                     fontWeight = FontWeight.Bold
@@ -383,5 +393,4 @@ fun ProtectedInfoCard(
             )
         }
     }
-
 }

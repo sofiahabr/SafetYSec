@@ -11,10 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.Rule
 import com.example.safetysec.domain.model.RuleStatus
 import com.example.safetysec.domain.model.RuleType
@@ -35,7 +37,7 @@ fun RulesScreen(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                title = "Safety Rules"
+                title = stringResource(R.string.safety_rules)
             )
         },
         bottomBar = {
@@ -49,7 +51,7 @@ fun RulesScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Create Rule",
+                        contentDescription = stringResource(R.string.create_rule),
                         tint = Color.White
                     )
                 }
@@ -63,7 +65,7 @@ fun RulesScreen(
         ) {
             when {
                 uiState.isLoading && uiState.rules.isEmpty() -> {
-                    FullScreenLoading(message = "Loading rules...")
+                    FullScreenLoading(message = stringResource(R.string.loading_rules))
                 }
                 uiState.error != null -> {
                     Column(
@@ -72,7 +74,7 @@ fun RulesScreen(
                             .padding(16.dp)
                     ) {
                         ErrorAlert(
-                            message = uiState.error ?: "An error occurred",
+                            message = uiState.error ?: stringResource(R.string.error_unknown),
                             onDismiss = { viewModel.clearError() }
                         )
                     }
@@ -83,7 +85,7 @@ fun RulesScreen(
                         isMonitor = uiState.isMonitor,
                         selectedFilter = uiState.selectedFilter,
                         pendingCount = uiState.pendingCount,
-                        navController = navController, // ADDED
+                        navController = navController,
                         onFilterChanged = { viewModel.filterByStatus(it) },
                         onAuthorize = { viewModel.authorizeRule(it) },
                         onReject = { viewModel.rejectRule(it) },
@@ -95,7 +97,7 @@ fun RulesScreen(
 
             // Loading overlay
             if (uiState.isLoading && uiState.rules.isNotEmpty()) {
-                LoadingDialog(message = "Processing...")
+                LoadingDialog(message = stringResource(R.string.processing))
             }
         }
     }
@@ -114,7 +116,7 @@ private fun RulesContent(
     isMonitor: Boolean,
     selectedFilter: RuleStatus?,
     pendingCount: Int,
-    navController: NavController, // ADDED
+    navController: NavController,
     onFilterChanged: (RuleStatus?) -> Unit,
     onAuthorize: (String) -> Unit,
     onReject: (String) -> Unit,
@@ -140,11 +142,11 @@ private fun RulesContent(
         if (rules.isEmpty()) {
             EmptyState(
                 icon = Icons.Default.Rule,
-                title = "No Rules",
+                title = stringResource(R.string.no_rules),
                 message = if (isMonitor) {
-                    "You haven't created any rules yet. Tap the + button to create your first rule."
+                    stringResource(R.string.no_rules_monitor_desc)
                 } else {
-                    "You don't have any rules from monitors yet."
+                    stringResource(R.string.no_rules_protected_desc)
                 },
                 modifier = Modifier.fillMaxSize()
             )
@@ -157,7 +159,7 @@ private fun RulesContent(
                     RuleCard(
                         rule = rule,
                         isMonitor = isMonitor,
-                        navController = navController, // ADDED
+                        navController = navController,
                         onAuthorize = { onAuthorize(rule.id) },
                         onReject = { onReject(rule.id) },
                         onRevoke = { onRevoke(rule.id) },
@@ -186,7 +188,7 @@ private fun StatusFilterChips(
         FilterChip(
             selected = selectedFilter == RuleStatus.AUTHORIZED,
             onClick = { onFilterChanged(RuleStatus.AUTHORIZED) },
-            label = { Text("Authorized") },
+            label = { Text(stringResource(R.string.authorized)) },
             leadingIcon = if (selectedFilter == RuleStatus.AUTHORIZED) {
                 {
                     Icon(
@@ -222,7 +224,7 @@ private fun StatusFilterChips(
             FilterChip(
                 selected = selectedFilter == RuleStatus.PENDING,
                 onClick = { onFilterChanged(RuleStatus.PENDING) },
-                label = { Text("Pending") },
+                label = { Text(stringResource(R.string.pending)) },
                 leadingIcon = if (selectedFilter == RuleStatus.PENDING) {
                     {
                         Icon(
@@ -244,7 +246,7 @@ private fun StatusFilterChips(
         FilterChip(
             selected = selectedFilter == RuleStatus.CANCELLED,
             onClick = { onFilterChanged(RuleStatus.CANCELLED) },
-            label = { Text("Cancelled") },
+            label = { Text(stringResource(R.string.cancelled)) },
             leadingIcon = if (selectedFilter == RuleStatus.CANCELLED) {
                 {
                     Icon(
@@ -267,7 +269,7 @@ private fun StatusFilterChips(
 private fun RuleCard(
     rule: Rule,
     isMonitor: Boolean,
-    navController: NavController, // ADDED
+    navController: NavController,
     onAuthorize: () -> Unit,
     onReject: () -> Unit,
     onRevoke: () -> Unit,
@@ -315,9 +317,9 @@ private fun RuleCard(
                         )
                         Text(
                             text = if (isMonitor) {
-                                "For: ${rule.protectedName}"
+                                "${stringResource(R.string.for_user)} ${rule.protectedName}"
                             } else {
-                                "By: ${rule.monitorName}"
+                                "${stringResource(R.string.monitor_by)} ${rule.monitorName}"
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
@@ -349,7 +351,7 @@ private fun RuleCard(
             // Created date
             val dateFormat = remember { SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()) }
             Text(
-                text = "Created: ${dateFormat.format(rule.createdAt)}",
+                text = "${stringResource(R.string.created)}: ${dateFormat.format(rule.createdAt)}",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray
             )
@@ -362,7 +364,7 @@ private fun RuleCard(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // ADDED: Edit button (only for authorized rules)
+                    // Edit button (only for authorized rules)
                     if (rule.status == RuleStatus.AUTHORIZED) {
                         IconButton(
                             onClick = {
@@ -371,7 +373,7 @@ private fun RuleCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Edit,
-                                contentDescription = "Edit Rule",
+                                contentDescription = stringResource(R.string.edit_rule),
                                 tint = PrimaryPurple
                             )
                         }
@@ -383,7 +385,7 @@ private fun RuleCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete Rule",
+                            contentDescription = stringResource(R.string.delete_rule),
                             tint = MaterialTheme.colorScheme.error
                         )
                     }
@@ -398,12 +400,12 @@ private fun RuleCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     SecondaryButton(
-                        text = "Reject",
+                        text = stringResource(R.string.reject),
                         onClick = { showRejectDialog = true },
                         modifier = Modifier.weight(1f)
                     )
                     PrimaryButton(
-                        text = "Authorize",
+                        text = stringResource(R.string.authorize),
                         onClick = { showAuthorizeDialog = true },
                         modifier = Modifier.weight(1f)
                     )
@@ -413,7 +415,7 @@ private fun RuleCard(
             if (!isMonitor && rule.status == RuleStatus.AUTHORIZED) {
                 Spacer(modifier = Modifier.height(16.dp))
                 DangerButton(
-                    text = "Revoke Authorization",
+                    text = stringResource(R.string.revoke_authorization),
                     onClick = { showRevokeDialog = true },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -424,9 +426,9 @@ private fun RuleCard(
     // Confirmation dialogs
     if (showDeleteDialog) {
         ConfirmationDialog(
-            title = "Delete Rule",
-            message = "Are you sure you want to delete this rule? This action cannot be undone.",
-            confirmText = "Delete",
+            title = stringResource(R.string.delete_rule),
+            message = stringResource(R.string.delete_rule_confirm),
+            confirmText = stringResource(R.string.delete),
             onConfirm = {
                 onDelete()
                 showDeleteDialog = false
@@ -438,9 +440,9 @@ private fun RuleCard(
 
     if (showAuthorizeDialog) {
         ConfirmationDialog(
-            title = "Authorize Rule",
-            message = "Do you authorize this monitoring rule?",
-            confirmText = "Authorize",
+            title = stringResource(R.string.authorize_rule),
+            message = stringResource(R.string.authorize_rule_confirm),
+            confirmText = stringResource(R.string.authorize),
             onConfirm = {
                 onAuthorize()
                 showAuthorizeDialog = false
@@ -451,9 +453,9 @@ private fun RuleCard(
 
     if (showRejectDialog) {
         ConfirmationDialog(
-            title = "Reject Rule",
-            message = "Are you sure you want to reject this rule?",
-            confirmText = "Reject",
+            title = stringResource(R.string.reject_rule),
+            message = stringResource(R.string.reject_rule_confirm),
+            confirmText = stringResource(R.string.reject),
             onConfirm = {
                 onReject()
                 showRejectDialog = false
@@ -465,9 +467,9 @@ private fun RuleCard(
 
     if (showRevokeDialog) {
         ConfirmationDialog(
-            title = "Revoke Authorization",
-            message = "Are you sure you want to revoke authorization for this rule?",
-            confirmText = "Revoke",
+            title = stringResource(R.string.revoke_authorization),
+            message = stringResource(R.string.revoke_authorization_confirm),
+            confirmText = stringResource(R.string.revoke),
             onConfirm = {
                 onRevoke()
                 showRevokeDialog = false
@@ -494,27 +496,27 @@ private fun RuleParametersDisplay(rule: Rule) {
             when (rule.type) {
                 RuleType.GEOFENCING -> {
                     Text(
-                        text = "Geofence Areas:",
+                        text = stringResource(R.string.geofence_areas_label),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Bold
                     )
                     rule.parameters.geofenceAreas.forEach { area ->
                         Text(
-                            text = "• ${area.name} (${area.radius.toInt()}m)",
+                            text = "• ${area.name} (${area.radius.toInt()}${stringResource(R.string.meter_radius)})",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                 }
                 RuleType.SPEED_CONTROL -> {
                     Text(
-                        text = "Max Speed: ${rule.parameters.maxSpeed} km/h",
+                        text = "${stringResource(R.string.max_speed_label)} ${rule.parameters.maxSpeed} ${stringResource(R.string.kmh)}",
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 RuleType.PROLONGED_INACTIVITY -> {
                     Text(
-                        text = "Duration: ${rule.parameters.inactivityDuration} minutes",
+                        text = "${stringResource(R.string.duration_label)} ${rule.parameters.inactivityDuration} ${stringResource(R.string.minutes)}",
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -597,7 +599,7 @@ private fun ConfirmationDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

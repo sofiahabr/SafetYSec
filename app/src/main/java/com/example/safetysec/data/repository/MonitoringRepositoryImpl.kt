@@ -6,7 +6,6 @@ import com.example.safetysec.domain.model.*
 import com.example.safetysec.domain.repository.MonitoringRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -496,6 +495,110 @@ class MonitoringRepositoryImpl @Inject constructor(
             maxSpeed = (params["maxSpeed"] as? Number)?.toInt() ?: 120,
             inactivityDuration = (params["inactivityDuration"] as? Number)?.toInt() ?: 30
         )
+    }
+
+    /**
+     * Cancel an alert within the 10-second cancellation window
+     */
+    override suspend fun cancelAlert(alertId: String, code: String): Result<Boolean> {
+        return try {
+            val alertRef = firestore.collection("alerts").document(alertId)
+            val alertDoc = alertRef.get().await()
+
+            if (!alertDoc.exists()) {
+                return Result.failure(Exception("Alert not found"))
+            }
+
+            // Check if alert can still be cancelled
+            val timestamp = alertDoc.getTimestamp("timestamp")?.toDate()
+            val now = Date()
+            val timeDiff = now.time - (timestamp?.time ?: 0)
+
+            if (timeDiff > 10000) { // 10 seconds
+                return Result.failure(Exception("Cancellation window expired"))
+            }
+
+            // Update alert as cancelled
+            alertRef.update(
+                mapOf(
+                    "cancelled" to true,
+                    "cancelledAt" to com.google.firebase.Timestamp.now()
+                )
+            ).await()
+
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Update alert with video URL after recording and upload
+     */
+    override suspend fun updateAlertWithVideo(alertId: String, videoUrl: String): Result<Boolean> {
+        return try {
+            firestore.collection("alerts")
+                .document(alertId)
+                .update("videoUrl", videoUrl)
+                .await()
+
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Refresh statistics (rules and time windows) for current user
+     * This updates the monitoring state with the latest rules and time windows
+     */
+    override suspend fun refreshStatistics() {
+        try {
+            val activeRules = getActiveRules(currentUserId)
+            val activeTimeWindows = getActiveTimeWindows(currentUserId)
+
+            _monitoringState.value = _monitoringState.value.copy(
+                protectedUserId = currentUserId,
+                activeRules = activeRules,
+                activeTimeWindows = activeTimeWindows,
+                lastUpdateTime = Date()
+            )
+        } catch (e: Exception) {
+            // Log error but don't throw - this is a background refresh
+        }
+    }
+
+    /**
+     * Get alert by ID
+     */
+    override suspend fun getAlertById(alertId: String): AlertEvent? {
+        return try {
+            val doc = firestore
+                .collection("alerts")
+                .document(alertId)
+                .get()
+                .await()
+
+            if (!doc.exists()) return null
+
+            AlertEvent(
+                id = doc.id,
+                type = AlertType.valueOf(doc.getString("type") ?: "PANIC_BUTTON"),
+                protectedUserId = doc.getString("protectedUserId") ?: return null,
+                protectedUserName = doc.getString("protectedUserName") ?: "Unknown User",
+                timestamp = doc.getTimestamp("timestamp")?.toLocalDateTime()
+                    ?: java.time.LocalDateTime.now(),
+                latitude = doc.getDouble("latitude") ?: 0.0,
+                longitude = doc.getDouble("longitude") ?: 0.0,
+                details = doc.getString("details"),
+                videoUrl = doc.getString("videoUrl"),
+                monitorIds = doc.get("monitorIds") as? List<String> ?: emptyList(),
+                isCancelled = doc.getBoolean("cancelled") ?: false,
+                cancelledAt = doc.getTimestamp("cancelledAt")?.toLocalDateTime()
+            )
+        } catch (e: Exception) {
+            null
+        }
     }
 }
 

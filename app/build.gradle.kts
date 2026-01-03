@@ -55,6 +55,8 @@ dependencies {
 
     // Hilt Dependency Injection
     implementation("com.google.dagger:hilt-android:2.48.1")
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.play.services.maps)
     ksp("com.google.dagger:hilt-compiler:2.48.1")
 
     // Jetpack Compose - Use BOM for version alignment
@@ -104,6 +106,10 @@ dependencies {
     // Google Play Services (required for location services)
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    // Google Maps for Compose
+    implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
     // Kotlin Coroutines for async operations
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
@@ -119,4 +125,60 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // CameraX for video recording
+    implementation("androidx.camera:camera-core:1.3.0")
+    implementation("androidx.camera:camera-camera2:1.3.0")
+    implementation("androidx.camera:camera-lifecycle:1.3.0")
+    implementation("androidx.camera:camera-video:1.3.0")
+    implementation("androidx.camera:camera-view:1.3.0")
+
+// ExoPlayer for video playback
+    implementation("androidx.media3:media3-exoplayer:1.2.0")
+    implementation("androidx.media3:media3-ui:1.2.0")
+
+// Firebase Cloud Messaging
+    implementation("com.google.firebase:firebase-messaging-ktx:23.4.0")
+
+// ============================================
+// PHASE 6: Alert System Dependencies
+// ============================================
+
+// CameraX for video recording (30-second alert videos)
+    implementation("androidx.camera:camera-core:1.3.0")
+    implementation("androidx.camera:camera-camera2:1.3.0")
+    implementation("androidx.camera:camera-lifecycle:1.3.0")
+    implementation("androidx.camera:camera-video:1.3.0")
+    implementation("androidx.camera:camera-view:1.3.0")
+    implementation("androidx.camera:camera-extensions:1.3.0")
+
+// Firebase Cloud Messaging for push notifications
+    implementation("com.google.firebase:firebase-messaging:23.3.1")
+
+// Coroutines for async operations (may already be present)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+// Firebase Storage (should already be present)
+    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
+
+// Firebase Firestore (should already be present)
+    implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
+
+// Firebase Auth (should already be present)
+    implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
+
+// Lifecycle components (should already be present)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-process:2.6.2")
+
+    implementation("androidx.lifecycle:lifecycle-process:2.6.2")
+
+    // DataStore for preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // AppCompat for locale support
+    implementation("androidx.appcompat:appcompat:1.6.1")
 }

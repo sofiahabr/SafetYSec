@@ -8,11 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.safetysec.R
 import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.theme.PrimaryPurple
 
@@ -41,35 +43,36 @@ data class BottomNavItem(
 /**
  * Bottom Navigation Items List
  */
+@Composable
 fun getBottomNavItems(): List<BottomNavItem> {
     return listOf(
         BottomNavItem(
             route = AppRoutes.DASHBOARD,
-            label = "Dashboard",
+            label = stringResource(R.string.dashboard),
             selectedIcon = Icons.Filled.Dashboard,
             unselectedIcon = Icons.Outlined.Dashboard
         ),
         BottomNavItem(
             route = AppRoutes.ASSOCIATIONS,
-            label = "Association",
+            label = stringResource(R.string.association),
             selectedIcon = Icons.Filled.People,
             unselectedIcon = Icons.Outlined.People
         ),
         BottomNavItem(
             route = AppRoutes.RULES,
-            label = "Rules",
+            label = stringResource(R.string.rules),
             selectedIcon = Icons.Filled.Rule,
             unselectedIcon = Icons.Outlined.Rule
         ),
         BottomNavItem(
             route = AppRoutes.ALERTS,
-            label = "Alerts",
+            label = stringResource(R.string.alerts),
             selectedIcon = Icons.Filled.Notifications,
             unselectedIcon = Icons.Outlined.Notifications
         ),
         BottomNavItem(
             route = AppRoutes.PROFILE,
-            label = "Profile",
+            label = stringResource(R.string.profile),
             selectedIcon = Icons.Filled.Person,
             unselectedIcon = Icons.Outlined.Person
         )
