@@ -14,7 +14,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.EmailTextField
 import com.example.safetysec.presentation.components.PrimaryButton
 import com.example.safetysec.presentation.components.PasswordTextField
@@ -53,7 +55,7 @@ fun LogInScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "Login",
+            stringResource(R.string.login),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -74,7 +76,7 @@ fun LogInScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         PrimaryButton(
-            text = "Login",
+            text = stringResource(R.string.login),
             onClick = { viewModel.login(email.value, password.value) },
             isLoading = authState.value.isLoading
         )
@@ -82,7 +84,7 @@ fun LogInScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         SecondaryButton(
-            text = "Don't have an account? Register here",
+            text = stringResource(R.string.no_account_register),
             onClick = onNavigateToRegister,
             isLoading = authState.value.isLoading
         )
@@ -90,7 +92,7 @@ fun LogInScreen(
         if (!authState.value.error.isNullOrEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                authState.value.error ?: "Unknown error",
+                authState.value.error ?: stringResource(R.string.unknown_error_message),
                 color = MaterialTheme.colorScheme.error
             )
         }

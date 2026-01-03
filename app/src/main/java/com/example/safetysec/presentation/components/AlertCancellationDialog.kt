@@ -318,10 +318,10 @@ private fun handleCancellation(
  * Extension function to display alert types
  */
 fun AlertType.toDisplayString(): String = when (this) {
-    AlertType.FALL_DETECTED -> "⚠️ Fall Detected"
-    AlertType.SPEED_ALERT -> "🚗 Speed Alert"
-    AlertType.GEOFENCING -> "📍 Geofence Breach"
-    AlertType.ACCIDENT_DETECTED -> "🚨 Accident Detected"
-    AlertType.PROLONGED_INACTIVITY -> "💤 Inactivity Alert"
-    AlertType.PANIC_BUTTON -> "🆘 Panic Button"
+    AlertType.FALL_DETECTED -> "⚠Fall Detected"
+    AlertType.SPEED_ALERT -> "Speed Alert"
+    AlertType.GEOFENCING -> "Geofence Breach"
+    AlertType.ACCIDENT_DETECTED -> "Accident Detected"
+    AlertType.PROLONGED_INACTIVITY -> "Inactivity Alert"
+    AlertType.PANIC_BUTTON -> "Panic Button"
 }

@@ -12,9 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.CustomTopAppBar
 import com.example.safetysec.data.preferences.ThemeMode
 import com.example.safetysec.data.preferences.ThemePreferences
@@ -64,7 +66,7 @@ fun SettingsScreen(navController: NavController) {
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = "Settings",
+                title = stringResource(R.string.settings),
                 onNavigationClick = {
                     navController.navigateUp()
                 }
@@ -78,19 +80,19 @@ fun SettingsScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
         ) {
             // Notifications Section
-            SettingsSection(title = "Notifications") {
+            SettingsSection(title = stringResource(R.string.notifications)) {
                 SettingsSwitchItem(
                     icon = Icons.Default.Notifications,
-                    title = "Push Notifications",
-                    subtitle = "Receive alert notifications",
+                    title = stringResource(R.string.push_notifications),
+                    subtitle = stringResource(R.string.push_notifications_desc),
                     checked = notificationsEnabled,
                     onCheckedChange = { notificationsEnabled = it }
                 )
 
                 SettingsSwitchItem(
                     icon = Icons.Default.VolumeUp,
-                    title = "Alert Sound",
-                    subtitle = "Play sound for alerts",
+                    title = stringResource(R.string.alert_sound),
+                    subtitle = stringResource(R.string.alert_sound_desc),
                     checked = alertSoundEnabled,
                     onCheckedChange = { alertSoundEnabled = it },
                     enabled = notificationsEnabled
@@ -98,8 +100,8 @@ fun SettingsScreen(navController: NavController) {
 
                 SettingsSwitchItem(
                     icon = Icons.Default.Vibration,
-                    title = "Vibration",
-                    subtitle = "Vibrate on alerts",
+                    title = stringResource(R.string.vibration),
+                    subtitle = stringResource(R.string.vibration_desc),
                     checked = vibrationEnabled,
                     onCheckedChange = { vibrationEnabled = it },
                     enabled = notificationsEnabled
@@ -109,17 +111,17 @@ fun SettingsScreen(navController: NavController) {
             Divider()
 
             // Preferences Section
-            SettingsSection(title = "Preferences") {
+            SettingsSection(title = stringResource(R.string.preferences)) {
                 SettingsItem(
                     icon = Icons.Default.Language,
-                    title = "Language",
+                    title = stringResource(R.string.language),
                     subtitle = selectedLanguage.displayName,
                     onClick = { showLanguageDialog = true }
                 )
 
                 SettingsItem(
                     icon = Icons.Default.DarkMode,
-                    title = "Theme",
+                    title = stringResource(R.string.theme),
                     subtitle = getThemeDisplayName(selectedTheme),
                     onClick = { showThemeDialog = true }
                 )
@@ -128,18 +130,18 @@ fun SettingsScreen(navController: NavController) {
             Divider()
 
             // Privacy & Security Section
-            SettingsSection(title = "Privacy & Security") {
+            SettingsSection(title = stringResource(R.string.privacy_security)) {
                 SettingsItem(
                     icon = Icons.Default.Lock,
-                    title = "Privacy Settings",
-                    subtitle = "Manage your privacy",
+                    title = stringResource(R.string.privacy_settings),
+                    subtitle = stringResource(R.string.privacy_settings_desc),
                     onClick = { /* TODO: Navigate to privacy settings */ }
                 )
 
                 SettingsItem(
                     icon = Icons.Default.Security,
-                    title = "Security",
-                    subtitle = "Two-factor authentication, etc.",
+                    title = stringResource(R.string.security),
+                    subtitle = stringResource(R.string.security_desc),
                     onClick = { /* TODO: Navigate to security settings */ }
                 )
             }
@@ -147,25 +149,25 @@ fun SettingsScreen(navController: NavController) {
             Divider()
 
             // Help & Support Section
-            SettingsSection(title = "Help & Support") {
+            SettingsSection(title = stringResource(R.string.help_support)) {
                 SettingsItem(
                     icon = Icons.Default.Help,
-                    title = "Help Center",
-                    subtitle = "Get help and support",
+                    title = stringResource(R.string.help_center),
+                    subtitle = stringResource(R.string.help_center_desc),
                     onClick = { /* TODO: Navigate to help */ }
                 )
 
                 SettingsItem(
                     icon = Icons.Default.Info,
-                    title = "About SafetYSec",
-                    subtitle = "Version 1.0.0",
+                    title = stringResource(R.string.about_safetysec),
+                    subtitle = stringResource(R.string.version),
                     onClick = { /* TODO: Show about dialog */ }
                 )
 
                 SettingsItem(
                     icon = Icons.Default.Description,
-                    title = "Terms & Privacy Policy",
-                    subtitle = "Legal information",
+                    title = stringResource(R.string.terms_privacy),
+                    subtitle = stringResource(R.string.terms_privacy_desc),
                     onClick = { /* TODO: Show terms */ }
                 )
             }
@@ -173,11 +175,11 @@ fun SettingsScreen(navController: NavController) {
             Divider()
 
             // Account Section
-            SettingsSection(title = "Account") {
+            SettingsSection(title = stringResource(R.string.account)) {
                 SettingsItem(
                     icon = Icons.Default.DeleteForever,
-                    title = "Delete Account",
-                    subtitle = "Permanently delete your account",
+                    title = stringResource(R.string.delete_account),
+                    subtitle = stringResource(R.string.delete_account_desc),
                     onClick = {
                         authViewModel.deleteUserProfile()
                         navController.navigate("login")
@@ -290,7 +292,7 @@ private fun SettingsItem(
 
         Icon(
             imageVector = Icons.Default.ChevronRight,
-            contentDescription = "Go to $title",
+            contentDescription = stringResource(R.string.go_to, title),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
@@ -367,7 +369,7 @@ private fun LanguageSelectionDialog(
             Icon(Icons.Default.Language, contentDescription = null)
         },
         title = {
-            Text("Select Language")
+            Text(stringResource(R.string.select_language))
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -405,7 +407,7 @@ private fun LanguageSelectionDialog(
                             if (language == currentLanguage) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(R.string.selected),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -416,7 +418,7 @@ private fun LanguageSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         }
     )
@@ -439,7 +441,7 @@ private fun ThemeSelectionDialog(
             Icon(Icons.Default.DarkMode, contentDescription = null)
         },
         title = {
-            Text("Select Theme")
+            Text(stringResource(R.string.select_theme))
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -477,7 +479,7 @@ private fun ThemeSelectionDialog(
                             if (theme == currentTheme) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(R.string.selected),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -488,7 +490,7 @@ private fun ThemeSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         }
     )

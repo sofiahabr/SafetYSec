@@ -9,9 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.protectedUser.MonitoringViewModel
@@ -46,7 +48,7 @@ fun ProtectedDashboardScreen(
         topBar = {
             if (showTopBar) {
                 MainTopAppBar(
-                    title = "Protected Dashboard"
+                    title = stringResource(R.string.protected_dashboard)
                 )
             }
         },
@@ -81,7 +83,7 @@ fun ProtectedDashboardScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 StatInfoBox(
-                    label = "Active Rules",
+                    label = stringResource(R.string.active_rules),
                     value = monitoringState.activeRules.size.toString(),
                     borderColor = PrimaryPurple,
                     textColor = SecondaryPurple,
@@ -89,7 +91,7 @@ fun ProtectedDashboardScreen(
                 )
 
                 StatInfoBox(
-                    label = "Time Windows",
+                    label = stringResource(R.string.time_windows),
                     value = monitoringState.activeTimeWindows.size.toString(),
                     borderColor = InfoBlue,
                     textColor = InfoBlue,
@@ -99,7 +101,7 @@ fun ProtectedDashboardScreen(
 
             // Quick Actions
             Text(
-                text = "Quick Actions",
+                text = stringResource(R.string.quick_actions),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(top = 8.dp)
             )
@@ -110,14 +112,14 @@ fun ProtectedDashboardScreen(
             ) {
                 QuickActionCard(
                     icon = Icons.Default.AccessTime,
-                    label = "Time Windows",
+                    label = stringResource(R.string.time_windows),
                     onClick = { navController.navigate(AppRoutes.TIME_WINDOWS) },
                     modifier = Modifier.weight(1f)
                 )
 
                 QuickActionCard(
                     icon = Icons.Default.Rule,
-                    label = "My Rules",
+                    label = stringResource(R.string.my_rules),
                     onClick = { navController.navigate(AppRoutes.RULES) },
                     modifier = Modifier.weight(1f)
                 )
@@ -129,14 +131,14 @@ fun ProtectedDashboardScreen(
             ) {
                 QuickActionCard(
                     icon = Icons.Default.Notifications,
-                    label = "Alerts",
+                    label = stringResource(R.string.alerts),
                     onClick = { navController.navigate(AppRoutes.ALERTS) },
                     modifier = Modifier.weight(1f)
                 )
 
                 QuickActionCard(
                     icon = Icons.Default.People,
-                    label = "Monitors",
+                    label = stringResource(R.string.monitors),
                     onClick = { navController.navigate(AppRoutes.ASSOCIATIONS) },
                     modifier = Modifier.weight(1f)
                 )

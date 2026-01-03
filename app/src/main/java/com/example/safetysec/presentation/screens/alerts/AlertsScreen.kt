@@ -13,10 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.domain.model.AlertType
 import com.example.safetysec.presentation.components.*
@@ -39,12 +41,12 @@ fun AlertsScreen(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                title = "Alerts",
+                title = stringResource(R.string.alerts),
                 actions = {
                     IconButton(onClick = { viewModel.refresh() }) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh"
+                            contentDescription = stringResource(R.string.refresh)
                         )
                     }
                 }
@@ -61,11 +63,11 @@ fun AlertsScreen(
         ) {
             when {
                 uiState.isLoading && uiState.alerts.isEmpty() -> {
-                    FullScreenLoading(message = "Loading alerts...")
+                    FullScreenLoading(message = stringResource(R.string.loading_alerts))
                 }
 
                 uiState.error != null && uiState.alerts.isEmpty() -> {
-                    ErrorAlert(message = uiState.error ?: "Unknown error")
+                    ErrorAlert(message = uiState.error ?: stringResource(R.string.error_unknown))
                 }
 
                 uiState.alerts.isEmpty() -> {
@@ -124,12 +126,15 @@ fun AlertsContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (selectedFilter == null) "All Alerts" else "Filtered Alerts",
+                    text = if (selectedFilter == null)
+                        stringResource(R.string.all_alerts)
+                    else
+                        stringResource(R.string.filtered_alerts),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${alerts.size} alert${if (alerts.size != 1) "s" else ""}",
+                    text = stringResource(R.string.alert_count, alerts.size),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -158,14 +163,14 @@ fun AlertStatisticsCard(statistics: Map<String, Int>) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Alert Statistics",
+                text = stringResource(R.string.alert_statistics),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
 
             if (statistics.isEmpty()) {
                 Text(
-                    text = "No statistics available",
+                    text = stringResource(R.string.no_statistics),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -220,7 +225,7 @@ fun AlertFilterChips(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Filter by type",
+            text = stringResource(R.string.filter_by_type),
             style = MaterialTheme.typography.labelMedium,
             color = Color.Gray
         )
@@ -235,7 +240,7 @@ fun AlertFilterChips(
             FilterChip(
                 selected = selectedFilter == null,
                 onClick = { onFilterChange(null) },
-                label = { Text("All") },
+                label = { Text(stringResource(R.string.all)) },
                 leadingIcon = if (selectedFilter == null) {
                     { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp)) }
                 } else null
@@ -301,7 +306,7 @@ fun AlertHistoryCard(
                         )
                         if (alert.isCancelled) {
                             Text(
-                                text = "Cancelled",
+                                text = stringResource(R.string.alert_cancelled),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = Color.Gray
                             )
@@ -312,7 +317,7 @@ fun AlertHistoryCard(
                 if (alert.videoUrl != null) {
                     Icon(
                         imageVector = Icons.Default.Videocam,
-                        contentDescription = "Has video",
+                        contentDescription = stringResource(R.string.has_video),
                         tint = PrimaryPurple,
                         modifier = Modifier.size(20.dp)
                     )

@@ -1,116 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App Name -->
+    <!-- Comum / Geral -->
     <string name="app_name">SafetYSec</string>
-
-    <!-- Common -->
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
     <string name="save">Guardar</string>
     <string name="delete">Eliminar</string>
     <string name="edit">Editar</string>
-    <string name="back">Voltar</string>
-    <string name="next">Seguinte</string>
-    <string name="done">Concluído</string>
+    <string name="close">Fechar</string>
     <string name="loading">A carregar…</string>
     <string name="error">Erro</string>
     <string name="success">Sucesso</string>
-    <string name="confirm">Confirmar</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="back">Voltar</string>
+    <string name="next">Seguinte</string>
+    <string name="done">Concluído</string>
     <string name="retry">Tentar novamente</string>
-    <string name="close">Fechar</string>
+    <string name="refresh">Atualizar</string>
+    <string name="select">Selecionar</string>
+    <string name="selected">Selecionado</string>
+    <string name="add">Adicionar</string>
+    <string name="remove">Remover</string>
+    <string name="confirm">Confirmar</string>
 
-    <!-- Authentication -->
-    <string name="login">Entrar</string>
+    <!-- Autenticação -->
+    <string name="login">Iniciar sessão</string>
     <string name="register">Registar</string>
-    <string name="logout">Sair</string>
-    <string name="email">Email</string>
+    <string name="logout">Terminar sessão</string>
+    <string name="email">E-mail</string>
     <string name="password">Palavra-passe</string>
-    <string name="confirm_password">Confirmar Palavra-passe</string>
-    <string name="forgot_password">Esqueceu a palavra-passe?</string>
-    <string name="full_name">Nome Completo</string>
-    <string name="phone_number">Número de Telefone</string>
-    <string name="create_account">Criar Conta</string>
-    <string name="already_have_account">Já tem uma conta?</string>
-    <string name="dont_have_account">Não tem uma conta?</string>
+    <string name="confirm_password">Confirmar palavra-passe</string>
+    <string name="current_password">Palavra-passe atual</string>
+    <string name="new_password">Nova palavra-passe</string>
+    <string name="full_name">Nome completo</string>
+    <string name="phone_number">Número de telefone</string>
+    <string name="phone">Telefone</string>
+    <string name="no_account_register">Não tem conta? Registe-se aqui</string>
+    <string name="create_account">Criar conta</string>
+    <string name="confirm_logout">Tem a certeza que deseja terminar a sessão?</string>
+    <string name="select_role">Selecionar função</string>
 
-    <!-- User Profiles -->
+    <!-- Funções do utilizador -->
+    <string name="role">Função</string>
     <string name="monitor">Monitor</string>
-    <string name="protected_user">Utilizador Protegido</string>
-    <string name="profile">Perfil</string>
-    <string name="settings">Definições</string>
-    <string name="account">Conta</string>
-    <string name="personal_info">Informação Pessoal</string>
-    <string name="change_password">Alterar Palavra-passe</string>
-    <string name="delete_account">Eliminar Conta</string>
+    <string name="protected_user">Protegido</string>
+    <string name="dual">Ambos</string>
+    <string name="role_monitor_desc">Quero monitorizar outros</string>
+    <string name="role_protected_desc">Quero ser monitorizado</string>
+    <string name="role_dual_desc">Quero ambas as funções</string>
 
-    <!-- Dashboard -->
+    <!-- Perfil -->
+    <string name="profile">Perfil</string>
+    <string name="edit_profile">Editar perfil</string>
+    <string name="change_password">Alterar palavra-passe</string>
+    <string name="loading_profile">A carregar o seu perfil...</string>
+    <string name="verified">Verificado</string>
+    <string name="account_information">Informações da conta</string>
+    <string name="name">Nome</string>
+    <string name="account">Conta</string>
+    <string name="monitoring_time_windows">Janelas de monitorização</string>
+    <string name="alert_cancellation_pin">PIN de cancelamento de alarme</string>
+    <string name="save_changes">Guardar alterações</string>
+    <string name="profile_updated">Perfil atualizado com sucesso!</string>
+    <string name="select_your_role">Selecione a sua função</string>
+    <string name="monitor_protect_others">Monitorizar e proteger outros</string>
+    <string name="receive_protection">Receber proteção de monitores</string>
+    <string name="both_roles">Monitorizar outros e receber proteção</string>
+
+    <!-- Requisitos da palavra-passe -->
+    <string name="password_requirements">Requisitos da palavra-passe</string>
+    <string name="password_requirements_desc">• Pelo menos 8 caracteres\n• Contém maiúsculas e minúsculas\n• Contém pelo menos um número\n• Contém um caractere especial</string>
+    <string name="password_strength">Força da palavra-passe</string>
+    <string name="password_strength_weak">Fraca</string>
+    <string name="password_strength_medium">Média</string>
+    <string name="password_strength_strong">Forte</string>
+    <string name="password_changed">Palavra-passe alterada com sucesso!</string>
+    <string name="password_error_length">A palavra-passe deve ter pelo menos 8 caracteres</string>
+    <string name="password_error_uppercase">A palavra-passe deve conter uma letra maiúscula</string>
+    <string name="password_error_lowercase">A palavra-passe deve conter uma letra minúscula</string>
+    <string name="password_error_number">A palavra-passe deve conter um número</string>
+    <string name="password_error_special">A palavra-passe deve conter um caractere especial</string>
+    <string name="password_error_mismatch">As palavras-passe não coincidem</string>
+    <string name="password_error_same">A nova palavra-passe deve ser diferente da atual</string>
+    <string name="password_error_weak">A palavra-passe é demasiado fraca</string>
+    <string name="current_password_required">A palavra-passe atual é obrigatória</string>
+    <string name="current_password_incorrect">O PIN atual está incorreto</string>
+
+    <!-- Definições -->
+    <string name="settings">Definições</string>
+    <string name="notifications">Notificações</string>
+    <string name="push_notifications">Notificações push</string>
+    <string name="receive_alert_notifications">Receber notificações de alarme</string>
+    <string name="alert_sound">Som de alarme</string>
+    <string name="play_sound_for_alerts">Reproduzir som para alarmes</string>
+    <string name="vibration">Vibração</string>
+    <string name="vibrate_on_alerts">Vibrar em alarmes</string>
+    <string name="preferences">Preferências</string>
+    <string name="language">Idioma</string>
+    <string name="select_language">Selecionar idioma</string>
+    <string name="theme">Tema</string>
+    <string name="select_theme">Selecionar tema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="theme_system">Padrão do sistema</string>
+    <string name="theme_light_desc">Usar sempre tema claro</string>
+    <string name="theme_dark_desc">Usar sempre tema escuro</string>
+    <string name="theme_system_desc">Seguir definições do sistema</string>
+    <string name="privacy_security">Privacidade &amp; Segurança</string>
+    <string name="privacy_settings">Definições de privacidade</string>
+    <string name="manage_privacy">Gerir a sua privacidade</string>
+    <string name="security">Segurança</string>
+    <string name="two_factor_auth">Autenticação de dois fatores, etc.</string>
+    <string name="help_support">Ajuda &amp; Suporte</string>
+    <string name="help_center">Centro de ajuda</string>
+    <string name="get_help_support">Obter ajuda e suporte</string>
+    <string name="about_safetysec">Sobre o SafetYSec</string>
+    <string name="version">Versão 1.0.0</string>
+    <string name="terms_privacy">Termos &amp; Política de Privacidade</string>
+    <string name="legal_information">Informação legal</string>
+    <string name="delete_account">Eliminar conta</string>
+    <string name="delete_account_desc">Eliminar a sua conta permanentemente</string>
+
+    <!-- Painel principal -->
     <string name="dashboard">Painel</string>
     <string name="home">Início</string>
-    <string name="my_safety">A Minha Segurança</string>
-    <string name="active_monitors">Monitores Ativos</string>
-    <string name="active_rules">Regras Ativas</string>
-    <string name="current_status">Estado Atual</string>
-    <string name="all_safe">Tudo Seguro</string>
+    <string name="my_safety">A minha segurança</string>
+    <string name="protected_dashboard">Painel protegido</string>
+    <string name="monitor_dashboard">Painel de monitor</string>
+    <string name="loading_dashboard">A carregar dados do painel...</string>
+    <string name="quick_actions">Ações rápidas</string>
+    <string name="active_monitors">Monitores ativos</string>
+    <string name="active_rules">Regras ativas</string>
+    <string name="protected_users">Utilizadores protegidos</string>
+    <string name="recent_alerts">Alertas recentes</string>
+    <string name="all_safe">Tudo seguro</string>
     <string name="monitoring_active">Monitorização ativa</string>
-    <string name="monitoring_inactive">Monitorização inativa</string>
-    <string name="start_monitoring">Iniciar Monitorização</string>
-    <string name="stop_monitoring">Parar Monitorização</string>
+    <string name="monitoring_stopped">Monitorização parada</string>
+    <string name="view_all">Ver tudo</string>
+    <string name="view_alerts">Ver alertas</string>
 
-    <!-- Rules -->
+    <!-- Controlo de monitorização -->
+    <string name="monitoring_control">Controlo de monitorização</string>
+    <string name="start_monitoring">Iniciar monitorização</string>
+    <string name="stop_monitoring">Parar monitorização</string>
+    <string name="panic_button">BOTÃO DE PÂNICO</string>
+    <string name="emergency_alert">Alarme de emergência</string>
+    <string name="emergency_alert_desc">Prima este botão em caso de emergência. Os seus monitores serão notificados imediatamente.</string>
+    <string name="permissions_required">Permissões necessárias</string>
+    <string name="grant_permissions">Conceder permissões</string>
+    <string name="permissions_desc">O SafetYSec necessita de permissões de localização e reconhecimento de atividade para monitorizar a sua segurança.</string>
+    <string name="currently_active_time_window">Está numa janela de tempo ativa</string>
+    <string name="outside_active_windows">Fora das janelas de tempo ativas</string>
+    <string name="sensor_data">Dados dos sensores</string>
+    <string name="acceleration">Aceleração</string>
+    <string name="speed">Velocidade</string>
+    <string name="activity">Atividade</string>
+
+    <!-- Regras -->
+    <string name="safety_rules">Regras de segurança</string>
     <string name="rules">Regras</string>
-    <string name="safety_rules">Regras de Segurança</string>
-    <string name="create_rule">Criar Regra</string>
-    <string name="edit_rule">Editar Regra</string>
-    <string name="delete_rule">Eliminar Regra</string>
-    <string name="rule_authorized">Autorizada</string>
-    <string name="rule_pending">Pendente de Autorização</string>
-    <string name="rule_name">Nome da Regra</string>
-    <string name="rule_description">Descrição</string>
-    <string name="rule_parameters">Parâmetros</string>
-    <string name="authorize_rule">Autorizar Regra</string>
-    <string name="no_rules">Sem regras configuradas</string>
+    <string name="my_rules">As minhas regras</string>
+    <string name="create_rule">Criar regra</string>
+    <string name="edit_rule">Editar regra</string>
+    <string name="delete_rule">Eliminar regra</string>
+    <string name="delete_rule_confirm">Tem a certeza que deseja eliminar esta regra? Esta ação não pode ser desfeita.</string>
+    <string name="no_rules">Sem regras</string>
+    <string name="no_rules_monitor">Ainda não criou nenhuma regra. Toque no botão + para criar a sua primeira regra.</string>
+    <string name="no_rules_monitor_desc">Ainda não criou nenhuma regra. Toque no botão + para criar a sua primeira regra.</string>
+    <string name="no_rules_protected">Ainda não tem regras dos monitores.</string>
+    <string name="no_rules_protected_desc">Ainda não tem regras dos monitores.</string>
+    <string name="loading_rules">A carregar regras...</string>
+    <string name="select_protected_user">Selecionar utilizador protegido</string>
+    <string name="select_rule_type">Selecionar tipo de regra</string>
+    <string name="rule_created">Regra criada com sucesso!</string>
+    <string name="rule_updated">Regra atualizada com sucesso!</string>
+    <string name="parameters">Parâmetros</string>
+    <string name="no_parameters">Sem parâmetros</string>
+    <string name="no_parameters_desc">Este tipo de regra não tem parâmetros configuráveis.</string>
+    <string name="loading_rule">A carregar regra...</string>
+    <string name="rule_not_found">Regra não encontrada</string>
+    <string name="rule_not_found_desc">A regra que está a tentar editar não foi encontrada.</string>
 
-    <!-- Rule Types -->
-    <string name="fall_detection">Deteção de Queda</string>
-    <string name="accident_detection">Deteção de Acidente</string>
-    <string name="geofencing">Geolocalização</string>
-    <string name="speed_control">Controlo de Velocidade</string>
-    <string name="prolonged_inactivity">Inatividade Prolongada</string>
-    <string name="panic_button">Botão de Pânico</string>
+    <!-- Tipos de regras -->
+    <string name="fall_detection">Detecção de queda</string>
+    <string name="accident_detection">Detecção de acidente</string>
+    <string name="geofencing">Geovalla</string>
+    <string name="speed_control">Controlo de velocidade</string>
+    <string name="prolonged_inactivity">Inatividade prolongada</string>
+    <string name="panic_button_rule">Botão de pânico</string>
 
-    <!-- Alerts -->
-    <string name="alerts">Alertas</string>
-    <string name="alert_history">Histórico de Alertas</string>
-    <string name="recent_alerts">Alertas Recentes</string>
-    <string name="alert_details">Detalhes do Alerta</string>
-    <string name="no_alerts">Sem alertas neste momento</string>
-    <string name="view_all">Ver Todos</string>
-    <string name="alert_location">Localização</string>
-    <string name="alert_time">Hora</string>
-    <string name="alert_type">Tipo</string>
-    <string name="alert_video">Gravação de Vídeo</string>
-    <string name="cancel_alert">Cancelar Alerta</string>
-    <string name="alert_cancelled">Alerta Cancelado</string>
+    <!-- Estado das regras -->
+    <string name="authorized">Autorizado</string>
+    <string name="pending">Pendente</string>
+    <string name="cancelled">Cancelado</string>
+    <string name="rejected">Rejeitado</string>
+    <string name="revoked">Revogado</string>
+    <string name="revoke">Revogar</string>
+    <string name="authorize">Autorizar</string>
+    <string name="authorize_rule">Autorizar regra</string>
+    <string name="authorize_rule_confirm">Deseja autorizar esta regra de monitorização?</string>
+    <string name="reject">Rejeitar</string>
+    <string name="reject_rule">Rejeitar regra</string>
+    <string name="reject_rule_confirm">Tem a certeza que deseja rejeitar esta regra?</string>
+    <string name="revoke_authorization">Revogar autorização</string>
+    <string name="revoke_authorization_confirm">Tem a certeza que deseja revogar a autorização desta regra?</string>
 
-    <!-- Association -->
-    <string name="association">Associação</string>
-    <string name="associations">Associações</string>
-    <string name="add_monitor">Adicionar Monitor</string>
-    <string name="add_protected">Adicionar Utilizador Protegido</string>
-    <string name="otp_code">Código de Uso Único</string>
-    <string name="generate_code">Gerar Código</string>
-    <string name="enter_code">Inserir Código</string>
-    <string name="connect">Conectar</string>
-    <string name="remove_association">Remover Associação</string>
-    <string name="no_associations">Sem associações ainda</string>
+    <!-- Parâmetros das regras -->
+    <string name="maximum_speed">Velocidade máxima (km/h)</string>
+    <string name="max_speed">Velocidade máx.</string>
+    <string name="max_speed_label">Velocidade máx.:</string>
+    <string name="max_speed_kmh">Velocidade máxima (km/h)</string>
+    <string name="duration_minutes">Duração (minutos)</string>
+    <string name="duration">Duração</string>
+    <string name="duration_label">Duração:</string>
+    <string name="minutes">minutos</string>
+    <string name="kmh">km/h</string>
+    <string name="geofence_areas">Áreas de geovalla</string>
+    <string name="geofence_areas_label">Áreas de geovalla:</string>
+    <string name="geofence_areas_count">Áreas de geovalla (%d)</string>
+    <string name="meter_radius">m</string>
+    <string name="meter_radius_value">Raio de %dm</string>
+    <string name="rule_type_label">Tipo de regra:</string>
+    <string name="add_area">Adicionar área</string>
+    <string name="add_geofence_area">Adicionar área de geovalla</string>
+    <string name="area_name">Nome da área</string>
+    <string name="area_name_placeholder">ex.: Casa, Escola</string>
+    <string name="latitude">Latitude</string>
+    <string name="latitude_placeholder">ex.: 38.7369</string>
+    <string name="latitude_range">Intervalo: -90 a 90</string>
+    <string name="longitude">Longitude</string>
+    <string name="longitude_placeholder">ex.: -9.1427</string>
+    <string name="longitude_range">Intervalo: -180 a 180</string>
+    <string name="radius_meters">Raio (metros)</string>
+    <string name="radius_placeholder">100</string>
+    <string name="radius_range">Intervalo: 1 a 100.000 m</string>
+    <string name="area_name_required">O nome da área é obrigatório</string>
+    <string name="latitude_required">A latitude é obrigatória</string>
+    <string name="latitude_invalid">A latitude deve estar entre -90 e 90</string>
+    <string name="longitude_required">A longitude é obrigatória</string>
+    <string name="longitude_invalid">A longitude deve estar entre -180 e 180</string>
+    <string name="radius_required">O raio é obrigatório</string>
+    <string name="radius_invalid">O raio deve estar entre 1 e 100.000 metros</string>
+    <string name="max_speed_required">Por favor introduza uma velocidade máxima válida</string>
+    <string name="duration_required">Por favor introduza uma duração válida</string>
+    <string name="geofence_required">Adicione pelo menos uma área de geovalla</string>
 
-    <!-- Time Windows -->
-    <string name="time_windows">Janelas Temporais</string>
-    <string name="add_time_window">Adicionar Janela Temporal</string>
-    <string name="edit_time_window">Editar Janela Temporal</string>
-    <string name="delete_time_window">Eliminar Janela Temporal</string>
-    <string name="start_time">Hora de Início</string>
-    <string name="end_time">Hora de Fim</string>
-    <string name="days_of_week">Dias da Semana</string>
+    <!-- Janelas de tempo -->
+    <string name="time_windows">Janelas de tempo</string>
+    <string name="monitoring_windows">Janelas de monitorização</string>
+    <string name="add_time_window">Adicionar janela de tempo</string>
+    <string name="create_time_window">Criar janela de tempo</string>
+    <string name="edit_time_window">Editar janela de tempo</string>
+    <string name="delete_time_window">Eliminar janela de tempo</string>
+    <string name="delete_time_window_confirm">Tem a certeza que deseja eliminar esta janela de monitorização?</string>
+    <string name="no_time_windows">Sem janelas de tempo</string>
+    <string name="no_time_windows_desc">Ainda não criou nenhuma janela de monitorização. Toque no botão + para criar uma.</string>
+    <string name="about_time_windows">Sobre janelas de tempo</string>
+    <string name="about_time_windows_desc">As janelas de tempo definem quando os monitores podem rastrear a sua segurança. As regras só estarão ativas nestes períodos.</string>
+    <string name="loading_time_windows">A carregar janelas de tempo...</string>
+    <string name="select_days">Selecionar dias</string>
+    <string name="time_range">Intervalo de tempo</string>
+    <string name="start_time">Hora de início (HH:mm)</string>
+    <string name="start_time_hhmm">Hora de início (HH:mm)</string>
+    <string name="end_time">Hora de fim (HH:mm)</string>
+    <string name="end_time_hhmm">Hora de fim (HH:mm)</string>
+    <string name="start_time_placeholder">09:00</string>
+    <string name="end_time_placeholder">17:00</string>
+    <string name="currently_active">Ativa neste momento</string>
+    <string name="create">Criar</string>
+
+    <!-- Dias da semana -->
     <string name="monday">Segunda-feira</string>
     <string name="tuesday">Terça-feira</string>
     <string name="wednesday">Quarta-feira</string>
@@ -118,95 +278,195 @@
     <string name="friday">Sexta-feira</string>
     <string name="saturday">Sábado</string>
     <string name="sunday">Domingo</string>
-    <string name="no_time_windows">Sem janelas temporais configuradas</string>
 
-    <!-- Notifications -->
-    <string name="notification_title_monitoring">Monitorização de Segurança Ativa</string>
-    <string name="notification_text_monitoring">A sua segurança está a ser monitorizada</string>
-    <string name="notification_channel_monitoring">Monitorização de Segurança</string>
-    <string name="notification_channel_alerts">Alertas de Segurança</string>
-    <string name="notification_alert_title">Alerta de Segurança!</string>
-    <string name="notification_alert_text">Alerta %s detetado</string>
+    <!-- Alertas -->
+    <string name="alerts">Alertas</string>
+    <string name="alert_history">Histórico de alertas</string>
+    <string name="alert_details">Detalhes do alerta</string>
+    <string name="alert_statistics">Estatísticas de alertas</string>
+    <string name="alert_count">%d alerta(s)</string>
+    <string name="filter_by_type">Filtrar por tipo</string>
+    <string name="all">Todos</string>
+    <string name="all_alerts">Todos os alertas</string>
+    <string name="filtered_alerts">Alertas filtrados</string>
+    <string name="no_alerts">Sem alertas</string>
+    <string name="no_alerts_desc">Não existem alertas para mostrar</string>
+    <string name="loading_alerts">A carregar alertas...</string>
+    <string name="loading_alert_details">A carregar detalhes do alerta...</string>
+    <string name="alert_not_found">Alerta não encontrado</string>
+    <string name="cancel_alert">Cancelar alerta</string>
+    <string name="alert_cancelled">Cancelado</string>
+    <string name="alert_cancelled_by_user">Alerta cancelado pelo utilizador</string>
+    <string name="alert_cancelled_by_user_timeline">Alerta cancelado pelo utilizador</string>
+    <string name="alert_cancelled_timeline_desc">O utilizador cancelou o alerta com sucesso. Não é necessária resposta de emergência.</string>
+    <string name="cancelled_at_time">Cancelado às %s</string>
+    <string name="alert_cancelled_desc">O utilizador protegido cancelou este alerta com sucesso. Não é necessária assistência de emergência.</string>
+    <string name="alert_information">Informação do alerta</string>
+    <string name="alert_location">Localização do alerta</string>
+    <string name="date_time">Data &amp; Hora</string>
+    <string name="details">Detalhes</string>
+    <string name="status">Estado</string>
+    <string name="active">Ativo</string>
+    <string name="location">Localização</string>
+    <string name="coordinates">Coordenadas</string>
+    <string name="location_not_available">Localização não disponível</string>
+    <string name="timeline">Linha temporal</string>
+    <string name="alert_triggered">Alerta acionado</string>
+    <string name="video_recording_completed">Gravação de vídeo concluída</string>
+    <string name="has_video">Tem vídeo</string>
+    <string name="open_map">Abrir</string>
+    <string name="no_statistics">Sem estatísticas disponíveis</string>
 
-    <!-- Permissions -->
-    <string name="permission_location_rationale">A permissão de localização é necessária para geolocalização e monitorização de velocidade.</string>
-    <string name="permission_camera_rationale">A permissão de câmara é necessária para gravar vídeo durante alertas.</string>
-    <string name="permission_activity_rationale">O reconhecimento de atividade é necessário para detetar inatividade prolongada.</string>
-    <string name="permission_notification_rationale">A permissão de notificação é necessária para enviar alertas de segurança.</string>
-    <string name="permission_required">Permissão Necessária</string>
-    <string name="grant_permission">Conceder Permissão</string>
+    <!-- Associações -->
+    <string name="associations">Associações</string>
+    <string name="generate_otp">Gerar OTP</string>
+    <string name="generate_otp_for_protected">Gerar OTP para utilizador protegido</string>
+    <string name="enter_otp">Introduzir OTP</string>
+    <string name="accept_monitor">Aceitar associação de monitor</string>
+    <string name="protected_user_email">E-mail do utilizador protegido</string>
+    <string name="monitor_email">E-mail do monitor</string>
+    <string name="otp_6_digit">OTP de 6 dígitos</string>
+    <string name="otp_placeholder">000000</string>
+    <string name="validate_create_association">Validar &amp; Criar associação</string>
+    <string name="generated_otp">OTP gerado</string>
+    <string name="share_code">Partilhe este código com o utilizador protegido</string>
+    <string name="otp_valid">Válido por 10 minutos</string>
+    <string name="otp_info">Introduza o e-mail do utilizador que deseja monitorizar e gere depois um OTP para partilhar com ele.</string>
+    <string name="otp_accept_info">Introduza o e-mail do monitor e o código OTP que ele partilhou consigo para estabelecer a associação.</string>
+    <string name="no_associations">Sem associações</string>
+    <string name="no_associations_desc">Nenhuma associação corresponde ao filtro selecionado.</string>
+    <string name="association">Associação</string>
+    <string name="remove_association">Remover associação</string>
+    <string name="remove_association_confirm">Tem a certeza que deseja remover esta associação? Esta ação não pode ser desfeita.</string>
+    <string name="association_cancelled_btn">Associação cancelada</string>
+    <string name="created">Criada</string>
+    <string name="add_protected_user">Adicionar utilizador protegido</string>
+    <string name="no_protected_users">Ainda sem utilizadores protegidos</string>
+    <string name="no_protected_users_desc">Adicione utilizadores protegidos para começar a monitorizar a segurança deles</string>
+    <string name="no_active_associations">Não tem utilizadores protegidos ativos. Por favor estabeleça primeiro uma associação.</string>
 
-    <!-- Errors -->
-    <string name="error_generic">Ocorreu um erro. Por favor, tente novamente.</string>
-    <string name="error_network">Erro de rede. Verifique a sua ligação.</string>
-    <string name="error_auth">Falha na autenticação.</string>
-    <string name="error_invalid_email">Endereço de email inválido.</string>
-    <string name="error_invalid_password">A palavra-passe deve ter pelo menos 6 caracteres.</string>
-    <string name="error_passwords_dont_match">As palavras-passe não coincidem.</string>
-    <string name="error_required_field">Este campo é obrigatório.</string>
-    <string name="error_invalid_otp">Código inválido ou expirado.</string>
-    <string name="error_permission_denied">Permissão negada.</string>
-    <string name="error_location_unavailable">Localização indisponível.</string>
-    <string name="error_video_recording_failed">Falha na gravação de vídeo.</string>
+    <!-- PIN de cancelamento -->
+    <string name="change_cancellation_pin">Alterar PIN de cancelamento</string>
+    <string name="set_cancellation_pin">Definir PIN de cancelamento</string>
+    <string name="about_cancellation_pin">Sobre o PIN de cancelamento</string>
+    <string name="about_cancellation_pin_desc">O seu PIN de 4 dígitos é usado para cancelar alarmes na janela de 10 segundos. Mantenha-o seguro e memorável!</string>
+    <string name="first_time_setup">Configuração inicial</string>
+    <string name="first_time_setup_desc">Ainda não definiu um PIN de cancelamento. Escolha um PIN de 4 dígitos fácil de lembrar em emergências.</string>
+    <string name="update_pin">Atualizar PIN</string>
+    <string name="update_pin_desc">Tem um PIN antigo de %d dígitos de uma versão anterior. Atualize para um novo PIN de 4 dígitos para maior segurança.</string>
+    <string name="current_pin">PIN atual</string>
+    <string name="new_pin">Novo PIN</string>
+    <string name="create_pin">Criar PIN</string>
+    <string name="confirm_pin">Confirmar PIN</string>
+    <string name="enter_current_pin">Introduza o seu atual PIN de %d dígitos</string>
+    <string name="choose_4_digit_pin">Escolha um PIN de 4 dígitos (0000-9999)</string>
+    <string name="reenter_pin">Reintroduza o novo PIN de 4 dígitos</string>
+    <string name="update_pin_btn">Atualizar PIN</string>
+    <string name="create_pin_btn">Criar PIN</string>
+    <string name="show_pin">Mostrar PIN</string>
+    <string name="hide_pin">Ocultar PIN</string>
+    <string name="pin_requirements">Requisitos do PIN:</string>
+    <string name="pin_requirement_4_digits">Deve ter exatamente 4 dígitos</string>
+    <string name="pin_requirement_numbers">Apenas números (0-9)</string>
+    <string name="pin_requirement_match">O novo PIN e a confirmação devem coincidir</string>
+    <string name="pin_requirement_current">O PIN atual deve ser introduzido</string>
+    <string name="pin_created_success">PIN criado com sucesso!</string>
+    <string name="pin_updated_success">PIN atualizado com sucesso!</string>
+    <string name="pin_error_incorrect">O PIN atual está incorreto</string>
+    <string name="pin_error_length">O novo PIN deve ter exatamente 4 dígitos</string>
+    <string name="pin_error_numbers">O PIN deve conter apenas números</string>
+    <string name="pin_error_mismatch">O novo PIN e a confirmação não coincidem</string>
+    <string name="pin_error_weak">Considere utilizar um PIN mais seguro</string>
 
-    <!-- Success Messages -->
-    <string name="success_rule_created">Regra criada com sucesso.</string>
-    <string name="success_rule_updated">Regra atualizada com sucesso.</string>
-    <string name="success_rule_deleted">Regra eliminada com sucesso.</string>
-    <string name="success_association_created">Associação criada com sucesso.</string>
-    <string name="success_association_removed">Associação removida com sucesso.</string>
-    <string name="success_profile_updated">Perfil atualizado com sucesso.</string>
-    <string name="success_password_changed">Palavra-passe alterada com sucesso.</string>
+    <!-- Monitores & Protegidos -->
+    <string name="monitors">Monitores</string>
+    <string name="monitor_by">Por</string>
+    <string name="for_user">Para</string>
+    <string name="protected_individuals">Indivíduos protegidos</string>
+    <string name="manage_users">Gerir utilizadores</string>
+    <string name="view_details">Ver detalhes</string>
+    <string name="monitoring_inactive">Inativo</string>
+    <string name="all_protected_users">mais %d utilizadores protegidos</string>
 
-    <!-- Confirmation Messages -->
-    <string name="confirm_delete_rule">Tem a certeza de que deseja eliminar esta regra?</string>
-    <string name="confirm_remove_association">Tem a certeza de que deseja remover esta associação?</string>
-    <string name="confirm_delete_account">Tem a certeza de que deseja eliminar a sua conta? Esta ação não pode ser revertida.</string>
-    <string name="confirm_cancel_alert">Tem a certeza de que deseja cancelar este alerta?</string>
-    <string name="confirm_logout">Tem a certeza de que deseja sair?</string>
+    <!-- Estados vazios -->
+    <string name="empty_state_generic">Sem itens para mostrar</string>
 
-    <!-- Accessibility -->
-    <string name="accessibility_back_button">Navegar para trás</string>
-    <string name="accessibility_menu">Menu</string>
-    <string name="accessibility_profile_picture">Foto de perfil</string>
-    <string name="accessibility_expand">Expandir</string>
-    <string name="accessibility_collapse">Recolher</string>
-    <string name="accessibility_play_video">Reproduzir vídeo</string>
-    <string name="accessibility_pause_video">Pausar vídeo</string>
-    <string name="accessibility_location_map">Mapa de localização</string>
-    <string name="accessibility_panic_button">Botão de pânico de emergência - Pressione para disparar alerta</string>
-    <string name="accessibility_monitoring_switch">Ativar/desativar monitorização</string>
+    <!-- Estados de carregamento -->
+    <string name="processing_request">A processar...</string>
+    <string name="creating_rule">A criar regra...</string>
+    <string name="updating_rule">A atualizar regra...</string>
 
-    <!-- Theme -->
-    <string name="theme">Tema</string>
-    <string name="theme_light">Claro</string>
-    <string name="theme_dark">Escuro</string>
-    <string name="theme_system">Predefinição do Sistema</string>
-    <string name="appearance">Aparência</string>
+    <!-- Mensagens de erro -->
+    <string name="error_loading_data">Falha ao carregar dados</string>
+    <string name="error_network">Ocorreu um erro de rede</string>
+    <string name="error_unknown_role">Função de utilizador desconhecida</string>
+    <string name="name_required">O nome é obrigatório</string>
+    <string name="email_required">É necessário um e-mail válido</string>
+    <string name="phone_required">O número de telefone é obrigatório</string>
 
-    <!-- Language -->
-    <string name="language">Idioma</string>
-    <string name="language_english">Inglês</string>
-    <string name="language_norwegian">Norueguês</string>
-    <string name="language_portuguese">Português</string>
+    <!-- Mensagens de sucesso -->
+    <string name="changes_saved">Alterações guardadas com sucesso</string>
 
-    <!-- About -->
-    <string name="about">Sobre</string>
-    <string name="version">Versão</string>
-    <string name="privacy_policy">Política de Privacidade</string>
-    <string name="terms_of_service">Termos de Serviço</string>
-    <string name="help">Ajuda</string>
-    <string name="contact_support">Contactar Suporte</string>
+    <!-- Validação -->
+    <string name="field_required">Este campo é obrigatório</string>
+    <string name="invalid_email">Endereço de e-mail inválido</string>
 
-    <!-- Empty States -->
-    <string name="empty_state_no_monitors">Ainda não adicionou nenhum monitor.</string>
-    <string name="empty_state_no_protected">Ainda não adicionou nenhum utilizador protegido.</string>
-    <string name="empty_state_no_alerts">Sem alertas para mostrar.</string>
-    <string name="empty_state_no_rules">Sem regras configuradas ainda.</string>
+    <!-- Expressões de tempo -->
+    <string name="just_now">Agora mesmo</string>
+    <string name="mins_ago">há %dm</string>
+    <string name="hours_ago">há %dh</string>
+    <string name="days_ago">há %dd</string>
+    <string name="now">agora</string>
 
-    <!-- Video Recording -->
-    <string name="recording_video">A gravar vídeo…</string>
-    <string name="video_recorded">Vídeo gravado</string>
-    <string name="uploading_video">A carregar vídeo…</string>
-    <string name="video_uploaded">Vídeo carregado</string>
+    <!-- Acessibilidade -->
+    <string name="go_to">Ir para %s</string>
+    <string name="content_description_generic">%s</string>
+
+    <!-- Mensagens informativas -->
+    <string name="info_create_first_rule">Toque no botão + para criar a sua primeira regra de monitorização</string>
+
+    <!-- Controlo de monitorização (repetições) -->
+    <string name="active_rules_count">Regras ativas (%d)</string>
+    <string name="in_active_time_window">Está numa janela de tempo ativa</string>
+    <string name="outside_time_windows">Fora das janelas de tempo ativas</string>
+    <string name="acceleration_value">Aceleração: %s m/s²</string>
+    <string name="speed_value">Velocidade: %s km/h</string>
+    <string name="activity_value">Atividade: %s (%d%%)</string>
+
+    <!-- Definições (repetições) -->
+    <string name="push_notifications_desc">Receber notificações de alarme</string>
+    <string name="alert_sound_desc">Reproduzir som para alarmes</string>
+    <string name="vibration_desc">Vibrar em alarmes</string>
+    <string name="privacy_settings_desc">Gerir a sua privacidade</string>
+    <string name="security_desc">Autenticação de dois fatores, etc.</string>
+    <string name="help_center_desc">Obter ajuda e suporte</string>
+    <string name="terms_privacy_desc">Informação legal</string>
+
+    <!-- Editar perfil -->
+    <string name="enter_full_name">Introduza o seu nome completo</string>
+    <string name="error_name_required">O nome é obrigatório</string>
+    <string name="error_valid_email_required">É necessário um e-mail válido</string>
+    <string name="error_phone_required">O número de telefone é obrigatório</string>
+
+    <!-- Alterar palavra-passe -->
+    <string name="password_changed_success">Palavra-passe alterada com sucesso!</string>
+    <string name="confirm_new_password">Confirmar nova palavra-passe</string>
+    <string name="error_current_password_required">A palavra-passe atual é obrigatória</string>
+    <string name="error_passwords_dont_match">As palavras-passe não coincidem</string>
+    <string name="error_password_must_differ">A nova palavra-passe deve ser diferente da atual</string>
+
+    <!-- Alterar PIN de cancelamento -->
+    <string name="toggle_debug">Mostrar/ocultar informação de depuração</string>
+    <string name="update_your_pin">Atualizar o seu PIN</string>
+    <string name="reenter_new_pin">Reintroduza o novo PIN de 4 dígitos</string>
+    <string name="saving">A guardar...</string>
+    <string name="pin_must_be_4_digits">Deve ter exatamente 4 dígitos</string>
+    <string name="pin_only_numbers">Apenas números (0-9)</string>
+    <string name="pin_must_match">O novo PIN e a confirmação devem coincidir</string>
+    <string name="current_pin_required">O PIN atual deve ser introduzido</string>
+    <string name="error_current_pin_incorrect">O PIN atual está incorreto</string>
+    <string name="error_pin_must_be_4_digits">O novo PIN deve ter exatamente 4 dígitos</string>
+    <string name="error_pin_only_numbers">O PIN deve conter apenas números</string>
+    <string name="error_pins_dont_match">O novo PIN e a confirmação não coincidem</string>
+    <string name="error_pin_weak">Considere utilizar um PIN mais seguro</string>
 </resources>

@@ -8,10 +8,12 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
@@ -30,6 +32,11 @@ import kotlinx.coroutines.launch
 fun ChangePasswordScreen(navController: NavController) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.authState.collectAsState()
+
+    // Get validation error strings
+    val errorCurrentPasswordRequired = stringResource(R.string.error_current_password_required)
+    val errorPasswordsDontMatch = stringResource(R.string.error_passwords_dont_match)
+    val errorPasswordMustDiffer = stringResource(R.string.error_password_must_differ)
 
     // Form state
     var currentPassword by remember { mutableStateOf("") }
@@ -53,7 +60,7 @@ fun ChangePasswordScreen(navController: NavController) {
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = "Change Password",
+                title = stringResource(R.string.change_password),
                 onNavigationClick = {
                     navController.navigateUp()
                 }
@@ -71,7 +78,7 @@ fun ChangePasswordScreen(navController: NavController) {
             // Success Alert
             if (showSuccessAlert) {
                 SuccessAlert(
-                    message = "Password changed successfully!",
+                    message = stringResource(R.string.password_changed_success),
                     onDismiss = {
                         showSuccessAlert = false
                         navController.navigateUp()
@@ -82,7 +89,7 @@ fun ChangePasswordScreen(navController: NavController) {
             // Error Alert
             if (authState.error != null) {
                 ErrorAlert(
-                    message = authState.error ?: "An error occurred",
+                    message = authState.error ?: stringResource(R.string.error_unknown),
                     onDismiss = {
                         authViewModel.clearError()
                     }
@@ -91,8 +98,8 @@ fun ChangePasswordScreen(navController: NavController) {
 
             // Info Card
             InfoAlert(
-                title = "Password Requirements",
-                message = "• At least 8 characters\n• Contains uppercase and lowercase\n• Contains at least one number\n• Contains special character"
+                title = stringResource(R.string.password_requirements),
+                message = stringResource(R.string.password_requirements_list)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -104,7 +111,7 @@ fun ChangePasswordScreen(navController: NavController) {
                     currentPassword = it
                     currentPasswordError = null
                 },
-                label = "Current Password",
+                label = stringResource(R.string.current_password),
                 isError = currentPasswordError != null,
                 errorMessage = currentPasswordError,
                 imeAction = ImeAction.Next
@@ -117,7 +124,7 @@ fun ChangePasswordScreen(navController: NavController) {
                     newPassword = it
                     newPasswordError = null
                 },
-                label = "New Password",
+                label = stringResource(R.string.new_password),
                 isError = newPasswordError != null,
                 errorMessage = newPasswordError,
                 imeAction = ImeAction.Next
@@ -135,7 +142,7 @@ fun ChangePasswordScreen(navController: NavController) {
                     confirmPassword = it
                     confirmPasswordError = null
                 },
-                label = "Confirm New Password",
+                label = stringResource(R.string.confirm_new_password),
                 isError = confirmPasswordError != null,
                 errorMessage = confirmPasswordError,
                 imeAction = ImeAction.Done
@@ -144,12 +151,12 @@ fun ChangePasswordScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             PrimaryButton(
-                text = "Change Password",
+                text = stringResource(R.string.change_password),
                 onClick = {
                     var isValid = true
 
                     if (currentPassword.isBlank()) {
-                        currentPasswordError = "Current password is required"
+                        currentPasswordError = errorCurrentPasswordRequired
                         isValid = false
                     }
 
@@ -160,12 +167,12 @@ fun ChangePasswordScreen(navController: NavController) {
                     }
 
                     if (newPassword != confirmPassword) {
-                        confirmPasswordError = "Passwords do not match"
+                        confirmPasswordError = errorPasswordsDontMatch
                         isValid = false
                     }
 
                     if (currentPassword == newPassword) {
-                        newPasswordError = "New password must be different from current password"
+                        newPasswordError = errorPasswordMustDiffer
                         isValid = false
                     }
 
@@ -182,7 +189,7 @@ fun ChangePasswordScreen(navController: NavController) {
 
             // Cancel Button
             CustomTextButton(
-                text = "Cancel",
+                text = stringResource(R.string.cancel),
                 onClick = {
                     navController.navigateUp()
                 }
@@ -203,7 +210,7 @@ fun PasswordStrengthIndicator(password: String) {
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = "Password Strength: ${strength.label}",
+            text = stringResource(R.string.password_strength, strength.label),
             style = MaterialTheme.typography.bodySmall,
             color = strength.color
         )

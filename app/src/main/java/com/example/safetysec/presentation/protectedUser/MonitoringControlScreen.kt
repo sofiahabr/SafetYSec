@@ -16,10 +16,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.MonitoringState
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.theme.*
@@ -94,10 +96,10 @@ fun MonitoringControlScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Monitoring Control") },
+                title = { Text(stringResource(R.string.monitoring_control)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -175,7 +177,7 @@ fun MonitoringControlScreen(
 
                     // Stop Monitoring Button
                     SecondaryButton(
-                        text = "Stop Monitoring",
+                        text = stringResource(R.string.stop_monitoring),
                         onClick = { viewModel.stopMonitoring() },
                         enabled = uiState !is MonitoringUiState.Loading,
                         isLoading = uiState is MonitoringUiState.Loading,
@@ -184,7 +186,7 @@ fun MonitoringControlScreen(
                 } else {
                     // Start Monitoring Button
                     PrimaryButton(
-                        text = "Start Monitoring",
+                        text = stringResource(R.string.start_monitoring),
                         onClick = { viewModel.startMonitoring() },
                         enabled = uiState !is MonitoringUiState.Loading && hasPermissions,
                         isLoading = uiState is MonitoringUiState.Loading,
@@ -239,7 +241,10 @@ private fun MonitoringStatusCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (monitoringState.isRunning) "Monitoring Active" else "Monitoring Stopped",
+                    text = if (monitoringState.isRunning)
+                        stringResource(R.string.monitoring_active)
+                    else
+                        stringResource(R.string.monitoring_stopped),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = if (monitoringState.isRunning) Color.White else TextPrimary
@@ -282,7 +287,7 @@ private fun ActiveRulesCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Active Rules (${monitoringState.getActiveRuleCount()})",
+                    text = stringResource(R.string.active_rules_count, monitoringState.getActiveRuleCount()),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -352,7 +357,7 @@ private fun TimeWindowStatusCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Time Windows",
+                    text = stringResource(R.string.time_windows),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -374,8 +379,9 @@ private fun TimeWindowStatusCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = if (monitoringState.isInActiveTimeWindow)
-                        "Currently in active time window"
-                    else "Outside active time windows",
+                        stringResource(R.string.in_active_time_window)
+                    else
+                        stringResource(R.string.outside_time_windows),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -413,7 +419,7 @@ private fun PermissionRequiredCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Permissions Required",
+                text = stringResource(R.string.permissions_required),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -421,7 +427,7 @@ private fun PermissionRequiredCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "SafetYSec needs location and activity recognition permissions to monitor your safety.",
+                text = stringResource(R.string.permissions_required_desc),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 textAlign = TextAlign.Center
@@ -430,7 +436,7 @@ private fun PermissionRequiredCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             PrimaryButton(
-                text = "Grant Permissions",
+                text = stringResource(R.string.grant_permissions),
                 onClick = onRequestPermissions,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -460,7 +466,7 @@ private fun SensorDataCard(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Sensor Data",
+                text = stringResource(R.string.sensor_data),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = SecondaryPurple
@@ -469,21 +475,31 @@ private fun SensorDataCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Acceleration: ${String.format("%.2f", sensorData.getTotalAcceleration())} m/s²",
+                text = stringResource(
+                    R.string.acceleration_value,
+                    String.format("%.2f", sensorData.getTotalAcceleration())
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
 
             if (sensorData.hasLocation()) {
                 Text(
-                    text = "Speed: ${sensorData.getSpeedKmh()?.let { String.format("%.1f", it) } ?: "N/A"} km/h",
+                    text = stringResource(
+                        R.string.speed_value,
+                        sensorData.getSpeedKmh()?.let { String.format("%.1f", it) } ?: "N/A"
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary
                 )
             }
 
             Text(
-                text = "Activity: ${sensorData.activityType.toDisplayString()} (${sensorData.activityConfidence}%)",
+                text = stringResource(
+                    R.string.activity_value,
+                    sensorData.activityType.toDisplayString(),
+                    sensorData.activityConfidence
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
@@ -523,14 +539,14 @@ fun PanicButtonSection(
             )
 
             Text(
-                text = "Emergency Alert",
+                text = stringResource(R.string.emergency_alert),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFFD32F2F)
             )
 
             Text(
-                text = "Press this button in case of emergency. Your monitors will be notified immediately.",
+                text = stringResource(R.string.emergency_alert_desc),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 textAlign = TextAlign.Center
@@ -554,13 +570,13 @@ fun PanicButtonSection(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Warning,
-                        contentDescription = "Panic",
+                        contentDescription = stringResource(R.string.panic_button),
                         modifier = Modifier.size(32.dp),
                         tint = Color.White
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "PANIC BUTTON",
+                        text = stringResource(R.string.panic_button),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White

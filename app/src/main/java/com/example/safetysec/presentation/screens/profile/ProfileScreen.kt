@@ -13,10 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.MockUserData
 import com.example.safetysec.domain.model.UserRole
 import com.example.safetysec.presentation.navigation.AppRoutes
@@ -24,49 +26,35 @@ import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 
-
-/**
- * Profile Screen
- *
- * Displays user profile information and provides access to:
- * - Edit profile
- * - Change password
- * - Time Windows (for Protected users)
- * - Settings
- * - Logout
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
 
-    // Get the ViewModel (injected via Hilt)
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.authState.collectAsState()
 
     val user = authState.user
 
-    // Show loading state if user is not loaded
     if (user == null) {
-        FullScreenLoading(message = "Loading your profile...")
+        FullScreenLoading(message = stringResource(R.string.loading_profile))
         return
     }
 
     var showLogoutDialog by remember { mutableStateOf(false) }
 
-    // Check if user has Protected role
     val isProtected = user.role == UserRole.PROTECTED || user.role == UserRole.DUAL
 
     Scaffold(
         topBar = {
             MainTopAppBar(
-                title = "Profile",
+                title = stringResource(R.string.profile),
                 actions = {
                     IconButton(onClick = {
                         navController.navigate("settings")
                     }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings"
+                            contentDescription = stringResource(R.string.settings)
                         )
                     }
                 }
@@ -82,7 +70,6 @@ fun ProfileScreen(navController: NavController) {
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Profile Header with Avatar
             ProfileHeader(
                 name = user.name,
                 email = user.email,
@@ -92,7 +79,6 @@ fun ProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Profile Information Card
             ProfileInfoCard(
                 name = user.name,
                 email = user.email,
@@ -102,58 +88,51 @@ fun ProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Action Buttons
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Edit Profile Button
                 SecondaryButton(
-                    text = "Edit Profile",
+                    text = stringResource(R.string.edit_profile),
                     onClick = {
                         navController.navigate("edit_profile")
                     }
                 )
 
-                // Change Password Button
                 SecondaryButton(
-                    text = "Change Password",
+                    text = stringResource(R.string.change_password),
                     onClick = {
                         navController.navigate("change_password")
                     }
                 )
 
-                // Time Windows Button (only for Protected users)
                 if (isProtected) {
                     SecondaryButton(
-                        text = "Monitoring Time Windows",
+                        text = stringResource(R.string.monitoring_time_windows),
                         onClick = {
                             navController.navigate(AppRoutes.TIME_WINDOWS)
                         }
                     )
                 }
 
-                // Change Cancellation PIN Button (only for Protected users)
                 if (isProtected) {
                     SecondaryButton(
-                        text = "Alert Cancellation PIN",
+                        text = stringResource(R.string.alert_cancellation_pin),
                         onClick = {
                             navController.navigate(AppRoutes.CHANGE_CANCELLATION_PIN)
                         }
                     )
                 }
 
-                // Settings Button
                 SecondaryButton(
-                    text = "Settings",
+                    text = stringResource(R.string.settings),
                     onClick = {
                         navController.navigate("settings")
                     }
                 )
 
-                // Logout Button
                 DangerButton(
-                    text = "Logout",
+                    text = stringResource(R.string.logout),
                     onClick = {
                         showLogoutDialog = true
                     }
@@ -164,7 +143,6 @@ fun ProfileScreen(navController: NavController) {
         }
     }
 
-    // Logout Confirmation Dialog
     if (showLogoutDialog) {
         LogoutConfirmationDialog(
             onConfirm = {
@@ -181,9 +159,6 @@ fun ProfileScreen(navController: NavController) {
     }
 }
 
-/**
- * Profile Header with Avatar
- */
 @Composable
 private fun ProfileHeader(
     name: String,
@@ -198,7 +173,6 @@ private fun ProfileHeader(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Avatar with Initials
         Box(
             modifier = Modifier
                 .size(100.dp)
@@ -216,7 +190,6 @@ private fun ProfileHeader(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Name
         Text(
             text = name,
             style = MaterialTheme.typography.headlineSmall,
@@ -226,7 +199,6 @@ private fun ProfileHeader(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Email with verification badge
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -240,7 +212,7 @@ private fun ProfileHeader(
             if (isEmailVerified) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Verified",
+                    contentDescription = stringResource(R.string.verified),
                     tint = Color.White,
                     modifier = Modifier.size(16.dp)
                 )
@@ -249,9 +221,6 @@ private fun ProfileHeader(
     }
 }
 
-/**
- * Profile Information Card
- */
 @Composable
 private fun ProfileInfoCard(
     name: String,
@@ -270,47 +239,40 @@ private fun ProfileInfoCard(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Account Information",
+                text = stringResource(R.string.account_information),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
 
             Divider()
 
-            // Name
             ProfileInfoRow(
                 icon = Icons.Default.Person,
-                label = "Name",
+                label = stringResource(R.string.name),
                 value = name
             )
 
-            // Email
             ProfileInfoRow(
                 icon = Icons.Default.Email,
-                label = "Email",
+                label = stringResource(R.string.email),
                 value = email
             )
 
-            // Phone
             ProfileInfoRow(
                 icon = Icons.Default.Phone,
-                label = "Phone",
+                label = stringResource(R.string.phone),
                 value = phone
             )
 
-            // Role
             ProfileInfoRow(
                 icon = Icons.Default.Shield,
-                label = "Role",
+                label = stringResource(R.string.role),
                 value = MockUserData.getRoleDisplayName(role)
             )
         }
     }
 }
 
-/**
- * Profile Info Row
- */
 @Composable
 private fun ProfileInfoRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -344,9 +306,6 @@ private fun ProfileInfoRow(
     }
 }
 
-/**
- * Logout Confirmation Dialog
- */
 @Composable
 private fun LogoutConfirmationDialog(
     onConfirm: () -> Unit,
@@ -357,14 +316,14 @@ private fun LogoutConfirmationDialog(
         icon = {
             Icon(
                 imageVector = Icons.Default.Logout,
-                contentDescription = "Logout"
+                contentDescription = stringResource(R.string.logout)
             )
         },
         title = {
-            Text("Logout")
+            Text(stringResource(R.string.logout))
         },
         text = {
-            Text("Are you sure you want to logout?")
+            Text(stringResource(R.string.confirm_logout))
         },
         confirmButton = {
             Button(
@@ -373,12 +332,12 @@ private fun LogoutConfirmationDialog(
                     containerColor = MaterialTheme.colorScheme.error
                 )
             ) {
-                Text("Logout")
+                Text(stringResource(R.string.logout))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

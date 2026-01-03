@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -22,6 +23,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.AlertEvent
 import com.example.safetysec.presentation.components.CustomTopAppBar
 import com.example.safetysec.presentation.components.ErrorAlert
@@ -54,7 +56,7 @@ fun AlertDetailScreen(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = "Alert Details",
+                title = stringResource(R.string.alert_details),
                 onNavigationClick = { navController.popBackStack() }
             )
         }
@@ -66,11 +68,11 @@ fun AlertDetailScreen(
         ) {
             when {
                 uiState.isLoading -> {
-                    FullScreenLoading(message = "Loading alert details...")
+                    FullScreenLoading(message = stringResource(R.string.loading_alert_details))
                 }
 
                 uiState.error != null -> {
-                    ErrorAlert(message = uiState.error ?: "Unknown error")
+                    ErrorAlert(message = uiState.error ?: stringResource(R.string.error_unknown))
                 }
 
                 uiState.selectedAlert != null -> {
@@ -80,7 +82,7 @@ fun AlertDetailScreen(
                 }
 
                 else -> {
-                    ErrorAlert(message = "Alert not found")
+                    ErrorAlert(message = stringResource(R.string.alert_not_found))
                 }
             }
         }
@@ -150,7 +152,7 @@ fun AlertTypeHeader(alert: AlertEvent) {
                 )
                 if (alert.isCancelled) {
                     Text(
-                        text = "Cancelled",
+                        text = stringResource(R.string.alert_cancelled),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White.copy(alpha = 0.9f)
                     )
@@ -184,20 +186,23 @@ fun CancellationBanner(alert: AlertEvent) {
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Alert Cancelled by User",
+                    text = stringResource(R.string.alert_cancelled_by_user),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF388E3C)
                 )
                 if (alert.cancelledAt != null) {
                     Text(
-                        text = "Cancelled at ${alert.cancelledAt.format(DateTimeFormatter.ofPattern("HH:mm:ss"))}",
+                        text = stringResource(
+                            R.string.cancelled_at_time,
+                            alert.cancelledAt.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFF555555)
                     )
                 }
                 Text(
-                    text = "The protected user successfully cancelled this alert. No emergency assistance needed.",
+                    text = stringResource(R.string.alert_cancelled_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color(0xFF666666)
                 )
@@ -253,7 +258,7 @@ fun AlertInformationCard(alert: AlertEvent) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Alert Information",
+                text = stringResource(R.string.alert_information),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -261,28 +266,31 @@ fun AlertInformationCard(alert: AlertEvent) {
             Divider()
 
             InfoRow(
-                label = "Protected User",
+                label = stringResource(R.string.protected_user),
                 value = alert.protectedUserName,
                 icon = Icons.Default.Person
             )
 
             InfoRow(
-                label = "Date & Time",
+                label = stringResource(R.string.date_time),
                 value = alert.timestamp.format(DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' HH:mm:ss")),
                 icon = Icons.Default.Schedule
             )
 
             if (!alert.details.isNullOrBlank()) {
                 InfoRow(
-                    label = "Details",
+                    label = stringResource(R.string.details),
                     value = alert.details,
                     icon = Icons.Default.Info
                 )
             }
 
             InfoRow(
-                label = "Status",
-                value = if (alert.isCancelled) "Cancelled" else "Active",
+                label = stringResource(R.string.status),
+                value = if (alert.isCancelled)
+                    stringResource(R.string.alert_cancelled)
+                else
+                    stringResource(R.string.active),
                 icon = if (alert.isCancelled) Icons.Default.Cancel else Icons.Default.CheckCircle,
                 valueColor = if (alert.isCancelled) Color.Gray else Color(0xFF4CAF50)
             )
@@ -302,7 +310,7 @@ fun LocationInformationCard(alert: AlertEvent) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Location",
+                text = stringResource(R.string.location),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -311,7 +319,7 @@ fun LocationInformationCard(alert: AlertEvent) {
 
             if (alert.latitude != 0.0 && alert.longitude != 0.0) {
                 InfoRow(
-                    label = "Coordinates",
+                    label = stringResource(R.string.coordinates),
                     value = alert.getFormattedLocation(),
                     icon = Icons.Default.LocationOn
                 )
@@ -325,7 +333,7 @@ fun LocationInformationCard(alert: AlertEvent) {
                 )
             } else {
                 Text(
-                    text = "Location not available",
+                    text = stringResource(R.string.location_not_available),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -346,7 +354,7 @@ fun AlertTimelineCard(alert: AlertEvent) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Timeline",
+                text = stringResource(R.string.timeline),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -355,7 +363,7 @@ fun AlertTimelineCard(alert: AlertEvent) {
 
             TimelineItem(
                 time = alert.timestamp.format(DateTimeFormatter.ofPattern("HH:mm:ss")),
-                event = "Alert triggered",
+                event = stringResource(R.string.alert_triggered),
                 icon = Icons.Default.Warning,
                 color = Color(0xFFEF5350)
             )
@@ -363,8 +371,8 @@ fun AlertTimelineCard(alert: AlertEvent) {
             if (alert.isCancelled && alert.cancelledAt != null) {
                 TimelineItem(
                     time = alert.cancelledAt.format(DateTimeFormatter.ofPattern("HH:mm:ss")),
-                    event = "Alert cancelled by user",
-                    description = "User successfully cancelled the alert. No emergency response needed.",
+                    event = stringResource(R.string.alert_cancelled_by_user_timeline),
+                    description = stringResource(R.string.alert_cancelled_timeline_desc),
                     icon = Icons.Default.CheckCircle,
                     color = Color(0xFF4CAF50) // Green for success
                 )
@@ -373,7 +381,7 @@ fun AlertTimelineCard(alert: AlertEvent) {
             if (alert.videoUrl != null && !alert.isCancelled) {
                 TimelineItem(
                     time = alert.timestamp.plusSeconds(30).format(DateTimeFormatter.ofPattern("HH:mm:ss")),
-                    event = "Video recording completed",
+                    event = stringResource(R.string.video_recording_completed),
                     icon = Icons.Default.Videocam,
                     color = PrimaryPurple
                 )
@@ -508,7 +516,7 @@ fun AlertLocationMap(
                 Marker(
                     state = MarkerState(position = alertLocation),
                     title = alertType.replace("_", " "),
-                    snippet = details ?: "Alert location",
+                    snippet = details ?: stringResource(R.string.alert_location),
                     icon = getMapMarkerIcon(alertType)
                 )
             }
@@ -546,7 +554,7 @@ fun AlertLocationMap(
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Open", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.open_map), style = MaterialTheme.typography.labelSmall)
             }
         }
     }

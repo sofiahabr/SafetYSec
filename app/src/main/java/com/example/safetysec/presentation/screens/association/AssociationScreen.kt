@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.Association
 import com.example.safetysec.domain.model.AssociationStatus
 import com.example.safetysec.presentation.components.*
@@ -36,7 +38,7 @@ fun AssociationScreen(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                title = "Associations"
+                title = stringResource(R.string.associations)
             )
         },
         bottomBar = {
@@ -105,7 +107,7 @@ fun AssociationScreen(
             // Loading Overlay
             if (viewState.isLoading) {
                 LoadingDialog(
-                    message = "Processing..."
+                    message = stringResource(R.string.processing)
                 )
             }
         }
@@ -129,7 +131,7 @@ private fun ModeToggleSection(
             onClick = { if (!isMonitorMode) onToggle() },
             label = {
                 Text(
-                    text = "Generate OTP",
+                    text = stringResource(R.string.generate_otp),
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
@@ -155,7 +157,7 @@ private fun ModeToggleSection(
             onClick = { if (isMonitorMode) onToggle() },
             label = {
                 Text(
-                    text = "Enter OTP",
+                    text = stringResource(R.string.enter_otp),
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
@@ -213,7 +215,7 @@ private fun MonitorModeContent(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Generate OTP for Protected User",
+                    text = stringResource(R.string.generate_otp_for_protected),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -223,7 +225,7 @@ private fun MonitorModeContent(
             EmailTextField(
                 value = viewState.protectedEmail,
                 onValueChange = onProtectedEmailChange,
-                label = "Protected User Email",
+                label = stringResource(R.string.protected_user_email),
                 modifier = Modifier.fillMaxWidth(),
                 imeAction = ImeAction.Done,
                 onImeAction = {
@@ -249,7 +251,7 @@ private fun MonitorModeContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Generated OTP",
+                            text = stringResource(R.string.generated_otp),
                             style = MaterialTheme.typography.bodyMedium,
                             color = PrimaryPurple
                         )
@@ -267,14 +269,14 @@ private fun MonitorModeContent(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = "Share this code with the protected user",
+                            text = stringResource(R.string.share_code),
                             style = MaterialTheme.typography.bodySmall,
                             textAlign = TextAlign.Center,
                             color = Color.Gray
                         )
 
                         Text(
-                            text = "Valid for 10 minutes",
+                            text = stringResource(R.string.otp_valid),
                             style = MaterialTheme.typography.bodySmall,
                             textAlign = TextAlign.Center,
                             color = Color.Gray,
@@ -286,7 +288,7 @@ private fun MonitorModeContent(
 
             // Generate Button
             PrimaryButton(
-                text = "Generate OTP",
+                text = stringResource(R.string.generate_otp),
                 onClick = onGenerateOTP,
                 enabled = viewState.protectedEmail.isNotBlank() && !viewState.isLoading,
                 modifier = Modifier.fillMaxWidth()
@@ -295,7 +297,7 @@ private fun MonitorModeContent(
             // Info Message
             if (viewState.generatedOTP == null) {
                 InlineAlert(
-                    message = "Enter the email of the user you want to monitor, then generate an OTP to share with them.",
+                    message = stringResource(R.string.otp_info),
                     type = AlertType.INFO
                 )
             }
@@ -339,7 +341,7 @@ private fun ProtectedModeContent(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Accept Monitor Association",
+                    text = stringResource(R.string.accept_monitor),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -349,7 +351,7 @@ private fun ProtectedModeContent(
             EmailTextField(
                 value = viewState.monitorEmail,
                 onValueChange = onMonitorEmailChange,
-                label = "Monitor Email",
+                label = stringResource(R.string.monitor_email),
                 modifier = Modifier.fillMaxWidth(),
                 imeAction = ImeAction.Next
             )
@@ -358,13 +360,13 @@ private fun ProtectedModeContent(
             CustomTextField(
                 value = viewState.otp,
                 onValueChange = onOTPChange,
-                label = "6-Digit OTP",
-                placeholder = "000000",
+                label = stringResource(R.string.otp_6_digit),
+                placeholder = stringResource(R.string.otp_placeholder),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Key,
-                        contentDescription = "OTP"
+                        contentDescription = stringResource(R.string.enter_otp)
                     )
                 },
                 imeAction = ImeAction.Done,
@@ -421,7 +423,7 @@ private fun ProtectedModeContent(
 
             // Validate Button
             PrimaryButton(
-                text = "Validate & Create Association",
+                text = stringResource(R.string.validate_create_association),
                 onClick = onValidateOTP,
                 enabled = viewState.monitorEmail.isNotBlank() &&
                         viewState.otp.length == 6 &&
@@ -431,7 +433,7 @@ private fun ProtectedModeContent(
 
             // Info Message
             InlineAlert(
-                message = "Enter the monitor's email and the OTP code they shared with you to establish the association.",
+                message = stringResource(R.string.otp_accept_info),
                 type = AlertType.INFO
             )
         }
@@ -452,7 +454,7 @@ private fun AssociationsListWithFilter(
     Column {
         // Header
         Text(
-            text = "Associations",
+            text = stringResource(R.string.associations),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -469,7 +471,7 @@ private fun AssociationsListWithFilter(
                 onClick = { selectedStatus = AssociationStatus.ACTIVE },
                 label = {
                     Text(
-                        text = "Active",
+                        text = stringResource(R.string.active),
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
@@ -495,7 +497,7 @@ private fun AssociationsListWithFilter(
                 onClick = { selectedStatus = AssociationStatus.PENDING },
                 label = {
                     Text(
-                        text = "Pending",
+                        text = stringResource(R.string.pending),
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
@@ -521,7 +523,7 @@ private fun AssociationsListWithFilter(
                 onClick = { selectedStatus = AssociationStatus.CANCELLED },
                 label = {
                     Text(
-                        text = "Cancelled",
+                        text = stringResource(R.string.cancelled),
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
@@ -574,8 +576,8 @@ private fun AssociationsList(
         ) {
             EmptyState(
                 icon = Icons.Default.PersonOff,
-                title = "No Associations",
-                message = "No associations match the selected filter.",
+                title = stringResource(R.string.no_associations),
+                message = stringResource(R.string.no_associations_desc),
                 modifier = Modifier.padding(32.dp)
             )
         }
@@ -645,7 +647,7 @@ private fun AssociationCard(
 
                     Column {
                         Text(
-                            text = "Association",
+                            text = stringResource(R.string.association),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -670,7 +672,7 @@ private fun AssociationCard(
                 // Monitor
                 DetailRow(
                     icon = Icons.Default.Shield,
-                    label = "Monitor",
+                    label = stringResource(R.string.monitor),
                     value = association.monitorName.ifEmpty {
                         association.monitorEmail.ifEmpty {
                             association.monitorId.take(10) + "..."
@@ -681,7 +683,7 @@ private fun AssociationCard(
                 // Protected
                 DetailRow(
                     icon = Icons.Default.Person,
-                    label = "Protected",
+                    label = stringResource(R.string.protected),
                     value = association.protectedName.ifEmpty {
                         association.protectedEmail.ifEmpty {
                             association.protectedId.take(10) + "..."
@@ -692,7 +694,7 @@ private fun AssociationCard(
                 // Created Date
                 DetailRow(
                     icon = Icons.Default.CalendarToday,
-                    label = "Created",
+                    label = stringResource(R.string.created),
                     value = dateFormat.format(association.createdAt)
                 )
             }
@@ -717,12 +719,12 @@ private fun AssociationCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Association Cancelled")
+                    Text(stringResource(R.string.association_cancelled_btn))
                 }
             } else {
                 // Active remove button
                 DangerButton(
-                    text = "Remove Association",
+                    text = stringResource(R.string.remove_association),
                     onClick = { showDeleteDialog = true },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -733,9 +735,9 @@ private fun AssociationCard(
     // Delete Confirmation Dialog
     if (showDeleteDialog) {
         ConfirmationDialog(
-            title = "Remove Association",
-            message = "Are you sure you want to remove this association? This action cannot be undone.",
-            confirmText = "Remove",
+            title = stringResource(R.string.remove_association),
+            message = stringResource(R.string.remove_association_confirm),
+            confirmText = stringResource(R.string.remove),
             onConfirm = {
                 onRemove()
                 showDeleteDialog = false
@@ -853,7 +855,7 @@ private fun ConfirmationDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
