@@ -54,6 +54,10 @@ fun RegistrationScreen(
 
     val authState by viewModel.authState.collectAsStateWithLifecycle()
 
+    val passwordMismatchErrorText = stringResource(R.string.password_error_mismatch)
+    val weakPasswordErrorText = stringResource(R.string.password_error_weak)
+    val weakPasswordLabel = stringResource(R.string.password_strength_weak)
+
     LaunchedEffect(authState.isAuthenticated) {
         if (authState.isAuthenticated && authState.user != null) {
             onRegistrationSuccess()
@@ -219,12 +223,12 @@ fun RegistrationScreen(
                 var isValid = true
 
                 if (password != confirmPassword) {
-                    confirmPasswordError = stringResource(R.string.password_error_mismatch)
+                    confirmPasswordError = passwordMismatchErrorText
                     isValid = false
                 }
 
-                if (calculatePasswordStrength(password).label == stringResource(R.string.password_strength_weak)) {
-                    passwordError = stringResource(R.string.password_error_weak)
+                if (calculatePasswordStrength(password).label == weakPasswordLabel) {
+                    passwordError = weakPasswordErrorText
                     isValid = false
                 }
 
