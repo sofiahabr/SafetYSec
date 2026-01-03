@@ -1,4 +1,4 @@
-package com.example.safetysec.presentation.protectedUser
+package com.example.safetysec.presentation.screens.protectedUser
 
 import android.Manifest
 import android.os.Build
@@ -24,6 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.safetysec.R
 import com.example.safetysec.domain.model.MonitoringState
 import com.example.safetysec.presentation.components.*
+import com.example.safetysec.presentation.viewmodel.MonitoringUiState
+import com.example.safetysec.presentation.viewmodel.MonitoringViewModel
 import com.example.safetysec.presentation.theme.*
 
 /**

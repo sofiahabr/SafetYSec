@@ -16,7 +16,7 @@ import androidx.navigation.NavController
 import com.example.safetysec.R
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.navigation.AppRoutes
-import com.example.safetysec.presentation.protectedUser.MonitoringViewModel
+import com.example.safetysec.presentation.viewmodel.MonitoringViewModel
 import com.example.safetysec.presentation.theme.*
 
 /**

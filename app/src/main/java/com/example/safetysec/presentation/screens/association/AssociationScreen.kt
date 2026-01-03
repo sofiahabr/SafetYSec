@@ -24,6 +24,7 @@ import com.example.safetysec.domain.model.Association
 import com.example.safetysec.domain.model.AssociationStatus
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.theme.PrimaryPurple
+import com.example.safetysec.presentation.viewmodel.AssociationViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
