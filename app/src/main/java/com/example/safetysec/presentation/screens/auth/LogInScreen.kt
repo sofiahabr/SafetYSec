@@ -87,7 +87,7 @@ fun LogInScreen(
                 viewModel.login(email.value, password.value, activity)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !authState.value.isLoading,  // ← Added comma
+            enabled = !authState.value.isLoading,
             isLoading = authState.value.isLoading
         )
 
@@ -102,7 +102,7 @@ fun LogInScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         SecondaryButton(
-            text = "Forgot Password?",
+            text = stringResource(R.string.forgot_password),
             onClick = onNavigateToForgotPassword,
             modifier = Modifier.fillMaxWidth()
         )

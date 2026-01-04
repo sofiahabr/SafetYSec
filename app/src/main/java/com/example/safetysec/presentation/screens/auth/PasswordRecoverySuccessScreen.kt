@@ -8,10 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.PrimaryButton
 import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.theme.PrimaryPurple
@@ -50,7 +52,7 @@ fun PasswordRecoverySuccessScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Success",
+                        contentDescription = stringResource(R.string.success),
                         modifier = Modifier.size(64.dp),
                         tint = PrimaryPurple
                     )
@@ -63,14 +65,14 @@ fun PasswordRecoverySuccessScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Password Reset Successfully!",
+                    text = stringResource(R.string.password_reset_success),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
 
                 Text(
-                    text = "Your password has been successfully reset. You can now log in with your new password.",
+                    text = stringResource(R.string.can_now_login_new_password),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray,
                     textAlign = TextAlign.Center
@@ -94,14 +96,14 @@ fun PasswordRecoverySuccessScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Security Tip",
+                            text = stringResource(R.string.security_tip),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFFF57F17)
                         )
 
                         Text(
-                            text = "Make sure to use a strong password and keep it secure. Never share your password with anyone.",
+                            text = stringResource(R.string.use_strong_password_keep_secure),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
@@ -120,17 +122,17 @@ fun PasswordRecoverySuccessScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Next Steps",
+                            text = stringResource(R.string.next_steps),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black
                         )
 
                         listOf(
-                            "Go back to the login screen",
-                            "Enter your email and new password",
-                            "Tap 'Log In' to access your account"
-                        ).forEach { step ->
+                            R.string.step_back_to_login_screen,
+                            R.string.step_enter_email_new_password,
+                            R.string.step_tap_login
+                        ).forEach { stepRes ->
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalAlignment = Alignment.Top
@@ -141,7 +143,7 @@ fun PasswordRecoverySuccessScreen(
                                     color = PrimaryPurple
                                 )
                                 Text(
-                                    text = step,
+                                    text = stringResource(stepRes),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
@@ -154,7 +156,7 @@ fun PasswordRecoverySuccessScreen(
 
         // Action Button
         PrimaryButton(
-            text = "Return to Login",
+            text = stringResource(R.string.return_to_login),
             onClick = {
                 navController.navigate(AppRoutes.LOGIN) {
                     popUpTo(AppRoutes.FORGOT_PASSWORD) { inclusive = true }

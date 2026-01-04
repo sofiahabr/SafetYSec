@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.PrimaryButton
 import com.example.safetysec.presentation.components.SecondaryButton
 import com.example.safetysec.presentation.theme.PrimaryPurple
@@ -60,7 +62,7 @@ fun MFAVerificationScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Verify Your Identity",
+                        text = stringResource(R.string.verify_identity),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -88,21 +90,21 @@ fun MFAVerificationScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Enter Verification Code",
+                        text = stringResource(R.string.enter_verification_code),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
 
                     Text(
-                        text = "We've sent a 6-digit code to your phone",
+                        text = stringResource(R.string.code_sent_to_phone),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.Gray
                     )
 
                     if (phoneNumber.isNotEmpty()) {
                         Text(
-                            text = "Ending in ${phoneNumber.takeLast(4)}",
+                            text = stringResource(R.string.ending_in, phoneNumber.takeLast(4)),
                             style = MaterialTheme.typography.bodySmall,
                             color = PrimaryPurple,
                             fontWeight = FontWeight.SemiBold
@@ -119,7 +121,7 @@ fun MFAVerificationScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Phone,
-                        contentDescription = "Phone verification",
+                        contentDescription = stringResource(R.string.phone_icon),
                         modifier = Modifier.size(64.dp),
                         tint = PrimaryPurple
                     )
@@ -133,7 +135,7 @@ fun MFAVerificationScreen(
                             code = newValue
                         }
                     },
-                    label = { Text("Verification Code") },
+                    label = { Text(stringResource(R.string.verification_code)) },
                     placeholder = { Text("000000") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier
@@ -166,14 +168,14 @@ fun MFAVerificationScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Security Tip",
+                            text = stringResource(R.string.security_tip),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryPurple
                         )
 
                         Text(
-                            text = "Never share this code with anyone. SafetYSec staff will never ask for your verification code.",
+                            text = stringResource(R.string.never_share_code),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
@@ -188,7 +190,7 @@ fun MFAVerificationScreen(
                 ) {
                     if (showResendButton) {
                         SecondaryButton(
-                            text = "Resend Code",
+                            text = stringResource(R.string.resend_code),
                             onClick = {
                                 code = ""
                                 showResendButton = false
@@ -197,7 +199,7 @@ fun MFAVerificationScreen(
                         )
                     } else {
                         Text(
-                            text = "Resend code in ${resendCountdown}s",
+                            text = stringResource(R.string.resend_code_in, resendCountdown),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray,
                             textAlign = TextAlign.Center
@@ -211,7 +213,7 @@ fun MFAVerificationScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 PrimaryButton(
-                    text = if (authState.isLoading) "Verifying..." else "Verify Code",
+                    text = if (authState.isLoading) stringResource(R.string.verifying) else stringResource(R.string.verify_code),
                     onClick = {
                         viewModel.verifyMFACode(code)
                     },
@@ -220,7 +222,7 @@ fun MFAVerificationScreen(
                 )
 
                 Text(
-                    text = "Code expires in 10 minutes",
+                    text = stringResource(R.string.code_expires_in_10_min),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray,
                     textAlign = TextAlign.Center,

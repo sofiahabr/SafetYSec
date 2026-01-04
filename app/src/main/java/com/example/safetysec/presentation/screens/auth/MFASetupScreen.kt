@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.PrimaryButton
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
@@ -71,7 +73,7 @@ fun MFASetupScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Set Up Two-Factor Authentication",
+                        text = stringResource(R.string.setup_two_factor_auth),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -80,7 +82,7 @@ fun MFASetupScreen(
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 },
@@ -160,14 +162,14 @@ private fun PhoneInputStep(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Secure Your Account",
+                    text = stringResource(R.string.secure_your_account),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
 
                 Text(
-                    text = "Enter your phone number to receive security codes when you log in.",
+                    text = stringResource(R.string.enter_phone_for_security_codes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -182,7 +184,7 @@ private fun PhoneInputStep(
             ) {
                 Icon(
                     imageVector = Icons.Default.Phone,
-                    contentDescription = "Phone setup",
+                    contentDescription = stringResource(R.string.phone_icon),
                     modifier = Modifier.size(64.dp),
                     tint = PrimaryPurple
                 )
@@ -192,7 +194,7 @@ private fun PhoneInputStep(
             OutlinedTextField(
                 value = phoneNumber,
                 onValueChange = onPhoneChange,
-                label = { Text("Phone Number") },
+                label = { Text(stringResource(R.string.phone_number)) },
                 placeholder = { Text("+4754665290") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 modifier = Modifier.fillMaxWidth(),
@@ -222,14 +224,14 @@ private fun PhoneInputStep(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Why Two-Factor Authentication?",
+                        text = stringResource(R.string.why_2fa),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = PrimaryPurple
                     )
 
                     Text(
-                        text = "2FA adds an extra layer of security to your account. Even if someone has your password, they can't access your account without this code.",
+                        text = stringResource(R.string.why_2fa_description),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
@@ -241,10 +243,10 @@ private fun PhoneInputStep(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 listOf(
-                    "Protects sensitive health information",
-                    "Prevents unauthorized access",
-                    "Required on every login"
-                ).forEach { benefit ->
+                    R.string.benefit_protects_health_info,
+                    R.string.benefit_prevents_unauthorized,
+                    R.string.benefit_required_on_login
+                ).forEach { benefitRes ->
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.Top
@@ -256,7 +258,7 @@ private fun PhoneInputStep(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = benefit,
+                            text = stringResource(benefitRes),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
@@ -267,7 +269,7 @@ private fun PhoneInputStep(
 
         // Continue Button
         PrimaryButton(
-            text = if (isLoading) "Sending Code..." else "Send Code",
+            text = if (isLoading) stringResource(R.string.sending_code) else stringResource(R.string.send_code),
             onClick = onContinue,
             modifier = Modifier.fillMaxWidth(),
             enabled = phoneNumber.isNotEmpty() && !isLoading
@@ -302,14 +304,14 @@ private fun CodeVerificationStep(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Verify Your Number",
+                    text = stringResource(R.string.verify_your_number),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
 
                 Text(
-                    text = "Enter the 6-digit code we sent to your phone.",
+                    text = stringResource(R.string.enter_6_digit_code),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -331,7 +333,7 @@ private fun CodeVerificationStep(
                 ) {
                     Column {
                         Text(
-                            text = "Code sent to",
+                            text = stringResource(R.string.code_sent_to),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.Gray
                         )
@@ -343,7 +345,7 @@ private fun CodeVerificationStep(
                     }
 
                     TextButton(onClick = onEdit) {
-                        Text("Edit")
+                        Text(stringResource(R.string.edit))
                     }
                 }
             }
@@ -356,7 +358,7 @@ private fun CodeVerificationStep(
                         onCodeChange(newValue)
                     }
                 },
-                label = { Text("Verification Code") },
+                label = { Text(stringResource(R.string.verification_code)) },
                 placeholder = { Text("000000") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
@@ -389,14 +391,14 @@ private fun CodeVerificationStep(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Didn't receive the code?",
+                        text = stringResource(R.string.didnt_receive_code),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = PrimaryPurple
                     )
 
                     Text(
-                        text = "Check your spam folder or request a new code. This code expires in 10 minutes.",
+                        text = stringResource(R.string.didnt_receive_code_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
@@ -406,7 +408,7 @@ private fun CodeVerificationStep(
 
         // Verify Button
         PrimaryButton(
-            text = if (isLoading) "Verifying..." else "Complete Setup",
+            text = if (isLoading) stringResource(R.string.verifying) else stringResource(R.string.complete_setup),
             onClick = onVerify,
             modifier = Modifier.fillMaxWidth(),
             enabled = verificationCode.length == 6 && !isLoading

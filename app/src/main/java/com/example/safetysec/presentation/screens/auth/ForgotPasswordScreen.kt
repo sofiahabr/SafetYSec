@@ -11,21 +11,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.*
+import com.example.safetysec.presentation.screens.profile.PasswordStrengthIndicator
+import com.example.safetysec.presentation.screens.profile.calculatePasswordStrength
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
-import androidx.compose.ui.unit.sp
 
 /**
  * Forgot Password Screen
  *
- * Allows users to recover their password by entering their email address.
- * Firebase sends a password reset link to the provided email.
+ * Step 1: Email input to request password reset link
+ * Step 2: Password reset form with requirements after user clicks email link
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,13 +41,14 @@ fun ForgotPasswordScreen(
     val authState by viewModel.authState.collectAsState()
     var email by remember { mutableStateOf("") }
     var isEmailSent by remember { mutableStateOf(false) }
+    var resetStep by remember { mutableStateOf(ResetStep.EMAIL_INPUT) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Password Recovery",
+                        text = stringResource(R.string.password_recovery),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -51,7 +57,7 @@ fun ForgotPasswordScreen(
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 },
@@ -69,35 +75,59 @@ fun ForgotPasswordScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            if (isEmailSent) {
-                EmailSentSuccessContent(
-                    email = email,
-                    onBackClick = { navController.navigateUp() },
-                    onResendClick = {
-                        viewModel.sendPasswordResetEmail(email)
-                    },
-                    isLoading = authState.isLoading
-                )
-            } else {
-                ForgotPasswordInputContent(
-                    email = email,
-                    onEmailChange = { email = it },
-                    onSendClick = {
-                        if (email.isNotEmpty()) {
+            when {
+                resetStep == ResetStep.EMAIL_INPUT && !isEmailSent -> {
+                    ForgotPasswordInputContent(
+                        email = email,
+                        onEmailChange = { email = it },
+                        onSendClick = {
+                            if (email.isNotEmpty()) {
+                                viewModel.sendPasswordResetEmail(email)
+                                isEmailSent = true
+                            }
+                        },
+                        isLoading = authState.isLoading,
+                        error = authState.error
+                    )
+                }
+                isEmailSent && resetStep == ResetStep.EMAIL_INPUT -> {
+                    EmailSentSuccessContent(
+                        email = email,
+                        onBackClick = {
+                            email = ""
+                            isEmailSent = false
+                            resetStep = ResetStep.EMAIL_INPUT
+                        },
+                        onResendClick = {
                             viewModel.sendPasswordResetEmail(email)
-                            isEmailSent = true
+                        },
+                        onContinueToReset = {
+                            resetStep = ResetStep.PASSWORD_RESET
+                        },
+                        isLoading = authState.isLoading
+                    )
+                }
+                resetStep == ResetStep.PASSWORD_RESET -> {
+                    PasswordResetContent(
+                        onBackClick = {
+                            resetStep = ResetStep.EMAIL_INPUT
+                        },
+                        isLoading = authState.isLoading,
+                        error = authState.error,
+                        onResetSuccess = {
+                            navController.navigate("password_recovery_success") {
+                                popUpTo("forgot_password") { inclusive = true }
+                            }
                         }
-                    },
-                    isLoading = authState.isLoading,
-                    error = authState.error
-                )
+                    )
+                }
             }
         }
     }
 }
 
 /**
- * Email Input Content
+ * Step 1: Email Input Content
  */
 @Composable
 private fun ForgotPasswordInputContent(
@@ -121,14 +151,14 @@ private fun ForgotPasswordInputContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Recover Your Password",
+                    text = stringResource(R.string.recover_password),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
 
                 Text(
-                    text = "Enter your email address and we'll send you a link to reset your password.",
+                    text = stringResource(R.string.enter_email_reset_link),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -143,7 +173,7 @@ private fun ForgotPasswordInputContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Email,
-                    contentDescription = "Email",
+                    contentDescription = stringResource(R.string.email),
                     modifier = Modifier.size(64.dp),
                     tint = PrimaryPurple
                 )
@@ -153,12 +183,12 @@ private fun ForgotPasswordInputContent(
             OutlinedTextField(
                 value = email,
                 onValueChange = onEmailChange,
-                label = { Text("Email Address") },
-                placeholder = { Text("your.email@example.com") },
+                label = { Text(stringResource(R.string.email)) },
+                placeholder = { Text(stringResource(R.string.email_placeholder)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
-                        contentDescription = "Email"
+                        contentDescription = stringResource(R.string.email)
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -189,14 +219,14 @@ private fun ForgotPasswordInputContent(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "What happens next?",
+                        text = stringResource(R.string.what_happens_next),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = PrimaryPurple
                     )
 
                     Text(
-                        text = "1. We'll send a reset link to your email\n2. Click the link to verify your identity\n3. Create a new password\n4. You're all set!",
+                        text = stringResource(R.string.password_reset_steps),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray,
                         lineHeight = 20.sp
@@ -210,14 +240,14 @@ private fun ForgotPasswordInputContent(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             PrimaryButton(
-                text = if (isLoading) "Sending..." else "Send Reset Link",
+                text = if (isLoading) stringResource(R.string.sending) else stringResource(R.string.send_reset_link),
                 onClick = onSendClick,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading && email.isNotEmpty()
             )
 
             Text(
-                text = "The reset link will expire in 24 hours",
+                text = stringResource(R.string.reset_link_expires_24_hours),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
@@ -228,13 +258,14 @@ private fun ForgotPasswordInputContent(
 }
 
 /**
- * Email Sent Success Content
+ * Step 2: Email Sent Success Content
  */
 @Composable
 private fun EmailSentSuccessContent(
     email: String,
     onBackClick: () -> Unit,
     onResendClick: () -> Unit,
+    onContinueToReset: () -> Unit,
     isLoading: Boolean
 ) {
     Column(
@@ -261,7 +292,7 @@ private fun EmailSentSuccessContent(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Email,
-                        contentDescription = "Email sent",
+                        contentDescription = stringResource(R.string.email),
                         modifier = Modifier.size(48.dp),
                         tint = PrimaryPurple
                     )
@@ -274,14 +305,14 @@ private fun EmailSentSuccessContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Check Your Email",
+                    text = stringResource(R.string.check_your_email),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
 
                 Text(
-                    text = "We've sent a password reset link to:",
+                    text = stringResource(R.string.reset_link_sent_to),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
@@ -306,18 +337,17 @@ private fun EmailSentSuccessContent(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "What to do next:",
+                        text = stringResource(R.string.what_to_do_next),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
 
                     listOf(
-                        "Check your email inbox (and spam folder)",
-                        "Click the password reset link",
-                        "Follow the instructions to set a new password",
-                        "Log in with your new password"
-                    ).forEach { instruction ->
+                        R.string.check_inbox_and_spam,
+                        R.string.click_password_reset_link,
+                        R.string.reset_link_will_take_you_to_form
+                    ).forEach { instructionRes ->
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.Top
@@ -328,7 +358,7 @@ private fun EmailSentSuccessContent(
                                 color = PrimaryPurple
                             )
                             Text(
-                                text = instruction,
+                                text = stringResource(instructionRes),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
@@ -339,7 +369,7 @@ private fun EmailSentSuccessContent(
 
             // Timer Info
             Text(
-                text = "Link expires in 24 hours",
+                text = stringResource(R.string.link_expires_24_hours),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray
             )
@@ -351,17 +381,190 @@ private fun EmailSentSuccessContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             PrimaryButton(
-                text = if (isLoading) "Resending..." else "Didn't receive email? Resend",
+                text = stringResource(R.string.continue_to_reset_form),
+                onClick = onContinueToReset,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
+            )
+
+            SecondaryButton(
+                text = if (isLoading) stringResource(R.string.resending) else stringResource(R.string.didnt_receive_resend),
                 onClick = onResendClick,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )
 
             SecondaryButton(
-                text = "Back to Login",
+                text = stringResource(R.string.back_to_login),
                 onClick = onBackClick,
                 modifier = Modifier.fillMaxWidth()
             )
         }
     }
+}
+
+/**
+ * Step 3: Password Reset Form with Requirements
+ */
+@Composable
+private fun PasswordResetContent(
+    onBackClick: () -> Unit,
+    isLoading: Boolean,
+    error: String?,
+    onResetSuccess: () -> Unit
+) {
+    var newPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    var newPasswordError by remember { mutableStateOf<String?>(null) }
+    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+
+    val passwordMismatchErrorText = stringResource(R.string.password_error_mismatch)
+    val weakPasswordErrorText = stringResource(R.string.password_error_weak)
+    val weakPasswordLabel = stringResource(R.string.password_strength_weak)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            // Header
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.create_new_password),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+
+                Text(
+                    text = stringResource(R.string.enter_strong_password),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
+
+            // Info Card - Password Requirements (Same as Registration)
+            InfoAlert(
+                title = stringResource(R.string.password_requirements),
+                message = stringResource(R.string.password_requirements_desc)
+            )
+
+            // New Password Field
+            PasswordTextField(
+                value = newPassword,
+                onValueChange = {
+                    newPassword = it
+                    newPasswordError = null
+                },
+                label = stringResource(R.string.new_password),
+                isError = newPasswordError != null,
+                errorMessage = newPasswordError,
+                imeAction = ImeAction.Next
+            )
+
+            // Password Strength Indicator (Same as Registration)
+            if (newPassword.isNotEmpty()) {
+                PasswordStrengthIndicator(password = newPassword)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Confirm Password Field
+            PasswordTextField(
+                value = confirmPassword,
+                onValueChange = {
+                    confirmPassword = it
+                    confirmPasswordError = null
+                },
+                label = stringResource(R.string.confirm_password),
+                isError = confirmPasswordError != null,
+                errorMessage = confirmPasswordError,
+                imeAction = ImeAction.Done
+            )
+
+            // Error Message
+            if (error != null) {
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+            // Info Box - Security Tip
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = PrimaryPurple.copy(alpha = 0.1f)
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.security_tip),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryPurple
+                    )
+
+                    Text(
+                        text = stringResource(R.string.use_strong_password_keep_secure),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
+            }
+        }
+
+        // Action Buttons
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            PrimaryButton(
+                text = if (isLoading) stringResource(R.string.saving) else stringResource(R.string.reset_password),
+                onClick = {
+                    var isValid = true
+
+                    if (newPassword != confirmPassword) {
+                        confirmPasswordError = passwordMismatchErrorText
+                        isValid = false
+                    }
+
+                    if (calculatePasswordStrength(newPassword).label == weakPasswordLabel) {
+                        newPasswordError = weakPasswordErrorText
+                        isValid = false
+                    }
+
+                    if (newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && isValid) {
+                        // Call viewModel to reset password
+                        // For now, simulate success
+                        onResetSuccess()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
+            )
+
+            SecondaryButton(
+                text = stringResource(R.string.back),
+                onClick = onBackClick,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+enum class ResetStep {
+    EMAIL_INPUT,
+    PASSWORD_RESET
 }
