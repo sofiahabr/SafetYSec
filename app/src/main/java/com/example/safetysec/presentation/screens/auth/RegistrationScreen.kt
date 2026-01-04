@@ -25,8 +25,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.safetysec.R
+import androidx.navigation.NavController
 import com.example.safetysec.presentation.components.CustomTextField
-import com.example.safetysec.presentation.components.PhoneTextField
+import com.example.safetysec.presentation.components.SplitPhoneTextField
 import com.example.safetysec.presentation.components.EmailTextField
 import com.example.safetysec.presentation.components.InfoAlert
 import com.example.safetysec.presentation.components.PasswordTextField
@@ -34,33 +35,40 @@ import com.example.safetysec.presentation.components.PrimaryButton
 import com.example.safetysec.presentation.screens.profile.PasswordStrengthIndicator
 import com.example.safetysec.presentation.screens.profile.calculatePasswordStrength
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
+import com.example.safetysec.presentation.navigation.AppRoutes
 
 @Composable
 fun RegistrationScreen(
     viewModel: AuthViewModel,
     onRegistrationSuccess: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
+    var countryCode by remember { mutableStateOf("") }
+    var phoneNumber by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var selectedRole by remember { mutableStateOf("MONITOR") }
 
     // Error states
     var passwordError by remember { mutableStateOf<String?>(null) }
     var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+    var phoneError by remember { mutableStateOf<String?>(null) }
 
     val authState by viewModel.authState.collectAsStateWithLifecycle()
 
     val passwordMismatchErrorText = stringResource(R.string.password_error_mismatch)
     val weakPasswordErrorText = stringResource(R.string.password_error_weak)
     val weakPasswordLabel = stringResource(R.string.password_strength_weak)
+    val phoneRequiredErrorText = stringResource(R.string.phone_required_error)
 
     LaunchedEffect(authState.isAuthenticated) {
         if (authState.isAuthenticated && authState.user != null) {
-            onRegistrationSuccess()
+            navController.navigate(AppRoutes.MFA_SETUP) {
+                popUpTo(AppRoutes.REGISTER) { inclusive = true }
+            }
         }
     }
 
@@ -102,9 +110,22 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        PhoneTextField(
-            value = phone,
-            onValueChange = { phone = it },
+        // Split Phone Number Input
+        SplitPhoneTextField(
+            countryCode = countryCode,
+            onCountryCodeChange = {
+                countryCode = it
+                phoneError = null
+            },
+            phoneNumber = phoneNumber,
+            onPhoneNumberChange = {
+                phoneNumber = it
+                phoneError = null
+            },
+            isError = phoneError != null,
+            errorMessage = phoneError,
+            imeAction = ImeAction.Next,
+            onImeAction = {}
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -232,11 +253,24 @@ fun RegistrationScreen(
                     isValid = false
                 }
 
-                if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty() && phone.isNotEmpty() && isValid) {
-                    viewModel.register(email, password, name, phone, selectedRole)
+                if (countryCode.isEmpty() || phoneNumber.isEmpty()) {
+                    phoneError = phoneRequiredErrorText
+                    isValid = false
+                }
+
+                // Combine country code and phone number into E.164 format
+                val fullPhone = if (countryCode.isNotEmpty() && phoneNumber.isNotEmpty()) {
+                    "+$countryCode$phoneNumber"
+                } else {
+                    ""
+                }
+
+                if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty() && fullPhone.isNotEmpty() && isValid) {
+                    viewModel.register(email, password, name, fullPhone, selectedRole)
                 }
             },
-            isLoading = authState.isLoading
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !authState.isLoading
         )
 
         if (!authState.error.isNullOrEmpty()) {

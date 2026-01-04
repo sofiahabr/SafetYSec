@@ -108,15 +108,6 @@ fun ProfileScreen(navController: NavController) {
 
                 if (isProtected) {
                     SecondaryButton(
-                        text = stringResource(R.string.monitoring_time_windows),
-                        onClick = {
-                            navController.navigate(AppRoutes.TIME_WINDOWS)
-                        }
-                    )
-                }
-
-                if (isProtected) {
-                    SecondaryButton(
                         text = stringResource(R.string.alert_cancellation_pin),
                         onClick = {
                             navController.navigate(AppRoutes.CHANGE_CANCELLATION_PIN)

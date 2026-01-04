@@ -34,9 +34,8 @@ fun TimeWindowsScreen(
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(
+            MainTopAppBar(
                 title = stringResource(R.string.monitoring_time_windows),
-                onNavigationClick = { navController.navigateUp() }
             )
         },
         bottomBar = {

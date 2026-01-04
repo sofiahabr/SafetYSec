@@ -261,6 +261,67 @@ fun PhoneTextField(
         onImeAction = onImeAction
     )
 }
+@Composable
+fun SplitPhoneTextField(
+    countryCode: String,
+    onCountryCodeChange: (String) -> Unit,
+    phoneNumber: String,
+    onPhoneNumberChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    imeAction: ImeAction = ImeAction.Next,
+    onImeAction: () -> Unit = {}
+) {
+    Row(modifier = modifier.fillMaxWidth()) {
+        // Country Code Field
+        CustomTextField(
+            value = countryCode,
+            onValueChange = { newValue ->
+                // Only allow digits, limit to 3 characters (longest is +886 for Taiwan)
+                if (newValue.all { it.isDigit() } && newValue.length <= 3) {
+                    onCountryCodeChange(newValue)
+                }
+            },
+            label = "+",
+            placeholder = stringResource(R.string.country_code_placeholder),
+            modifier = Modifier.width(90.dp),
+            keyboardType = KeyboardType.Number,
+            isError = isError,
+            errorMessage = null,
+            imeAction = ImeAction.Next
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        // Phone Number Field
+        CustomTextField(
+            value = phoneNumber,
+            onValueChange = { newValue ->
+                // Only allow digits, limit to 15 characters (E.164 standard max)
+                if (newValue.all { it.isDigit() } && newValue.length <= 15) {
+                    onPhoneNumberChange(newValue)
+                }
+            },
+            label = stringResource(R.string.phone_number),
+            placeholder = stringResource(R.string.phone_placeholder),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Phone,
+                    contentDescription = stringResource(R.string.phone_icon)
+                )
+            },
+            keyboardType = KeyboardType.Phone,
+            isError = isError,
+            errorMessage = errorMessage,
+            imeAction = imeAction,
+            onImeAction = onImeAction
+        )
+    }
+}
 
 /**
  * Multi-line Text Field - For longer text input

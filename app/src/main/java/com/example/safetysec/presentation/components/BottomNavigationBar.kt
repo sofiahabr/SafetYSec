@@ -5,18 +5,22 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.safetysec.R
+import com.example.safetysec.domain.model.UserRole
 import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.theme.PrimaryPurple
+import com.example.safetysec.presentation.viewmodel.AuthViewModel
 
 /**
  * Bottom Navigation Bar Component
@@ -37,7 +41,8 @@ data class BottomNavItem(
     val label: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val badgeCount: Int? = null
+    val badgeCount: Int? = null,
+    val visibleForRoles: List<UserRole> = listOf(UserRole.MONITOR, UserRole.PROTECTED, UserRole.DUAL)
 )
 
 /**
@@ -50,25 +55,43 @@ fun getBottomNavItems(): List<BottomNavItem> {
             route = AppRoutes.DASHBOARD,
             label = stringResource(R.string.dashboard),
             selectedIcon = Icons.Filled.Dashboard,
-            unselectedIcon = Icons.Outlined.Dashboard
+            unselectedIcon = Icons.Outlined.Dashboard,
+            visibleForRoles = listOf(UserRole.MONITOR, UserRole.PROTECTED, UserRole.DUAL)
         ),
         BottomNavItem(
             route = AppRoutes.ASSOCIATIONS,
             label = stringResource(R.string.association),
             selectedIcon = Icons.Filled.People,
-            unselectedIcon = Icons.Outlined.People
+            unselectedIcon = Icons.Outlined.People,
+            visibleForRoles = listOf(UserRole.MONITOR, UserRole.PROTECTED, UserRole.DUAL)
         ),
         BottomNavItem(
             route = AppRoutes.RULES,
             label = stringResource(R.string.rules),
             selectedIcon = Icons.Filled.Rule,
-            unselectedIcon = Icons.Outlined.Rule
+            unselectedIcon = Icons.Outlined.Rule,
+            visibleForRoles = listOf(UserRole.MONITOR, UserRole.PROTECTED, UserRole.DUAL)
         ),
         BottomNavItem(
             route = AppRoutes.ALERTS,
             label = stringResource(R.string.alerts),
             selectedIcon = Icons.Filled.Notifications,
-            unselectedIcon = Icons.Outlined.Notifications
+            unselectedIcon = Icons.Outlined.Notifications,
+            visibleForRoles = listOf(UserRole.MONITOR)  // Monitor only
+        ),
+        BottomNavItem(
+            route = AppRoutes.TIME_WINDOWS,
+            label = "Time Windows",
+            selectedIcon = Icons.Filled.Schedule,
+            unselectedIcon = Icons.Outlined.Schedule,
+            visibleForRoles = listOf(UserRole.PROTECTED)  // Protected only
+        ),
+        BottomNavItem(
+            route = AppRoutes.ADMINISTRATION,
+            label = "Administration",
+            selectedIcon = Icons.Filled.Settings,
+            unselectedIcon = Icons.Outlined.Settings,
+            visibleForRoles = listOf(UserRole.DUAL)  // Dual only
         ),
         BottomNavItem(
             route = AppRoutes.PROFILE,
@@ -81,21 +104,37 @@ fun getBottomNavItems(): List<BottomNavItem> {
 
 /**
  * Main Bottom Navigation Bar
+ *
+ * Automatically fetches user role from AuthViewModel and filters navigation items accordingly.
+ * Only shows navbar when user role is loaded to prevent glitching.
  */
 @Composable
 fun BottomNavigationBar(
     navController: NavController,
     items: List<BottomNavItem> = getBottomNavItems()
 ) {
+    // Fetch user role from AuthViewModel
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val authState by authViewModel.authState.collectAsState()
+    val userRole = authState.user?.role
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+
+    if (userRole == null) {
+        return
+    }
+
+    val visibleItems = items.filter { item ->
+        item.visibleForRoles.contains(userRole)
+    }
 
     NavigationBar(
         containerColor = Color.White,
         contentColor = PrimaryPurple,
         tonalElevation = 8.dp
     ) {
-        items.forEach { item ->
+        visibleItems.forEach { item ->
             val isSelected = currentDestination?.hierarchy?.any {
                 it.route == item.route
             } == true

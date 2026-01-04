@@ -13,6 +13,10 @@ import androidx.navigation.navArgument
 import com.example.safetysec.presentation.screens.association.AssociationScreen
 import com.example.safetysec.presentation.screens.auth.LogInScreen
 import com.example.safetysec.presentation.screens.auth.RegistrationScreen
+import com.example.safetysec.presentation.screens.auth.ForgotPasswordScreen
+import com.example.safetysec.presentation.screens.auth.PasswordRecoverySuccessScreen
+import com.example.safetysec.presentation.screens.auth.MFASetupScreen
+import com.example.safetysec.presentation.screens.auth.MFAVerificationScreen
 import com.example.safetysec.presentation.screens.dashboard.DashboardScreen
 import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
 import com.example.safetysec.presentation.screens.profile.ChangePasswordScreen
@@ -28,6 +32,7 @@ import com.example.safetysec.presentation.screens.timewindows.TimeWindowsScreen
 import com.example.safetysec.presentation.screens.protectedUser.MonitoringControlScreen
 import com.example.safetysec.presentation.screens.alerts.AlertDetailScreen
 import com.example.safetysec.presentation.screens.alerts.AlertsScreen
+import com.example.safetysec.presentation.screens.administration.AdministrationScreen
 import com.example.safetysec.presentation.screens.profile.ChangeCancellationPinScreen
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
 import com.example.safetysec.presentation.viewmodel.MonitorDashboardViewModel
@@ -53,7 +58,6 @@ fun AppNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        // Auth screens
         composable(AppRoutes.LOGIN) {
             LogInScreen(
                 viewModel = authViewModel,
@@ -64,7 +68,11 @@ fun AppNavHost(
                 },
                 onNavigateToRegister = {
                     navController.navigate(AppRoutes.REGISTER)
-                }
+                },
+                onNavigateToForgotPassword = {
+                    navController.navigate(AppRoutes.FORGOT_PASSWORD)
+                },
+                navController = navController
             )
         }
 
@@ -72,14 +80,38 @@ fun AppNavHost(
             RegistrationScreen(
                 viewModel = authViewModel,
                 onRegistrationSuccess = {
-                    navController.navigate(AppRoutes.DASHBOARD) {
-                        popUpTo(AppRoutes.REGISTER) { inclusive = true }
-                    }
-                }
+                },
+                navController = navController
             )
         }
 
-        // Main Dashboard - Smart routing based on user role
+        composable(AppRoutes.FORGOT_PASSWORD) {
+            ForgotPasswordScreen(
+                navController = navController,
+                viewModel = authViewModel
+            )
+        }
+
+        composable(AppRoutes.PASSWORD_RECOVERY_SUCCESS) {
+            PasswordRecoverySuccessScreen(
+                navController = navController
+            )
+        }
+
+        composable(AppRoutes.MFA_SETUP) {
+            MFASetupScreen(
+                navController = navController,
+                viewModel = authViewModel
+            )
+        }
+
+        composable(AppRoutes.MFA_VERIFICATION) {
+            MFAVerificationScreen(
+                navController = navController,
+                viewModel = authViewModel
+            )
+        }
+
         composable(AppRoutes.DASHBOARD) {
             DashboardScreen(
                 navController = navController,
@@ -87,7 +119,6 @@ fun AppNavHost(
             )
         }
 
-        // Role-specific dashboards (can be accessed directly)
         composable(AppRoutes.MONITOR) {
             MonitorDashScreen(
                 navController = navController,
@@ -99,14 +130,12 @@ fun AppNavHost(
             ProtectedDashboardScreen(navController = navController)
         }
 
-        // Monitoring Control Screen (NEW)
         composable(AppRoutes.MONITORING_CONTROL) {
             MonitoringControlScreen(
                 onNavigateBack = { navController.navigateUp() }
             )
         }
 
-        // Main screens (with bottom navigation)
         composable(AppRoutes.ASSOCIATIONS) {
             AssociationScreen(
                 navController = navController,
@@ -120,6 +149,10 @@ fun AppNavHost(
 
         composable(AppRoutes.ALERTS) {
             AlertsScreen(navController = navController)
+        }
+
+        composable(AppRoutes.ADMINISTRATION) {
+            AdministrationScreen(navController = navController)
         }
 
         composable(AppRoutes.PROFILE) {
@@ -170,9 +203,16 @@ fun AppNavHost(
             )
         }
 
-        // Add this to AppNavHost.kt composable navigation
+        composable(AppRoutes.TIME_WINDOWS) {
+            TimeWindowsScreen(navController = navController)
+        }
 
-// Alert Detail Screen
+        composable(AppRoutes.SHOWCASE) {
+            ComponentsShowcaseScreen(
+                onNavigateBack = { navController.navigateUp() }
+            )
+        }
+
         composable(
             route = AppRoutes.ALERT_DETAIL,
             arguments = listOf(
