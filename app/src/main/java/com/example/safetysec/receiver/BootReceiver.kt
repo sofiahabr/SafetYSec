@@ -31,7 +31,7 @@ class BootReceiver : BroadcastReceiver() {
                 val wasMonitoringActive = checkMonitoringState(it)
 
                 if (wasMonitoringActive) {
-                    // CRITICAL: Check permissions before starting service
+                    // Check permissions before starting service
                     if (hasRequiredPermissions(it)) {
                         Log.d(TAG, "Permissions granted - restarting monitoring service")
                         MonitoringService.startMonitoring(it)
@@ -51,7 +51,7 @@ class BootReceiver : BroadcastReceiver() {
 
     /**
      * Check if all required permissions are granted
-     * CRITICAL: Must check permissions before starting MonitoringService
+     *  Must check permissions before starting MonitoringService
      */
     private fun hasRequiredPermissions(context: Context): Boolean {
         val requiredPermissions = mutableListOf(
