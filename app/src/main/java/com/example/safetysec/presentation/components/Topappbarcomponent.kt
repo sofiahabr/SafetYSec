@@ -7,7 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.example.safetysec.R
 import com.example.safetysec.presentation.theme.PrimaryPurple
 
 /**
@@ -40,7 +42,7 @@ fun CustomTopAppBar(
             IconButton(onClick = onNavigationClick) {
                 Icon(
                     imageVector = navigationIcon,
-                    contentDescription = "Navigate back"
+                    contentDescription = stringResource(R.string.navigate_back)
                 )
             }
         },
@@ -106,7 +108,7 @@ fun CenteredTopAppBar(
             IconButton(onClick = onNavigationClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Navigate back"
+                    contentDescription = stringResource(R.string.navigate_back)
                 )
             }
         },
@@ -137,7 +139,7 @@ fun TransparentTopAppBar(
             IconButton(onClick = onNavigationClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Navigate back",
+                    contentDescription = stringResource(R.string.navigate_back),
                     tint = Color.White
                 )
             }
@@ -162,7 +164,7 @@ fun SearchTopAppBar(
     onSearchQueryChange: (String) -> Unit,
     onNavigationClick: () -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = "Search...",
+    placeholder: String = stringResource(R.string.search_placeholder),
     onSearch: () -> Unit = {}
 ) {
     TopAppBar(
@@ -180,7 +182,7 @@ fun SearchTopAppBar(
             IconButton(onClick = onNavigationClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Navigate back"
+                    contentDescription = stringResource(R.string.navigate_back)
                 )
             }
         },
@@ -206,7 +208,7 @@ fun TopAppBarActions(
         IconButton(onClick = onSearchClick) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search"
+                contentDescription = stringResource(R.string.search)
             )
         }
     }
@@ -215,7 +217,7 @@ fun TopAppBarActions(
         IconButton(onClick = onNotificationsClick) {
             Icon(
                 imageVector = Icons.Default.Notifications,
-                contentDescription = "Notifications"
+                contentDescription = stringResource(R.string.notifications)
             )
         }
     }
@@ -224,7 +226,7 @@ fun TopAppBarActions(
         IconButton(onClick = onSettingsClick) {
             Icon(
                 imageVector = Icons.Default.Settings,
-                contentDescription = "Settings"
+                contentDescription = stringResource(R.string.settings)
             )
         }
     }
@@ -233,7 +235,7 @@ fun TopAppBarActions(
         IconButton(onClick = onMoreClick) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
-                contentDescription = "More options"
+                contentDescription = stringResource(R.string.more_options)
             )
         }
     }

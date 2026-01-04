@@ -102,7 +102,7 @@ class MonitoringService : Service() {
 
         when (intent?.action) {
             ACTION_START_MONITORING -> {
-                // CRITICAL: Check permissions before starting
+                // Checking permissions before starting
                 if (!hasRequiredPermissions()) {
                     Log.e(TAG, "Cannot start monitoring: missing required permissions")
                     stopSelf()
@@ -121,7 +121,7 @@ class MonitoringService : Service() {
     }
 
     /**
-     * CRITICAL: Check if all required permissions are granted
+     * Check if all required permissions are granted
      * Required for Android 14+ (API 34+) to start foreground service
      */
     private fun hasRequiredPermissions(): Boolean {
@@ -142,7 +142,7 @@ class MonitoringService : Service() {
     }
 
     /**
-     * CRITICAL: Handle panic button press
+     * Handle panic button press
      * This method ensures panic button goes through the same flow as automatic alerts
      * which includes video recording, cancellation window, and FCM notifications
      */
@@ -194,8 +194,7 @@ class MonitoringService : Service() {
                     sensorData = sensorData
                 )
 
-                // CRITICAL: Call triggerAlert which includes video recording!
-                Log.d(TAG, "Triggering panic alert through normal flow (includes video)")
+                // Call triggerAlert which includes video recording!
                 triggerAlert(detectionResult, monitoringState, sensorData)
 
             } catch (e: Exception) {
@@ -706,7 +705,7 @@ class MonitoringService : Service() {
         }
 
         /**
-         * CRITICAL: Trigger panic button with video recording
+         * Trigger panic button with video recording
          * This ensures the panic button goes through MonitoringService
          * so video recording is triggered properly
          */

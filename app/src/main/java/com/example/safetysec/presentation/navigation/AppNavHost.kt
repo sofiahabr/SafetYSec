@@ -18,7 +18,6 @@ import com.example.safetysec.presentation.screens.auth.PasswordRecoverySuccessSc
 import com.example.safetysec.presentation.screens.auth.MFASetupScreen
 import com.example.safetysec.presentation.screens.auth.MFAVerificationScreen
 import com.example.safetysec.presentation.screens.dashboard.DashboardScreen
-import com.example.safetysec.presentation.screens.home.HomeScreen
 import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
 import com.example.safetysec.presentation.screens.profile.ChangePasswordScreen
 import com.example.safetysec.presentation.screens.profile.EditProfileScreen
@@ -30,7 +29,7 @@ import com.example.safetysec.presentation.screens.rules.EditRuleScreen
 import com.example.safetysec.presentation.screens.rules.RulesScreen
 import com.example.safetysec.presentation.screens.showcase.ComponentsShowcaseScreen
 import com.example.safetysec.presentation.screens.timewindows.TimeWindowsScreen
-import com.example.safetysec.presentation.protectedUser.MonitoringControlScreen
+import com.example.safetysec.presentation.screens.protectedUser.MonitoringControlScreen
 import com.example.safetysec.presentation.screens.alerts.AlertDetailScreen
 import com.example.safetysec.presentation.screens.alerts.AlertsScreen
 import com.example.safetysec.presentation.screens.administration.AdministrationScreen
@@ -160,6 +159,7 @@ fun AppNavHost(
             ProfileScreen(navController = navController)
         }
 
+        // Profile sub-screens
         composable(AppRoutes.EDIT_PROFILE) {
             EditProfileScreen(navController = navController)
         }
@@ -176,8 +176,20 @@ fun AppNavHost(
             SettingsScreen(navController = navController)
         }
 
+        // Rules management screens
         composable(AppRoutes.CREATE_RULE) {
             CreateRuleScreen(navController = navController)
+        }
+
+        // Time windows screen
+        composable(AppRoutes.TIME_WINDOWS) {
+            TimeWindowsScreen(navController = navController)
+        }
+
+        composable(AppRoutes.SHOWCASE) {
+            ComponentsShowcaseScreen(
+                onNavigateBack = { navController.navigateUp() }
+            )
         }
 
         composable(
@@ -193,10 +205,6 @@ fun AppNavHost(
 
         composable(AppRoutes.TIME_WINDOWS) {
             TimeWindowsScreen(navController = navController)
-        }
-
-        composable(AppRoutes.HOME) {
-            HomeScreen(navController = navController)
         }
 
         composable(AppRoutes.SHOWCASE) {

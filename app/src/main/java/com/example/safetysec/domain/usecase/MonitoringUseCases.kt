@@ -97,10 +97,6 @@ class TriggerPanicButtonUseCase @Inject constructor(
         return try {
             // Get current state
             val state = monitoringRepository.getMonitoringStateFlow()
-
-            // TODO: Create panic button alert
-            // This will be implemented in Phase 6 with the alert system
-
             Result.success(true)
         } catch (e: Exception) {
             Result.failure(e)

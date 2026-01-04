@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.theme.PrimaryPurple
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
@@ -44,6 +46,13 @@ fun ChangeCancellationPinScreen(
 ) {
     val authState by viewModel.authState.collectAsState()
     val scope = rememberCoroutineScope()
+
+    // Get validation error strings
+    val errorCurrentPinIncorrect = stringResource(R.string.error_current_pin_incorrect)
+    val errorPinMustBe4Digits = stringResource(R.string.error_pin_must_be_4_digits)
+    val errorPinOnlyNumbers = stringResource(R.string.error_pin_only_numbers)
+    val errorPinsDontMatch = stringResource(R.string.error_pins_dont_match)
+    val errorPinWeak = stringResource(R.string.error_pin_weak)
 
     var currentPin by remember { mutableStateOf("") }
     var newPin by remember { mutableStateOf("") }
@@ -97,14 +106,17 @@ fun ChangeCancellationPinScreen(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = if (hasExistingPin) "Change Cancellation PIN" else "Set Cancellation PIN",
+                title = if (hasExistingPin)
+                    stringResource(R.string.change_cancellation_pin)
+                else
+                    stringResource(R.string.set_cancellation_pin),
                 onNavigationClick = { navController.navigateUp() },
                 actions = {
                     // Debug toggle button
                     IconButton(onClick = { showDebug = !showDebug }) {
                         Icon(
                             imageVector = Icons.Default.BugReport,
-                            contentDescription = "Toggle Debug Info"
+                            contentDescription = stringResource(R.string.toggle_debug)
                         )
                     }
                 }
@@ -173,13 +185,13 @@ fun ChangeCancellationPinScreen(
                     )
                     Column {
                         Text(
-                            text = "About Cancellation PIN",
+                            text = stringResource(R.string.about_cancellation_pin),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Your 4-digit PIN is used to cancel alerts within the 10-second window. Keep it secure and memorable!",
+                            text = stringResource(R.string.about_cancellation_pin_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
@@ -207,14 +219,14 @@ fun ChangeCancellationPinScreen(
                         )
                         Column {
                             Text(
-                                text = "First Time Setup",
+                                text = stringResource(R.string.first_time_setup),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF2196F3)
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "You haven't set a cancellation PIN yet. Choose a 4-digit PIN that you'll remember easily in emergencies.",
+                                text = stringResource(R.string.first_time_setup_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
@@ -240,14 +252,14 @@ fun ChangeCancellationPinScreen(
                         )
                         Column {
                             Text(
-                                text = "Update Your PIN",
+                                text = stringResource(R.string.update_your_pin),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFFFF9800)
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "You have an old ${actualPin.length}-digit PIN from a previous version. Please update it to a new 4-digit PIN for better security.",
+                                text = stringResource(R.string.update_pin_desc, actualPin.length),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
@@ -271,7 +283,7 @@ fun ChangeCancellationPinScreen(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Current PIN") },
+                    label = { Text(stringResource(R.string.current_pin)) },
                     placeholder = { Text("*".repeat(actualPin?.length ?: 4)) },
                     visualTransformation = if (showCurrentPin) {
                         VisualTransformation.None
@@ -290,12 +302,15 @@ fun ChangeCancellationPinScreen(
                                 } else {
                                     Icons.Default.VisibilityOff
                                 },
-                                contentDescription = if (showCurrentPin) "Hide PIN" else "Show PIN"
+                                contentDescription = if (showCurrentPin)
+                                    stringResource(R.string.hide_pin)
+                                else
+                                    stringResource(R.string.show_pin)
                             )
                         }
                     },
                     supportingText = {
-                        Text("Enter your current ${actualPin?.length ?: 4}-digit PIN")
+                        Text(stringResource(R.string.enter_current_pin, actualPin?.length ?: 4))
                     }
                 )
             }
@@ -310,7 +325,7 @@ fun ChangeCancellationPinScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(if (hasExistingPin) "New PIN" else "Create PIN") },
+                label = { Text(if (hasExistingPin) stringResource(R.string.new_pin) else stringResource(R.string.create_pin)) },
                 placeholder = { Text("****") },
                 visualTransformation = if (showNewPin) {
                     VisualTransformation.None
@@ -329,12 +344,15 @@ fun ChangeCancellationPinScreen(
                             } else {
                                 Icons.Default.VisibilityOff
                             },
-                            contentDescription = if (showNewPin) "Hide PIN" else "Show PIN"
+                            contentDescription = if (showNewPin)
+                                stringResource(R.string.hide_pin)
+                            else
+                                stringResource(R.string.show_pin)
                         )
                     }
                 },
                 supportingText = {
-                    Text("Choose a 4-digit PIN (0000-9999)")
+                    Text(stringResource(R.string.choose_4_digit_pin))
                 }
             )
 
@@ -348,7 +366,7 @@ fun ChangeCancellationPinScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Confirm PIN") },
+                label = { Text(stringResource(R.string.confirm_pin)) },
                 placeholder = { Text("****") },
                 visualTransformation = if (showConfirmPin) {
                     VisualTransformation.None
@@ -367,20 +385,31 @@ fun ChangeCancellationPinScreen(
                                 newPin = newPin,
                                 confirmPin = confirmPin,
                                 existingPin = actualPin ?: "",
-                                onError = { errorMessage = it }
+                                onError = { errorMessage = it },
+                                errorCurrentPinIncorrect = errorCurrentPinIncorrect,
+                                errorPinMustBe4Digits = errorPinMustBe4Digits,
+                                errorPinOnlyNumbers = errorPinOnlyNumbers,
+                                errorPinsDontMatch = errorPinsDontMatch,
+                                errorPinWeak = errorPinWeak
                             )
                         ) {
                             isProcessing = true
                             viewModel.updateCancellationPin(newPin) { success, error ->
                                 isProcessing = false
                                 if (success) {
-                                    successMessage = "PIN ${if (hasExistingPin) "updated" else "created"} successfully!"
+                                    successMessage = if (hasExistingPin)
+                                        "PIN updated successfully!"
+                                    else
+                                        "PIN created successfully!"
                                     scope.launch {
                                         delay(1500)
                                         navController.navigateUp()
                                     }
                                 } else {
-                                    errorMessage = error ?: "Failed to ${if (hasExistingPin) "update" else "create"} PIN"
+                                    errorMessage = error ?: if (hasExistingPin)
+                                        "Failed to update PIN"
+                                    else
+                                        "Failed to create PIN"
                                 }
                             }
                         }
@@ -394,12 +423,15 @@ fun ChangeCancellationPinScreen(
                             } else {
                                 Icons.Default.VisibilityOff
                             },
-                            contentDescription = if (showConfirmPin) "Hide PIN" else "Show PIN"
+                            contentDescription = if (showConfirmPin)
+                                stringResource(R.string.hide_pin)
+                            else
+                                stringResource(R.string.show_pin)
                         )
                     }
                 },
                 supportingText = {
-                    Text("Re-enter your new 4-digit PIN")
+                    Text(stringResource(R.string.reenter_new_pin))
                 }
             )
 
@@ -443,9 +475,9 @@ fun ChangeCancellationPinScreen(
             // Save Button
             PrimaryButton(
                 text = if (isProcessing) {
-                    "Saving..."
+                    stringResource(R.string.saving)
                 } else {
-                    if (hasExistingPin) "Update PIN" else "Create PIN"
+                    if (hasExistingPin) stringResource(R.string.update_pin) else stringResource(R.string.create_pin)
                 },
                 onClick = {
                     if (validateInputs(
@@ -454,20 +486,31 @@ fun ChangeCancellationPinScreen(
                             newPin = newPin,
                             confirmPin = confirmPin,
                             existingPin = actualPin ?: "",
-                            onError = { errorMessage = it }
+                            onError = { errorMessage = it },
+                            errorCurrentPinIncorrect = errorCurrentPinIncorrect,
+                            errorPinMustBe4Digits = errorPinMustBe4Digits,
+                            errorPinOnlyNumbers = errorPinOnlyNumbers,
+                            errorPinsDontMatch = errorPinsDontMatch,
+                            errorPinWeak = errorPinWeak
                         )
                     ) {
                         isProcessing = true
                         viewModel.updateCancellationPin(newPin) { success, error ->
                             isProcessing = false
                             if (success) {
-                                successMessage = "PIN ${if (hasExistingPin) "updated" else "created"} successfully!"
+                                successMessage = if (hasExistingPin)
+                                    "PIN updated successfully!"
+                                else
+                                    "PIN created successfully!"
                                 scope.launch {
                                     delay(1500)
                                     navController.navigateUp()
                                 }
                             } else {
-                                errorMessage = error ?: "Failed to ${if (hasExistingPin) "update" else "create"} PIN"
+                                errorMessage = error ?: if (hasExistingPin)
+                                    "Failed to update PIN"
+                                else
+                                    "Failed to create PIN"
                             }
                         }
                     }
@@ -489,25 +532,25 @@ fun ChangeCancellationPinScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "PIN Requirements:",
+                        text = stringResource(R.string.pin_requirements),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     PinRequirementRow(
-                        text = "Must be exactly 4 digits",
+                        text = stringResource(R.string.pin_must_be_4_digits),
                         isMet = newPin.length == 4
                     )
                     PinRequirementRow(
-                        text = "Only numbers (0-9)",
+                        text = stringResource(R.string.pin_only_numbers),
                         isMet = newPin.all { it.isDigit() }
                     )
                     PinRequirementRow(
-                        text = "New PIN and confirmation must match",
+                        text = stringResource(R.string.pin_must_match),
                         isMet = newPin == confirmPin && newPin.isNotEmpty()
                     )
                     if (hasExistingPin) {
                         PinRequirementRow(
-                            text = "Current PIN must be entered",
+                            text = stringResource(R.string.current_pin_required),
                             isMet = currentPin.length == (actualPin?.length ?: 4)
                         )
                     }
@@ -526,35 +569,40 @@ private fun validateInputs(
     newPin: String,
     confirmPin: String,
     existingPin: String,
-    onError: (String) -> Unit
+    onError: (String) -> Unit,
+    errorCurrentPinIncorrect: String,
+    errorPinMustBe4Digits: String,
+    errorPinOnlyNumbers: String,
+    errorPinsDontMatch: String,
+    errorPinWeak: String
 ): Boolean {
     // Validate current PIN if user has existing PIN
     if (hasExistingPin && currentPin != existingPin) {
-        onError("Current PIN is incorrect")
+        onError(errorCurrentPinIncorrect)
         return false
     }
 
     // Validate new PIN length
     if (newPin.length != 4) {
-        onError("New PIN must be exactly 4 digits")
+        onError(errorPinMustBe4Digits)
         return false
     }
 
     // Validate new PIN is numeric
     if (!newPin.all { it.isDigit() }) {
-        onError("PIN must contain only numbers")
+        onError(errorPinOnlyNumbers)
         return false
     }
 
     // Validate PINs match
     if (newPin != confirmPin) {
-        onError("New PIN and confirmation do not match")
+        onError(errorPinsDontMatch)
         return false
     }
 
     // Warn about weak PINs
     if (newPin == "0000" || newPin == "1234" || newPin == "9999") {
-        onError("Consider using a more secure PIN")
+        onError(errorPinWeak)
         return false
     }
 

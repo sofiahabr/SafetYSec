@@ -20,9 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.safetysec.R
 import androidx.navigation.NavController
 import com.example.safetysec.presentation.components.CustomTextField
 import com.example.safetysec.presentation.components.PhoneTextField
@@ -55,7 +57,10 @@ fun RegistrationScreen(
 
     val authState by viewModel.authState.collectAsStateWithLifecycle()
 
-    // Navigate to MFA setup after successful registration
+    val passwordMismatchErrorText = stringResource(R.string.password_error_mismatch)
+    val weakPasswordErrorText = stringResource(R.string.password_error_weak)
+    val weakPasswordLabel = stringResource(R.string.password_strength_weak)
+
     LaunchedEffect(authState.isAuthenticated) {
         if (authState.isAuthenticated && authState.user != null) {
             navController.navigate(AppRoutes.MFA_SETUP) {
@@ -72,7 +77,7 @@ fun RegistrationScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "Create Account",
+            stringResource(R.string.create_account),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -80,8 +85,8 @@ fun RegistrationScreen(
 
         // Info Card
         InfoAlert(
-            title = "Password Requirements",
-            message = "• At least 8 characters\n• Contains uppercase and lowercase\n• Contains at least one number\n• Contains special character"
+            title = stringResource(R.string.password_requirements),
+            message = stringResource(R.string.password_requirements_desc)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -97,7 +102,7 @@ fun RegistrationScreen(
         CustomTextField(
             value = name,
             onValueChange = { name = it },
-            label = "Full Name"
+            label = stringResource(R.string.full_name)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -116,7 +121,7 @@ fun RegistrationScreen(
                 password = it
                 passwordError = null
             },
-            label = "Password",
+            label = stringResource(R.string.password),
             isError = passwordError != null,
             errorMessage = passwordError,
             imeAction = ImeAction.Next
@@ -136,7 +141,7 @@ fun RegistrationScreen(
                 confirmPassword = it
                 confirmPasswordError = null
             },
-            label = "Confirm Password",
+            label = stringResource(R.string.confirm_password),
             isError = confirmPasswordError != null,
             errorMessage = confirmPasswordError,
             imeAction = ImeAction.Done
@@ -145,7 +150,7 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            "Select Role",
+            stringResource(R.string.select_role),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.align(Alignment.Start)
         )
@@ -165,9 +170,9 @@ fun RegistrationScreen(
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text("Monitor", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.monitor), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "I want to monitor others",
+                    stringResource(R.string.role_monitor_desc),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -186,9 +191,9 @@ fun RegistrationScreen(
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text("Protected", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.protected_user), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "I want to be monitored",
+                    stringResource(R.string.role_protected_desc),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -207,9 +212,9 @@ fun RegistrationScreen(
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text("Both", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.dual), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "I want both roles",
+                    stringResource(R.string.role_dual_desc),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -218,17 +223,17 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = "Register",
+            text = stringResource(R.string.register),
             onClick = {
                 var isValid = true
 
                 if (password != confirmPassword) {
-                    confirmPasswordError = "Passwords do not match"
+                    confirmPasswordError = passwordMismatchErrorText
                     isValid = false
                 }
 
-                if (calculatePasswordStrength(password).label == "Weak") {
-                    passwordError = "Password is too weak"
+                if (calculatePasswordStrength(password).label == weakPasswordLabel) {
+                    passwordError = weakPasswordErrorText
                     isValid = false
                 }
 

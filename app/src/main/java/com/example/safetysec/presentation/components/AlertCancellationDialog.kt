@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.AlertType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -44,6 +46,10 @@ fun AlertCancellationDialog(
     var cancellationCode by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     var isProcessing by remember { mutableStateOf(false) }
+
+    // Get strings outside lambdas
+    val errorPleaseEnter4Digit = stringResource(R.string.error_please_enter_4_digit)
+    val errorIncorrectPin = stringResource(R.string.error_incorrect_pin_try_again)
 
     // Countdown timer
     LaunchedEffect(Unit) {
@@ -110,7 +116,7 @@ fun AlertCancellationDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Warning,
-                        contentDescription = "Alert",
+                        contentDescription = stringResource(R.string.alert),
                         tint = Color.White,
                         modifier = Modifier.size(48.dp)
                     )
@@ -126,7 +132,7 @@ fun AlertCancellationDialog(
 
                 // Alert Message
                 Text(
-                    text = "An alert has been detected and will be sent to your monitors unless cancelled.",
+                    text = stringResource(R.string.alert_will_be_sent_message),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     color = Color.Gray
@@ -140,7 +146,7 @@ fun AlertCancellationDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Time Remaining",
+                        text = stringResource(R.string.time_remaining),
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.Gray
                     )
@@ -165,7 +171,7 @@ fun AlertCancellationDialog(
                     }
 
                     Text(
-                        text = "seconds",
+                        text = stringResource(R.string.seconds),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
@@ -179,7 +185,7 @@ fun AlertCancellationDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Enter Your Cancellation PIN",
+                        text = stringResource(R.string.enter_your_cancellation_pin),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -193,7 +199,7 @@ fun AlertCancellationDialog(
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("4-Digit PIN") },
+                        label = { Text(stringResource(R.string.four_digit_pin)) },
                         placeholder = { Text("****") },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(
@@ -208,7 +214,9 @@ fun AlertCancellationDialog(
                                         correctCode = userCancellationCode,
                                         onSuccess = { onCancel(cancellationCode) },
                                         onError = { errorMessage = it },
-                                        setProcessing = { isProcessing = it }
+                                        setProcessing = { isProcessing = it },
+                                        errorPleaseEnter4Digit = errorPleaseEnter4Digit,
+                                        errorIncorrectPin = errorIncorrectPin
                                     )
                                 }
                             }
@@ -238,7 +246,7 @@ fun AlertCancellationDialog(
                         modifier = Modifier.weight(1f),
                         enabled = !isProcessing
                     ) {
-                        Text("Let Alert Send")
+                        Text(stringResource(R.string.let_alert_send))
                     }
 
                     // Cancel Alert Button
@@ -249,7 +257,9 @@ fun AlertCancellationDialog(
                                 correctCode = userCancellationCode,
                                 onSuccess = { onCancel(cancellationCode) },
                                 onError = { errorMessage = it },
-                                setProcessing = { isProcessing = it }
+                                setProcessing = { isProcessing = it },
+                                errorPleaseEnter4Digit = errorPleaseEnter4Digit,
+                                errorIncorrectPin = errorIncorrectPin
                             )
                         },
                         modifier = Modifier.weight(1f),
@@ -271,14 +281,14 @@ fun AlertCancellationDialog(
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Cancel Alert")
+                            Text(stringResource(R.string.cancel_alert))
                         }
                     }
                 }
 
                 // Helper text
                 Text(
-                    text = "Enter your 4-digit PIN to cancel this alert",
+                    text = stringResource(R.string.enter_4_digit_pin_helper),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray,
                     textAlign = TextAlign.Center
@@ -296,10 +306,12 @@ private fun handleCancellation(
     correctCode: String,
     onSuccess: () -> Unit,
     onError: (String) -> Unit,
-    setProcessing: (Boolean) -> Unit
+    setProcessing: (Boolean) -> Unit,
+    errorPleaseEnter4Digit: String,
+    errorIncorrectPin: String
 ) {
     if (enteredCode.length != 4) {
-        onError("Please enter a 4-digit PIN")
+        onError(errorPleaseEnter4Digit)
         return
     }
 
@@ -310,18 +322,19 @@ private fun handleCancellation(
         onSuccess()
     } else {
         setProcessing(false)
-        onError("Incorrect PIN. Please try again.")
+        onError(errorIncorrectPin)
     }
 }
 
 /**
  * Extension function to display alert types
  */
+@Composable
 fun AlertType.toDisplayString(): String = when (this) {
-    AlertType.FALL_DETECTED -> "⚠️ Fall Detected"
-    AlertType.SPEED_ALERT -> "🚗 Speed Alert"
-    AlertType.GEOFENCE_BREACH -> "📍 Geofence Breach"
-    AlertType.ACCIDENT_DETECTED -> "🚨 Accident Detected"
-    AlertType.PROLONGED_INACTIVITY -> "💤 Inactivity Alert"
-    AlertType.PANIC_BUTTON -> "🆘 Panic Button"
+    AlertType.FALL_DETECTED -> stringResource(R.string.alert_type_fall_detected)
+    AlertType.SPEED_ALERT -> stringResource(R.string.alert_type_speed_alert)
+    AlertType.GEOFENCING -> stringResource(R.string.alert_type_geofence_breach)
+    AlertType.ACCIDENT_DETECTED -> stringResource(R.string.alert_type_accident_detected)
+    AlertType.PROLONGED_INACTIVITY -> stringResource(R.string.alert_type_inactivity)
+    AlertType.PANIC_BUTTON -> stringResource(R.string.alert_type_panic_button)
 }

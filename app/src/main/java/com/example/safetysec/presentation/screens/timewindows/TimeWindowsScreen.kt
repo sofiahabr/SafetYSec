@@ -11,10 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.DayOfWeek
 import com.example.safetysec.domain.model.TimeWindow
 import com.example.safetysec.presentation.components.*
@@ -33,7 +35,7 @@ fun TimeWindowsScreen(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                title = "Monitoring Windows",
+                title = stringResource(R.string.monitoring_time_windows),
             )
         },
         bottomBar = {
@@ -46,7 +48,7 @@ fun TimeWindowsScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Time Window",
+                    contentDescription = stringResource(R.string.add_time_window),
                     tint = Color.White
                 )
             }
@@ -59,7 +61,7 @@ fun TimeWindowsScreen(
         ) {
             when {
                 uiState.isLoading && uiState.timeWindows.isEmpty() -> {
-                    FullScreenLoading(message = "Loading time windows...")
+                    FullScreenLoading(message = stringResource(R.string.loading_time_windows))
                 }
                 uiState.error != null -> {
                     Column(
@@ -68,7 +70,7 @@ fun TimeWindowsScreen(
                             .padding(16.dp)
                     ) {
                         ErrorAlert(
-                            message = uiState.error ?: "An error occurred",
+                            message = uiState.error ?: stringResource(R.string.error_unknown),
                             onDismiss = { viewModel.clearError() }
                         )
                     }
@@ -88,7 +90,7 @@ fun TimeWindowsScreen(
             }
 
             if (uiState.isLoading && uiState.timeWindows.isNotEmpty()) {
-                LoadingDialog(message = "Processing...")
+                LoadingDialog(message = stringResource(R.string.processing))
             }
         }
     }
@@ -140,8 +142,8 @@ private fun TimeWindowsContent(
     ) {
         // Info card
         InfoAlert(
-            title = "About Time Windows",
-            message = "Time windows define when monitors can track your safety. Rules will only be active during these times."
+            title = stringResource(R.string.about_time_windows),
+            message = stringResource(R.string.about_time_windows_desc)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -149,8 +151,8 @@ private fun TimeWindowsContent(
         if (timeWindows.isEmpty()) {
             EmptyState(
                 icon = Icons.Default.Schedule,
-                title = "No Time Windows",
-                message = "You haven't created any monitoring time windows yet. Tap the + button to create one.",
+                title = stringResource(R.string.no_time_windows),
+                message = stringResource(R.string.no_time_windows_desc),
                 modifier = Modifier.fillMaxSize()
             )
         } else {
@@ -214,7 +216,7 @@ private fun TimeWindowCard(
                         )
                         if (timeWindow.monitorName.isNotBlank()) {
                             Text(
-                                text = "Monitor: ${timeWindow.monitorName}",
+                                text = "${stringResource(R.string.monitor)}: ${timeWindow.monitorName}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
@@ -274,7 +276,7 @@ private fun TimeWindowCard(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = "Currently Active",
+                        text = stringResource(R.string.currently_active),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF4CAF50),
                         fontWeight = FontWeight.Bold
@@ -289,13 +291,13 @@ private fun TimeWindowCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 SecondaryButton(
-                    text = "Edit",
+                    text = stringResource(R.string.edit),
                     onClick = onEdit,
                     modifier = Modifier.weight(1f)
                 )
 
                 DangerButton(
-                    text = "Delete",
+                    text = stringResource(R.string.delete),
                     onClick = { showDeleteDialog = true },
                     modifier = Modifier.weight(1f)
                 )
@@ -306,8 +308,8 @@ private fun TimeWindowCard(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Time Window") },
-            text = { Text("Are you sure you want to delete this monitoring window?") },
+            title = { Text(stringResource(R.string.delete_time_window)) },
+            text = { Text(stringResource(R.string.delete_time_window_confirm)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -318,12 +320,12 @@ private fun TimeWindowCard(
                         containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -349,7 +351,12 @@ private fun TimeWindowDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(if (timeWindow == null) "Create Time Window" else "Edit Time Window")
+            Text(
+                if (timeWindow == null)
+                    stringResource(R.string.create_time_window)
+                else
+                    stringResource(R.string.edit_time_window)
+            )
         },
         text = {
             Column(
@@ -358,7 +365,7 @@ private fun TimeWindowDialog(
             ) {
                 // Days selection
                 Text(
-                    text = "Select Days",
+                    text = stringResource(R.string.select_days),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -385,7 +392,7 @@ private fun TimeWindowDialog(
 
                 // Time selection
                 Text(
-                    text = "Time Range",
+                    text = stringResource(R.string.time_range),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -393,14 +400,14 @@ private fun TimeWindowDialog(
                 CustomTextField(
                     value = startTime,
                     onValueChange = { startTime = it },
-                    label = "Start Time (HH:mm)",
+                    label = stringResource(R.string.start_time_hhmm),
                     placeholder = "09:00"
                 )
 
                 CustomTextField(
                     value = endTime,
                     onValueChange = { endTime = it },
-                    label = "End Time (HH:mm)",
+                    label = stringResource(R.string.end_time_hhmm),
                     placeholder = "17:00"
                 )
             }
@@ -412,12 +419,17 @@ private fun TimeWindowDialog(
                 },
                 enabled = selectedDays.isNotEmpty() && startTime.isNotBlank() && endTime.isNotBlank()
             ) {
-                Text(if (timeWindow == null) "Create" else "Save")
+                Text(
+                    if (timeWindow == null)
+                        stringResource(R.string.create)
+                    else
+                        stringResource(R.string.save)
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

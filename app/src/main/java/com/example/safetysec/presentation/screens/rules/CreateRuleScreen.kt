@@ -8,10 +8,12 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.*
 import com.example.safetysec.presentation.components.*
 import com.example.safetysec.presentation.viewmodel.CreateRuleViewModel
@@ -34,7 +36,7 @@ fun CreateRuleScreen(
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = "Create Rule",
+                title = stringResource(R.string.create_rule),
                 onNavigationClick = { navController.navigateUp() }
             )
         }
@@ -62,11 +64,11 @@ fun CreateRuleScreen(
                 // Protected User Selection
                 if (uiState.availableProtectedUsers.isEmpty()) {
                     WarningAlert(
-                        message = "You don't have any active protected users. Please establish an association first."
+                        message = stringResource(R.string.no_active_associations)
                     )
                 } else {
                     Text(
-                        text = "Select Protected User",
+                        text = stringResource(R.string.select_protected_user),
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -91,7 +93,7 @@ fun CreateRuleScreen(
                                 if (uiState.selectedProtectedUser == user) {
                                     Icon(
                                         imageVector = Icons.Default.CheckCircle,
-                                        contentDescription = "Selected"
+                                        contentDescription = stringResource(R.string.selected)
                                     )
                                 }
                             }
@@ -102,7 +104,7 @@ fun CreateRuleScreen(
 
                     // Rule Type Selection
                     Text(
-                        text = "Select Rule Type",
+                        text = stringResource(R.string.select_rule_type),
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -132,7 +134,7 @@ fun CreateRuleScreen(
                                 if (uiState.selectedRuleType == ruleType) {
                                     Icon(
                                         imageVector = Icons.Default.CheckCircle,
-                                        contentDescription = "Selected"
+                                        contentDescription = stringResource(R.string.selected)
                                     )
                                 }
                             }
@@ -158,7 +160,7 @@ fun CreateRuleScreen(
 
                     // Create button
                     PrimaryButton(
-                        text = "Create Rule",
+                        text = stringResource(R.string.create_rule),
                         onClick = { viewModel.createRule() },
                         isLoading = uiState.isLoading,
                         enabled = uiState.selectedProtectedUser != null
@@ -167,7 +169,7 @@ fun CreateRuleScreen(
             }
 
             if (uiState.isLoading) {
-                LoadingDialog(message = "Creating rule...")
+                LoadingDialog(message = stringResource(R.string.creating_rule))
             }
         }
     }
@@ -187,7 +189,7 @@ private fun RuleParametersInput(
     var showAddAreaDialog by remember { mutableStateOf(false) }
 
     Text(
-        text = "Parameters",
+        text = stringResource(R.string.parameters),
         style = MaterialTheme.typography.titleMedium
     )
 
@@ -196,7 +198,7 @@ private fun RuleParametersInput(
             CustomTextField(
                 value = maxSpeed,
                 onValueChange = onMaxSpeedChange,
-                label = "Maximum Speed (km/h)",
+                label = stringResource(R.string.max_speed_kmh),
                 keyboardType = KeyboardType.Number
             )
         }
@@ -204,14 +206,14 @@ private fun RuleParametersInput(
             CustomTextField(
                 value = inactivityDuration,
                 onValueChange = onInactivityDurationChange,
-                label = "Duration (minutes)",
+                label = stringResource(R.string.duration_minutes),
                 keyboardType = KeyboardType.Number
             )
         }
         RuleType.GEOFENCING -> {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = "Geofence Areas (${geofenceAreas.size})",
+                    text = stringResource(R.string.geofence_areas_count, geofenceAreas.size),
                     style = MaterialTheme.typography.bodyMedium
                 )
 
@@ -229,19 +231,22 @@ private fun RuleParametersInput(
                                     style = MaterialTheme.typography.titleSmall
                                 )
                                 Text(
-                                    text = "${area.radius.toInt()}m radius",
+                                    text = stringResource(R.string.meter_radius_value, area.radius.toInt()),
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
                             IconButton(onClick = { onRemoveGeofenceArea(area.id) }) {
-                                Icon(Icons.Default.Delete, contentDescription = "Remove")
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.remove)
+                                )
                             }
                         }
                     }
                 }
 
                 SecondaryButton(
-                    text = "Add Area",
+                    text = stringResource(R.string.add_area),
                     onClick = { showAddAreaDialog = true }
                 )
             }
@@ -325,7 +330,7 @@ private fun AddGeofenceAreaDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Geofence Area") },
+        title = { Text(stringResource(R.string.add_geofence_area)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 // Error message
@@ -343,8 +348,8 @@ private fun AddGeofenceAreaDialog(
                         name = it
                         errorMessage = null
                     },
-                    label = "Area Name",
-                    placeholder = "e.g., Home, School"
+                    label = stringResource(R.string.area_name),
+                    placeholder = stringResource(R.string.area_name_placeholder)
                 )
 
                 CustomTextField(
@@ -353,10 +358,10 @@ private fun AddGeofenceAreaDialog(
                         latitude = it
                         errorMessage = null
                     },
-                    label = "Latitude",
-                    placeholder = "e.g., 41.1579",
+                    label = stringResource(R.string.latitude),
+                    placeholder = stringResource(R.string.latitude_placeholder),
                     keyboardType = KeyboardType.Decimal,
-                    supportingText = "Range: -90 to 90"
+                    supportingText = stringResource(R.string.latitude_range)
                 )
 
                 CustomTextField(
@@ -365,10 +370,10 @@ private fun AddGeofenceAreaDialog(
                         longitude = it
                         errorMessage = null
                     },
-                    label = "Longitude",
-                    placeholder = "e.g., -8.6291",
+                    label = stringResource(R.string.longitude),
+                    placeholder = stringResource(R.string.longitude_placeholder),
                     keyboardType = KeyboardType.Decimal,
-                    supportingText = "Range: -180 to 180"
+                    supportingText = stringResource(R.string.longitude_range)
                 )
 
                 CustomTextField(
@@ -377,10 +382,10 @@ private fun AddGeofenceAreaDialog(
                         radius = it
                         errorMessage = null
                     },
-                    label = "Radius (meters)",
+                    label = stringResource(R.string.radius_meters),
                     placeholder = "100",
                     keyboardType = KeyboardType.Number,
-                    supportingText = "Range: 1 to 100,000m"
+                    supportingText = stringResource(R.string.radius_range)
                 )
             }
         },
@@ -392,12 +397,12 @@ private fun AddGeofenceAreaDialog(
                         longitude.isNotBlank() &&
                         radius.isNotBlank()
             ) {
-                Text("Add")
+                Text(stringResource(R.string.add))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

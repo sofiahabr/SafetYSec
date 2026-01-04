@@ -15,7 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.safetysec.R
 import com.example.safetysec.presentation.components.EmailTextField
 import com.example.safetysec.presentation.components.PrimaryButton
 import com.example.safetysec.presentation.components.PasswordTextField
@@ -39,19 +41,15 @@ fun LogInScreen(
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
-    // ✅ KEY FIX: Get the Activity from context for MFA
     val context = LocalContext.current
     val activity = context as? Activity
 
     val authState = viewModel.authState.collectAsState()
 
-    // Handle login success - check if MFA is required
     LaunchedEffect(authState.value.mfaRequired, authState.value.isAuthenticated) {
         if (authState.value.mfaRequired) {
-            // Navigate to MFA verification
             navController.navigate(AppRoutes.MFA_VERIFICATION)
         } else if (authState.value.isAuthenticated && authState.value.user != null) {
-            // No MFA needed, go to dashboard
             onLoginSuccess()
         }
     }
@@ -63,7 +61,7 @@ fun LogInScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "Login",
+            stringResource(R.string.login),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -84,19 +82,19 @@ fun LogInScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         PrimaryButton(
-            text = "Login",
+            text = stringResource(R.string.login),
             onClick = {
-                // ✅ KEY FIX: Pass the Activity to the login function for MFA support
                 viewModel.login(email.value, password.value, activity)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !authState.value.isLoading
+            enabled = !authState.value.isLoading,  // ← Added comma
+            isLoading = authState.value.isLoading
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         SecondaryButton(
-            text = "Don't have an account? Register here",
+            text = stringResource(R.string.no_account_register),
             onClick = onNavigateToRegister,
             modifier = Modifier.fillMaxWidth()
         )
@@ -112,7 +110,7 @@ fun LogInScreen(
         if (!authState.value.error.isNullOrEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                authState.value.error ?: "Unknown error",
+                authState.value.error ?: stringResource(R.string.error_unknown),
                 color = MaterialTheme.colorScheme.error
             )
         }

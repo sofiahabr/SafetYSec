@@ -1,11 +1,22 @@
-package com.example.safetysec.presentation.screens.association
+package com.example.safetysec.presentation.viewmodel
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.safetysec.domain.usecase.association.*
+import com.example.safetysec.domain.usecase.association.GenerateOTPUseCase
+import com.example.safetysec.domain.usecase.association.GetAssociationsUseCase
+import com.example.safetysec.domain.usecase.association.RemoveAssociationUseCase
+import com.example.safetysec.domain.usecase.association.ValidateOTPUseCase
 import com.example.safetysec.domain.usecase.auth.GetCurrentUserUseCase
+import com.example.safetysec.presentation.screens.association.AssociationUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -288,6 +299,6 @@ class AssociationViewModel @Inject constructor(
      */
     private fun isValidEmail(email: String): Boolean {
         return email.isNotBlank() &&
-                android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }

@@ -9,12 +9,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.safetysec.R
 import com.example.safetysec.domain.model.UserRole
 import com.example.safetysec.presentation.navigation.AppRoutes
 import com.example.safetysec.presentation.theme.PrimaryPurple
@@ -23,12 +25,12 @@ import com.example.safetysec.presentation.viewmodel.AuthViewModel
 /**
  * Bottom Navigation Bar Component
  *
- * Automatically role-aware - fetches user role from AuthViewModel and filters navigation items.
- *
- * Navigation visibility:
- * - Protected users: Dashboard, Association, Rules, Time Windows, Profile
- * - Monitor users: Dashboard, Association, Rules, Alerts, Profile
- * - Dual users: Dashboard, Association, Rules, Administration, Profile
+ * Main navigation for the SafetYSec app with 5 sections:
+ * - Dashboard
+ * - Association
+ * - Rules
+ * - Alerts
+ * - Profile
  */
 
 /**
@@ -46,32 +48,33 @@ data class BottomNavItem(
 /**
  * Bottom Navigation Items List
  */
+@Composable
 fun getBottomNavItems(): List<BottomNavItem> {
     return listOf(
         BottomNavItem(
             route = AppRoutes.DASHBOARD,
-            label = "Dashboard",
+            label = stringResource(R.string.dashboard),
             selectedIcon = Icons.Filled.Dashboard,
             unselectedIcon = Icons.Outlined.Dashboard,
             visibleForRoles = listOf(UserRole.MONITOR, UserRole.PROTECTED, UserRole.DUAL)
         ),
         BottomNavItem(
             route = AppRoutes.ASSOCIATIONS,
-            label = "Association",
+            label = stringResource(R.string.association),
             selectedIcon = Icons.Filled.People,
             unselectedIcon = Icons.Outlined.People,
             visibleForRoles = listOf(UserRole.MONITOR, UserRole.PROTECTED, UserRole.DUAL)
         ),
         BottomNavItem(
             route = AppRoutes.RULES,
-            label = "Rules",
+            label = stringResource(R.string.rules),
             selectedIcon = Icons.Filled.Rule,
             unselectedIcon = Icons.Outlined.Rule,
             visibleForRoles = listOf(UserRole.MONITOR, UserRole.PROTECTED, UserRole.DUAL)
         ),
         BottomNavItem(
             route = AppRoutes.ALERTS,
-            label = "Alerts",
+            label = stringResource(R.string.alerts),
             selectedIcon = Icons.Filled.Notifications,
             unselectedIcon = Icons.Outlined.Notifications,
             visibleForRoles = listOf(UserRole.MONITOR)  // Monitor only
@@ -92,10 +95,9 @@ fun getBottomNavItems(): List<BottomNavItem> {
         ),
         BottomNavItem(
             route = AppRoutes.PROFILE,
-            label = "Profile",
+            label = stringResource(R.string.profile),
             selectedIcon = Icons.Filled.Person,
-            unselectedIcon = Icons.Outlined.Person,
-            visibleForRoles = listOf(UserRole.MONITOR, UserRole.PROTECTED, UserRole.DUAL)
+            unselectedIcon = Icons.Outlined.Person
         )
     )
 }
@@ -175,15 +177,19 @@ fun BottomNavigationBar(
                         // Special handling for Dashboard - always clear back stack
                         if (item.route == AppRoutes.DASHBOARD) {
                             navController.navigate(item.route) {
+                                // Pop everything up to and including the current dashboard
                                 popUpTo(AppRoutes.DASHBOARD) {
                                     inclusive = true
                                 }
+                                // Launch fresh dashboard
                                 launchSingleTop = true
+                                // Don't restore state for dashboard - always fresh
                                 restoreState = false
                             }
                         } else {
                             // For other tabs, pop to dashboard and navigate
                             navController.navigate(item.route) {
+                                // Pop up to dashboard but don't remove it
                                 popUpTo(AppRoutes.DASHBOARD) {
                                     saveState = true
                                     inclusive = false
