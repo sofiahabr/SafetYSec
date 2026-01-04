@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.safetysec.presentation.components.CustomTextField
 import com.example.safetysec.presentation.components.PhoneTextField
 import com.example.safetysec.presentation.components.EmailTextField
@@ -31,13 +32,14 @@ import com.example.safetysec.presentation.components.PasswordTextField
 import com.example.safetysec.presentation.components.PrimaryButton
 import com.example.safetysec.presentation.screens.profile.PasswordStrengthIndicator
 import com.example.safetysec.presentation.screens.profile.calculatePasswordStrength
-
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
+import com.example.safetysec.presentation.navigation.AppRoutes
 
 @Composable
 fun RegistrationScreen(
     viewModel: AuthViewModel,
     onRegistrationSuccess: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     var email by remember { mutableStateOf("") }
@@ -53,9 +55,12 @@ fun RegistrationScreen(
 
     val authState by viewModel.authState.collectAsStateWithLifecycle()
 
+    // Navigate to MFA setup after successful registration
     LaunchedEffect(authState.isAuthenticated) {
         if (authState.isAuthenticated && authState.user != null) {
-            onRegistrationSuccess()
+            navController.navigate(AppRoutes.MFA_SETUP) {
+                popUpTo(AppRoutes.REGISTER) { inclusive = true }
+            }
         }
     }
 
@@ -82,7 +87,6 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Email
-
         EmailTextField(
             value = email,
             onValueChange = { email = it }
@@ -223,18 +227,17 @@ fun RegistrationScreen(
                     isValid = false
                 }
 
-
                 if (calculatePasswordStrength(password).label == "Weak") {
                     passwordError = "Password is too weak"
                     isValid = false
                 }
 
-
                 if (email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty() && phone.isNotEmpty() && isValid) {
                     viewModel.register(email, password, name, phone, selectedRole)
                 }
             },
-            isLoading = authState.isLoading
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !authState.isLoading
         )
 
         if (!authState.error.isNullOrEmpty()) {

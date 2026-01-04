@@ -53,6 +53,11 @@ object AppRoutes {
     const val FORGOT_PASSWORD = "forgot_password"
     const val PASSWORD_RECOVERY_SUCCESS = "password_recovery_success"
 
+    // MFA routes
+    const val MFA_SETUP = "mfa_setup"
+    const val MFA_VERIFICATION = "mfa_verification"
+    const val MFA_SUCCESS = "mfa_success"
+
     // Helper functions for parameterized routes
     fun alertDetail(alertId: String) = "alert_detail/$alertId"
     fun editRule(ruleId: String) = "edit_rule/$ruleId"

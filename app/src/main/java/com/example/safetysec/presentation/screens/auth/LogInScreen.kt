@@ -14,39 +14,47 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.safetysec.presentation.components.EmailTextField
 import com.example.safetysec.presentation.components.PrimaryButton
 import com.example.safetysec.presentation.components.PasswordTextField
 import com.example.safetysec.presentation.components.SecondaryButton
 import com.example.safetysec.presentation.viewmodel.AuthViewModel
-import com.example.safetysec.presentation.viewmodel.AuthState
+import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.safetysec.presentation.navigation.AppRoutes
+import android.app.Activity
 
 @Composable
 fun LogInScreen(
     viewModel: AuthViewModel,
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
-
     onNavigateToForgotPassword: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    var email = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
 
-    val authState = remember { mutableStateOf(AuthState()) }
+    // ✅ KEY FIX: Get the Activity from context for MFA
+    val context = LocalContext.current
+    val activity = context as? Activity
 
-    LaunchedEffect(Unit) {
-        viewModel.authState.collect { state ->
-            authState.value = state
+    val authState = viewModel.authState.collectAsState()
 
-            if (state.isAuthenticated && state.user != null) {
-                onLoginSuccess()
-            }
+    // Handle login success - check if MFA is required
+    LaunchedEffect(authState.value.mfaRequired, authState.value.isAuthenticated) {
+        if (authState.value.mfaRequired) {
+            // Navigate to MFA verification
+            navController.navigate(AppRoutes.MFA_VERIFICATION)
+        } else if (authState.value.isAuthenticated && authState.value.user != null) {
+            // No MFA needed, go to dashboard
+            onLoginSuccess()
         }
     }
-
 
     Column(
         modifier = modifier
@@ -77,8 +85,12 @@ fun LogInScreen(
 
         PrimaryButton(
             text = "Login",
-            onClick = { viewModel.login(email.value, password.value) },
-            isLoading = authState.value.isLoading
+            onClick = {
+                // ✅ KEY FIX: Pass the Activity to the login function for MFA support
+                viewModel.login(email.value, password.value, activity)
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !authState.value.isLoading
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -86,12 +98,15 @@ fun LogInScreen(
         SecondaryButton(
             text = "Don't have an account? Register here",
             onClick = onNavigateToRegister,
-            isLoading = authState.value.isLoading
+            modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         SecondaryButton(
             text = "Forgot Password?",
             onClick = onNavigateToForgotPassword,
+            modifier = Modifier.fillMaxWidth()
         )
 
         if (!authState.value.error.isNullOrEmpty()) {

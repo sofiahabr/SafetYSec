@@ -15,6 +15,8 @@ import com.example.safetysec.presentation.screens.auth.LogInScreen
 import com.example.safetysec.presentation.screens.auth.RegistrationScreen
 import com.example.safetysec.presentation.screens.auth.ForgotPasswordScreen
 import com.example.safetysec.presentation.screens.auth.PasswordRecoverySuccessScreen
+import com.example.safetysec.presentation.screens.auth.MFASetupScreen
+import com.example.safetysec.presentation.screens.auth.MFAVerificationScreen
 import com.example.safetysec.presentation.screens.dashboard.DashboardScreen
 import com.example.safetysec.presentation.screens.home.HomeScreen
 import com.example.safetysec.presentation.screens.monitor.MonitorDashScreen
@@ -70,7 +72,8 @@ fun AppNavHost(
                 },
                 onNavigateToForgotPassword = {
                     navController.navigate(AppRoutes.FORGOT_PASSWORD)
-                }
+                },
+                navController = navController
             )
         }
 
@@ -78,14 +81,11 @@ fun AppNavHost(
             RegistrationScreen(
                 viewModel = authViewModel,
                 onRegistrationSuccess = {
-                    navController.navigate(AppRoutes.DASHBOARD) {
-                        popUpTo(AppRoutes.REGISTER) { inclusive = true }
-                    }
-                }
+                },
+                navController = navController
             )
         }
 
-        // Password Recovery Screens
         composable(AppRoutes.FORGOT_PASSWORD) {
             ForgotPasswordScreen(
                 navController = navController,
@@ -99,6 +99,20 @@ fun AppNavHost(
             )
         }
 
+        composable(AppRoutes.MFA_SETUP) {
+            MFASetupScreen(
+                navController = navController,
+                viewModel = authViewModel
+            )
+        }
+
+        composable(AppRoutes.MFA_VERIFICATION) {
+            MFAVerificationScreen(
+                navController = navController,
+                viewModel = authViewModel
+            )
+        }
+
         composable(AppRoutes.DASHBOARD) {
             DashboardScreen(
                 navController = navController,
@@ -106,7 +120,6 @@ fun AppNavHost(
             )
         }
 
-        // Role-specific dashboards (can be accessed directly)
         composable(AppRoutes.MONITOR) {
             MonitorDashScreen(
                 navController = navController,
@@ -118,7 +131,6 @@ fun AppNavHost(
             ProtectedDashboardScreen(navController = navController)
         }
 
-        // Monitoring Control Screen
         composable(AppRoutes.MONITORING_CONTROL) {
             MonitoringControlScreen(
                 onNavigateBack = { navController.navigateUp() }
@@ -140,7 +152,6 @@ fun AppNavHost(
             AlertsScreen(navController = navController)
         }
 
-        // Administration screen for Dual users
         composable(AppRoutes.ADMINISTRATION) {
             AdministrationScreen(navController = navController)
         }
